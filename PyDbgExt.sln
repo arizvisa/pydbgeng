@@ -1,0 +1,66 @@
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Document", "Document", "{EEF2962F-B6C6-4981-AACB-970D2D51B775}"
+	ProjectSection(SolutionItems) = preProject
+		Document\ChangeLog.txt = Document\ChangeLog.txt
+		Document\Copyright.txt = Document\Copyright.txt
+		examples.txt = examples.txt
+		Document\FAQ.txt = Document\FAQ.txt
+		Document\HowToBuild.txt = Document\HowToBuild.txt
+	EndProjectSection
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PyDbgEng", "Source\PyDbgEng\PyDbgEng.vcproj", "{1E82557C-EAF5-402A-B21D-44EF7F6379B6}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PyDbgExt", "Source\PyDbgExt\PyDbgExt.vcproj", "{55939FC5-3CF3-4B96-99E5-2230B430D78A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1E82557C-EAF5-402A-B21D-44EF7F6379B6} = {1E82557C-EAF5-402A-B21D-44EF7F6379B6}
+	EndProjectSection
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Script", "Source\Script\Script.vcproj", "{788985FC-73AB-44E5-8DC2-1011A011EEE0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1E82557C-EAF5-402A-B21D-44EF7F6379B6} = {1E82557C-EAF5-402A-B21D-44EF7F6379B6}
+		{55939FC5-3CF3-4B96-99E5-2230B430D78A} = {55939FC5-3CF3-4B96-99E5-2230B430D78A}
+	EndProjectSection
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1E82557C-EAF5-402A-B21D-44EF7F6379B6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1E82557C-EAF5-402A-B21D-44EF7F6379B6}.Debug|Win32.Build.0 = Debug|Win32
+		{1E82557C-EAF5-402A-B21D-44EF7F6379B6}.Release|Win32.ActiveCfg = Release|Win32
+		{1E82557C-EAF5-402A-B21D-44EF7F6379B6}.Release|Win32.Build.0 = Release|Win32
+		{55939FC5-3CF3-4B96-99E5-2230B430D78A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{55939FC5-3CF3-4B96-99E5-2230B430D78A}.Debug|Win32.Build.0 = Debug|Win32
+		{55939FC5-3CF3-4B96-99E5-2230B430D78A}.Release|Win32.ActiveCfg = Release|Win32
+		{55939FC5-3CF3-4B96-99E5-2230B430D78A}.Release|Win32.Build.0 = Release|Win32
+		{788985FC-73AB-44E5-8DC2-1011A011EEE0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{788985FC-73AB-44E5-8DC2-1011A011EEE0}.Debug|Win32.Build.0 = Debug|Win32
+		{788985FC-73AB-44E5-8DC2-1011A011EEE0}.Release|Win32.ActiveCfg = Release|Win32
+		{788985FC-73AB-44E5-8DC2-1011A011EEE0}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(DPCodeReviewSolutionGUID) = preSolution
+		DPCodeReviewSolutionGUID = {00000000-0000-0000-0000-000000000000}
+	EndGlobalSection
+EndGlobal

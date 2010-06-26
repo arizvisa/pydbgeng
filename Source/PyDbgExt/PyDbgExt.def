@@ -1,0 +1,20 @@
+LIBRARY	PyDbgExt
+
+;--------------------------------------------------------------------
+; Core exports provided by the ExtCpp framework.
+;--------------------------------------------------------------------
+
+EXPORTS
+	DebugExtensionInitialize
+    DebugExtensionUninitialize
+    DebugExtensionNotify
+    help
+    
+;--------------------------------------------------------------------
+; Extension commands.
+;--------------------------------------------------------------------
+
+	eval
+	exec
+	import
+	from

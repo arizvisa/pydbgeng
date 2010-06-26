@@ -1,0 +1,79 @@
+1. Prepare the dependent libraries
+
+1.1. Python 2.5+
+
+  The project integrate Python runtime into WinDbg, so we need download and install Python.
+  
+  http://www.python.org/download/
+  
+  I develop and test the project in Python 2.5+, so please make sure you install the latest version, even I have try my best to avoid using new feature in Python 2.5.
+  
+1.2. Boost 1.33.0+  
+
+  The project use boost::python as wrapper of native C++ classes, so we need download and compile boost library.
+  
+  http://sourceforge.net/project/showfiles.php?group_id=7586
+  
+  I develop and test the project in boost 1.33, and used some new features in this version, so please make sure you got the latest version. I promise to use the latest stable boost version when this project become stable enough.
+  
+1.3. WinDbg 6.6.7.5+
+
+  The project is a extension for WinDbg, so we need download and install WinDbg for it's SDK
+
+  http://www.microsoft.com/whdc/devtools/debugging/installx86.mspx
+
+2. Fix the project setting
+
+  <TBD>
+
+3. Setup the test envionment
+
+3.1. Compile the project
+
+  # Compile the project in debug or release mode
+  # Make sure the PyDbgExt.dll and PyDbgEng.pyd in the output directory
+
+3.2. Got the dependent DLLs
+
+  # Copy dbgeng.dll and dbghelp.dll from WinDbg directory to the output directory
+  # Copy boost_python_debug.dll from boost\bin\ to the output directory
+  # Copy msvcm80d.dll/msvcp80d.dll/msvcr80d.dll to the output directory for debug mode
+  
+3.3. Set WinDbg and load the extention
+
+  # Use ".extpath+ <Output Directory>" command to add a extention path, or add the output directory to PATH envrionment variable
+  # Use ".load PyDbgExt" command to load the extention
+  # Use ".chain" command to verify the extention has been loaded
+  
+4. Common commands
+
+4.1. Use "!help" command to show a description, for example
+
+    0:001> !help
+    Help for pydbgext.dll
+
+    [Envionment]
+
+	    Extention Image	: D:\Study\Python\PyDbgExt\bin\debug\PyDbgExt.dll : 98304 @ 2007-5-8 23:01:22
+	    Python Version	: 2.5.1 (r251:54863, Apr 18 2007, 08:51:08) [MSC v.1310 32 bit (Intel)] @ win32
+
+    [Usage]
+
+	    eval			: Evaluate a python expression
+	    import			: Import a python module
+	    exec			: Execute a python script
+	    help			: Shows this help
+
+4.2. Use "!eval" command to evalute a python expression, for example
+
+    0:001> !eval 2 ** 5
+    32
+    0:001> !eval dir(PyDbgEng)
+    ['DebugClient', 'DebugControl', 'DebugOutput', 'DebugRegisters', '__doc__', '__file__', '__name__']
+    
+4.3. Use "!import" command to import a python module, for example
+
+    0:001> !import PyDbgToy
+    Load <module 'PyDbgToy' from 'D:\Study\Python\PyDbgExt\bin\debug\PyDbgToy.pyc'> succeeded.
+    0:001> !eval dir(PyDbgToy)
+    ['__builtins__', '__doc__', '__file__', '__name__', 'dumpRegister', 'reg']    

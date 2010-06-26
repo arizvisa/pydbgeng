@@ -1,0 +1,15 @@
+0.2, <TBD>
+
+Enhance:
+
+  * Add 'from' command to import symbols to the global namespace
+  * Add DebugSymbols class to support IDebugSymbols interfaces, which were used to maintain the debug symbols, such as query the data structure.
+  * Add DebugDataSpaces class to support IDebugDataSpaces interfaces, which were used to maintain the memory data spaces, such as access the physical memory.
+  * Add DebugSystemObjects class to supprot IDebugSystemObjects interfaces, which were used to maintain the system objects, such as to query process id by PEB.
+  * Add DebugAdvanced class to support IDebugAdvanced interfaces, which were used to do some system level helper functions, such as get the thread context.
+
+Improvement;
+
+  * Use 'char *' instead of 'std::string' as the function parameter type, to avoid boost::python delete some wrong pointer
+
+0.1, 2007-05-10, First release, just a prototype
