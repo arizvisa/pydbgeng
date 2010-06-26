@@ -1,0 +1,120 @@
+####### This was copied off of the original authors blog located at http://flierlu.blogspot.com/
+
+### for accessing kernelspace for when driver is linked in as a resource.
+
+>>> from PyDbgEng import *
+>>> c = DebugClient()
+>>> c.AttachKernel()
+>>> c.Control.WaitForEvent()
+True
+>>> c.Symbols.LoadedModules
+{'nt': (Module nt @ ffffffff80800000)}
+>>> c.Symbols.GetSymbols("nt!KiServiceTable")
+{'KiServiceTable': ((Symbol nt!KiServiceTable), 0)}
+>>> offset = c.Symbols.GetSymbols("nt!KiServiceTable").popitem()[1][0].Offset
+>>> c.Symbols.GetSymbols(c.DataSpaces.Virtual.ReadPointers(offset)[0])
+{'NtAcceptConnectPort': ((Symbol nt!NtAcceptConnectPort), 18446744071571636794L)}
+
+### for using the standard debugger
+
+#!/usr/bin/env python
+import sys
+from PyDbgEng import *
+
+c = DebugClient()
+
+c.CreateProcess("ftp.exe", createFlags=[CreateFlags.ATTACH_ONLY_THIS_PROCESS, CreateFlags.NEW_CONSOLE])
+
+while c.Control.WaitForEvent():
+ pass
+ 
+### for handling different debugger events
+
+def onCreateProcess(args):
+ print "CreateProc: %08x-%08x %s\t%s" % (args.BaseOffset, args.BaseOffset+args.ModuleSize, args.ModuleName, args.ImageName)
+
+def onExitProcess(args):
+ print "ExitProcess %d" % args.ExitCode
+
+def onCreateThread(args):
+ print "CreateThread %x %08x %08x" % (args.Handle, args.DataOffset, args.StartOffset)
+
+def onExitThread(args):
+ print "ExitThread %d" % args.ExitCode
+
+def onLoadModule(args):
+ print "ModLoad: %08x-%08x %s\t%s" % (args.BaseOffset, args.BaseOffset+args.ModuleSize, args.ModuleName, args.ImageName)
+
+c.EventCallbacks.CreateProcess = onCreateProcess
+c.EventCallbacks.ExitProcess = onExitProcess
+c.EventCallbacks.CreateThread = onCreateThread
+c.EventCallbacks.ExitThread = onExitThread
+c.EventCallbacks.LoadModule = onLoadModule
+c.EventCallbacks.Attach()
+c.CreateProcess(...)
+
+### for displaying debugger state
+
+def onSessionStatus(args):
+ print "SessionStatus: %s" % (str(args.Status))
+
+def onChangeEngineState(args):
+ sys.stdout.write("EngineState: %s " % str(args.State))
+
+ if EngineState.EXECUTION_STATUS == args.State:
+  print ExecutionStatus.values[args.Argument & 0xf]
+ else:
+  print "%x" % args.Argument
+
+c.EventCallbacks.SessionStatus = onSessionStatus
+c.EventCallbacks.ChangeEngineState = onChangeEngineState
+
+### breakpoints
+
+def onLoadModule(args):
+ print "ModLoad: %08x-%08x %s\t%s" % ( args.BaseOffset, args.BaseOffset+args.ModuleSize, args.ModuleName, args.ImageName)
+
+if "WS2_32" == args.ModuleName:
+  bp = c.Control.AddBreakpoint(flags=[BreakpointFlag.ENABLED], offset=c.Symbols.GetOffsetByName("WS2_32!socket")) 
+
+  symbol = c.Symbols.GetNameByOffset(bp.Offset)
+  print "Add Breakpoint: %s %d @ %08x %s:%d" % (str(bp.Type[0]), bp.Id, bp.Offset, symbol[0], symbol[1])
+
+def onBreakpoint(args):
+  bp = args.Breakpoint
+
+  symbol = c.Symbols.GetNameByOffset(bp.Offset)
+  print "Hit Breakpoint: %s %d @ %08x %s:%d" % (str(bp.Type[0]), bp.Id, bp.Offset, symbol[0], symbol[1])
+
+  return ExecutionStatus.BREAK
+
+c.EventCallbacks.Breakpoint = onBreakpoint
+
+### exceptions
+
+def onException(args):
+ symbol = c.Symbols.GetNameByOffset(args.Address)
+ sys.stdout.write("Exception: %08x %08x %s:%d" % (args.Code, args.Address, symbol[0], symbol[1]))
+
+ if args.IsFirstChance:
+   print " first"
+ else:
+   print " second"
+
+ for frame in c.Control.GetStackFrames():
+   symbol = c.Symbols.GetNameByOffset(frame.InstructionOffset)
+   print " %04d %08x %s:%d" % (frame.FrameNumber, frame.InstructionOffset, symbol[0], symbol[1])
+
+ print c.Control.Breakpoints
+
+c.EventCallbacks.Exception = onException
+
+### stability
+try:
+  while c.Control.WaitForEvent():
+    c.Control.ExecutionStatus = ExecutionStatus.GO_HANDLED
+    print "Change engine state to %s" % c.Control.ExecutionStatus
+except:
+  if ExecutionStatus.NO_DEBUGGEE != c.Control.ExecutionStatus:
+    print "Unexpected error:", sys.exc_info()[0]
+    raise
