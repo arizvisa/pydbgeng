@@ -9,7 +9,8 @@ using namespace boost::python;
 
 class CPythonEngine : public boost::noncopyable
 {
-  PyGILState_STATE m_threadstate;
+  PyInterpreterState* m_interpreter;
+  PyGILState_STATE m_threadstate;  
 
 public:
   CPythonEngine(LPCSTR name);

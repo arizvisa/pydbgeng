@@ -7,11 +7,12 @@ using namespace boost::python;
 
 struct PYDBGENG_API CPythonHelper
 {
-  static void RaiseException(errno_t err, PyObject *type = PyExc_RuntimeError) throw(...);
   static void RaiseException(const std::string& msg, PyObject *type = PyExc_RuntimeError) throw(...);
+  static void RaiseException(errno_t err, std::string s, PyObject *type = PyExc_RuntimeError) throw(...);
+  static void RaiseException(const std::string& msg, std::string s, PyObject *type = PyExc_RuntimeError) throw(...);
 
-  static void Check(HRESULT hr);
-  static void Check(errno_t err);
+  static void RealCheck(HRESULT hr, std::string s);
+  static void RealCheck(errno_t err, std::string s);
 
   static size_t len(const dict& d);
   static size_t len(const list& l);

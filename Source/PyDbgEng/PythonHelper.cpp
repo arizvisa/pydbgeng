@@ -29,11 +29,18 @@ const std::string CPythonHelper::repr(const object& obj)
   return std::string(extract<char *>(object(handle<>(allow_null(::PyObject_Repr(obj.ptr()))))));
 }
 
-void CPythonHelper::RaiseException(errno_t err, PyObject *type) throw(...)
+void CPythonHelper::RaiseException(errno_t err, std::string s, PyObject *type) throw(...)
 {
   _set_errno(err);
 
   ::PyErr_SetFromErrno(type);
+
+  throw_error_already_set();
+}
+
+void CPythonHelper::RaiseException(const std::string& msg, std::string s, PyObject *type) throw(...)
+{
+  ::PyErr_SetString(type, msg.c_str());
 
   throw_error_already_set();
 }
@@ -45,12 +52,12 @@ void CPythonHelper::RaiseException(const std::string& msg, PyObject *type) throw
   throw_error_already_set();
 }
 
-void CPythonHelper::Check(errno_t err) throw(...)
+void CPythonHelper::RealCheck(errno_t err, std::string s) throw(...)
 {
-  if (err != 0) RaiseException(err);
+  if (err != 0) RaiseException(err, s);
 }
 
-void CPythonHelper::Check(HRESULT hr) throw(...)
+void CPythonHelper::RealCheck(HRESULT hr, std::string s) throw(...)
 {
   if (SUCCEEDED(hr))
   {

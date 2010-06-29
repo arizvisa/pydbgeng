@@ -69,7 +69,7 @@ BEGIN
     BEGIN
         BLOCK "000004b0"
         BEGIN
-            VALUE "FileDescription", "PyDbgExt Dynamic Link Library"
+            VALUE "FileDescription", "PyDbgExt Dynamic Link Library (modified)"
             VALUE "FileVersion", "0, 1, 0, 48"
             VALUE "InternalName", "PyDbgExt"
             VALUE "LegalCopyright", "Copyright (C) 2007"

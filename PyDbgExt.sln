@@ -4,7 +4,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Document", "Document", "{EE
 	ProjectSection(SolutionItems) = preProject
 		Document\ChangeLog.txt = Document\ChangeLog.txt
 		Document\Copyright.txt = Document\Copyright.txt
-		examples.txt = examples.txt
 		Document\FAQ.txt = Document\FAQ.txt
 		Document\HowToBuild.txt = Document\HowToBuild.txt
 	EndProjectSection

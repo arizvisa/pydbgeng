@@ -56,6 +56,11 @@ BOOL APIENTRY DllMain( HANDLE hModule, DWORD dwReason, LPVOID lpReserved )
 
 extern "C" HRESULT CALLBACK DebugExtensionInitialize(PULONG Version, PULONG Flags)
 {
+  if (g_engine.get() != 0) {
+    /* XXX: already initialized? */
+    return 0;
+  }
+
   *Version = DEBUG_EXTENSION_VERSION(1, 0);
   *Flags = 0;
 
@@ -95,8 +100,6 @@ extern "C" HRESULT CALLBACK DebugExtensionInitialize(PULONG Version, PULONG Flag
 
 extern "C" void CALLBACK DebugExtensionUninitialize(void)
 {
-  g_engine->Acquire();
-
   g_global.reset();
   g_engine.reset();
 
@@ -154,7 +157,7 @@ extern "C" HRESULT CALLBACK help(PDEBUG_CLIENT4 Client, PCSTR args)
           "\tExtention Image\t: %s built %s %s @ %s, %d\n"
           "\tPython Version\t: %s @ %s\n\n"
           "[Usage]\n\n"
-//          "\teval\t\t\t: Evaluate a python expression\n"
+          "\teval\t\t\t: Evaluate a python expression\n"
           "\timport\t\t\t: Import a python module\n"
           "\tfrom\t\t\t: Import a list of symbols from a python module\n"
           "\texec\t\t\t: Execute a python script\n"

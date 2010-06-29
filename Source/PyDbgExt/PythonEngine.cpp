@@ -5,10 +5,15 @@
 
 CPythonEngine::CPythonEngine(LPCSTR name)
 {
+  PyThreadState* threadstate;
+
   ::Py_SetProgramName(const_cast<LPSTR>(name));
   ::Py_Initialize();
 
   ::PyEval_InitThreads();
+  threadstate = ::PyThreadState_Get();
+  m_interpreter = threadstate->interp;
+  (void)::PyEval_ReleaseThread(threadstate);
 }
 
 CPythonEngine::~CPythonEngine(void)
@@ -16,21 +21,26 @@ CPythonEngine::~CPythonEngine(void)
   (void)this->Acquire();
   if ( ::Py_IsInitialized() ) {
     ::Py_Finalize();
+    m_threadstate = static_cast<PyGILState_STATE>(0);
     return;
   }
   (void)this->Release();
+  m_threadstate = static_cast<PyGILState_STATE>(0);
 }
 
 void
 CPythonEngine::Acquire(void)
 {
-    m_threadstate = ::PyGILState_Ensure();
+     m_threadstate = ::PyGILState_Ensure();
+//    (void)::PyEval_AcquireThread(m_threadstate);
+//    (void)::PyEval_AcquireLock();
 }
 
 void
 CPythonEngine::Release(void)
 {
-    ::PyGILState_Release( m_threadstate );
+//    (void)::PyEval_RestoreThread(m_threadstate);
+    (void)::PyGILState_Release(m_threadstate);
 }
 
 LPCSTR CPythonEngine::GetName(void) const

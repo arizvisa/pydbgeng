@@ -152,11 +152,11 @@ const object CDebugDataSpaces::CVirtualDataSpace::Read(ULONG64 offset, ULONG siz
   if (0 != ::PyObject_AsWriteBuffer(buffer.ptr(), &data, &len))
     throw_error_already_set();
 
-  if (TYPE_UNCACHED == type)
+  if (TYPE_UNCACHED == type) {
     Check(m_intf->ReadVirtualUncached(offset, data, len, NULL));
-  else 
+  } else {
     Check(m_intf->ReadVirtual(offset, data, len, NULL));
-
+  }
   return buffer;
 }
 ULONG CDebugDataSpaces::CVirtualDataSpace::Write(ULONG64 offset, const object& buffer, CacheType type) const
@@ -171,11 +171,11 @@ ULONG CDebugDataSpaces::CVirtualDataSpace::Write(ULONG64 offset, const object& b
   if (0 != ::PyObject_AsReadBuffer(buffer.ptr(), &data, &len))
     throw_error_already_set();
 
-  if (TYPE_UNCACHED == type)
+  if (TYPE_UNCACHED == type) {
     Check(m_intf->WriteVirtualUncached(offset, const_cast<LPVOID>(data), len, &written));
-  else
+  } else {
     Check(m_intf->WriteVirtual(offset, const_cast<LPVOID>(data), len, &written));
-
+  }
   return written;
 }
 ULONG CDebugDataSpaces::CVirtualDataSpace::Fill(ULONG64 offset, ULONG size, const object& pattern) const
@@ -203,11 +203,11 @@ ULONG64 CDebugDataSpaces::CVirtualDataSpace::Search(ULONG64 offset, ULONG64 leng
 
   ULONG64 match;
 
-  if (SEARCH_DEFAULT == flags)
+  if (SEARCH_DEFAULT == flags) {
     Check(m_intf->SearchVirtual(offset, length, const_cast<LPVOID>(data), len, granularity, &match));
-  else
+  } else {
     Check(CComQIPtr<IDebugDataSpaces4>(m_intf)->SearchVirtual2(offset, length, (ULONG) flags, const_cast<LPVOID>(data), len, granularity, &match));
-
+  }
   return match;
 }
 
@@ -221,11 +221,11 @@ const object CDebugDataSpaces::CPhysicalDataSpace::Read(ULONG64 offset, ULONG si
   if (0 != ::PyObject_AsWriteBuffer(buffer.ptr(), &data, &len))
     throw_error_already_set();
 
-  if (TYPE_DEFAULT == type)
+  if (TYPE_DEFAULT == type) {
     Check(m_intf->ReadPhysical(offset, data, len, NULL));
-  else     
+  } else {
     Check(CComQIPtr<IDebugDataSpaces4>(m_intf)->ReadPhysical2(offset, (ULONG) type, data, len, NULL));
-
+  }
   return buffer;
 }
 ULONG CDebugDataSpaces::CPhysicalDataSpace::Write(ULONG64 offset, const object& buffer, CacheType type) const
@@ -237,12 +237,12 @@ ULONG CDebugDataSpaces::CPhysicalDataSpace::Write(ULONG64 offset, const object& 
   if (0 != ::PyObject_AsReadBuffer(buffer.ptr(), &data, &len))
     throw_error_already_set();
 
-  if (TYPE_DEFAULT == type)
+  if (TYPE_DEFAULT == type) {
     Check(m_intf->WritePhysical(offset, const_cast<LPVOID>(data), len, &written));
-  else
+  } else {
     Check(CComQIPtr<IDebugDataSpaces4>(m_intf)->WritePhysical2(offset, 
       (ULONG) type, const_cast<LPVOID>(data), len, &written));
-
+  }
   return written;
 }
 ULONG CDebugDataSpaces::CPhysicalDataSpace::Fill(ULONG64 offset, ULONG size, const object& pattern) const

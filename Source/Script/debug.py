@@ -6,7 +6,7 @@ import PyDbgEng
 from PyDbgEng import *
 
 TINYUNITOFTIME=1
-class IDebugClient(object):
+class client(object):
     def __init__(self, client=None):
         if client is None:
             client = PyDbgEng.DebugClient()
@@ -93,8 +93,7 @@ class IDebugClient(object):
         bp = c.Control.AddBreakpoint()
         id = address
 
-        print 'offset'
-        bp.offset = address
+        bp.Offset = address
 
         if id in self.__breakpoints:
             print "Replace Breakpoint: %s %d @ %08x" % (str(bp.Type[0]), bp.Id, bp.Offset)
@@ -113,10 +112,11 @@ if __name__ == '__main__':
 
     address = 0x76c61126 
 
+    import sys
     pid = int(sys.argv[1])
 #    pid = 1868
     
-    self = module.IDebugClient()
+    self = module.client()
     self.setcallbacks()
 
     self.attach(pid)

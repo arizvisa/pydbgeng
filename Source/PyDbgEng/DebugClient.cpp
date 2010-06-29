@@ -723,19 +723,20 @@ const dict CDebugClient::GetDumpFiles(void) const
 
 void CDebugClient::WriteUserDumpFile(const std::string& filename, UserQualifier qualifier, DumpFormat format, const std::string& comment) const
 {
-  if (FORMAT_DEFAULT == format && comment.empty())
+  if (FORMAT_DEFAULT == format && comment.empty()) {
     Check(m_intf->WriteDumpFile(filename.c_str(), static_cast<ULONG>(qualifier)));
-  else
+  } else {
     Check(CComQIPtr<IDebugClient2>(m_intf)->WriteDumpFile2(
       filename.c_str(), static_cast<ULONG>(qualifier), (ULONG) format, comment.empty() ? comment.c_str() : NULL));
+  }
 }
 
 void CDebugClient::WriteKernelDumpFile(const std::string& filename, KernelQualifier qualifier, DumpFormat format, const std::string& comment) const
 {
-  if (FORMAT_DEFAULT == format && comment.empty())
+  if (FORMAT_DEFAULT == format && comment.empty()) {
     Check(m_intf->WriteDumpFile(filename.c_str(), static_cast<ULONG>(qualifier)));
-  else
+  } else {
     Check(CComQIPtr<IDebugClient2>(m_intf)->WriteDumpFile2(
     filename.c_str(), static_cast<ULONG>(qualifier), (ULONG) format, comment.empty() ? comment.c_str() : NULL));
-
+  }
 }

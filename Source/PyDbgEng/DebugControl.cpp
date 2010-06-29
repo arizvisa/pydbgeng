@@ -960,10 +960,11 @@ const CDebugControl::CBreakpoint CDebugControl::AddBreakpoint(CDebugControl::Bre
 
 void CDebugControl::Output(const std::string& text, OutputMask mask, OutputTarget target) const
 {
-  if (TARGET_ALL_CLIENTS == target)
+  if (TARGET_ALL_CLIENTS == target) {
     Check(m_intf->Output((ULONG) mask, "%s", text.c_str()));
-  else
+  } else {
     Check(m_intf->ControlledOutput((ULONG) target, (ULONG) mask, "%s", text.c_str()));
+  }
 }
 
 const list CDebugControl::GetEvents(void) const

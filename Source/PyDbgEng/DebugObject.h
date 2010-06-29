@@ -132,3 +132,5 @@ public:
 
   I *GetInterface(void) const { return m_intf; }
 };
+
+#define Check(x) { RealCheck(x, #x); }

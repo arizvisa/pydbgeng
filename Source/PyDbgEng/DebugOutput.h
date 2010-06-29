@@ -22,5 +22,3 @@ public:
   static PWINDBG_OUTPUT_ROUTINE GetCallback(void) { return s_callback; }
   static void SetCallback(PWINDBG_OUTPUT_ROUTINE callback) { s_callback = callback; }
 };
-
-#define PYCHECK(x)    do { CheckCode(x, ##x); } while (0);
