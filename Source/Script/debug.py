@@ -107,8 +107,8 @@ class client(object):
         raise NotImplementedError
 
 if __name__ == '__main__':
-    import test; reload(test)
-    module=test
+    import debug; reload(debug)
+    module=debug
 
     address = 0x76c61126 
 
