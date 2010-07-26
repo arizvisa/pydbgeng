@@ -267,7 +267,7 @@ public:
 
     ULONG GetId(void) const;
     const tuple GetType(void) const;
-    const CDebugClient GetOwer(void) const;
+    const CDebugClient GetOwner(void) const;
 
     const list GetFlags(void) const;
     void SetFlags(list flags) const;
@@ -292,7 +292,10 @@ public:
     const tuple GetDataParameters(void) const;
     void SetDataParameters(tuple params) const;
 
-    static const object Repr(const CBreakpoint& bp);
+    const object Repr(void);
+
+    void Disable(void);
+    void Enable(void);
   };
 
   class CEvent : public __inherited

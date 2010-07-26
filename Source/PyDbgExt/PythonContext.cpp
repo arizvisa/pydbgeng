@@ -5,6 +5,7 @@ CPythonContext::CPythonContext(void)
 {
     m_objMainModule = import("__main__");
     m_objMainNamespace = extract<dict>(m_objMainModule.attr("__dict__"));
+    m_objLocalNamespace = m_objMainNamespace;   // XXX: share namespace of main module
 }
 
 bool CPythonContext::Import(const std::string& name, object& mod)

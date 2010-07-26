@@ -20,7 +20,14 @@ CPythonEngine::~CPythonEngine(void)
 {
   (void)this->Acquire();
   if ( ::Py_IsInitialized() ) {
-    ::Py_Finalize();
+    try {
+      ::Py_Finalize();  /* XXX: for some reason this crashes occasionally */
+    } catch (...) {
+        /*
+            XXX: FIXME: WTF: this isn't right, but I acquired the lock..
+                 what else do i need to do?
+        */
+    }
     m_threadstate = static_cast<PyGILState_STATE>(0);
     return;
   }

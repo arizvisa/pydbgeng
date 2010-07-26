@@ -320,7 +320,7 @@ void CDebugControl::Export(void)
     .add_property("Flags", &CDebugControl::CBreakpoint::GetFlags, &CDebugControl::CBreakpoint::SetFlags, "the flags for a breakpoint.")
     .def("AddFlags", &CDebugControl::CBreakpoint::AddFlags, "adds flags to a breakpoint.")
     .def("RemoveFlags", &CDebugControl::CBreakpoint::RemoveFlags, "removes flags from a breakpoint.")
-    .add_property("Owner", &CDebugControl::CBreakpoint::GetOwer, "the client that owns the breakpoint.")
+    .add_property("Owner", &CDebugControl::CBreakpoint::GetOwner, "the client that owns the breakpoint.")
     .add_property("Offset", &CDebugControl::CBreakpoint::GetOffset, &CDebugControl::CBreakpoint::SetOffset,
       "the location that triggers a breakpoint.")
     .add_property("OffsetExpression", &CDebugControl::CBreakpoint::GetOffsetExpression, &CDebugControl::CBreakpoint::SetOffsetExpression,
@@ -337,6 +337,8 @@ void CDebugControl::Export(void)
       "the parameters for a processor breakpoint.")
 
     .def("__repr__", &CDebugControl::CBreakpoint::Repr)
+    .def("Enable", &CDebugControl::CBreakpoint::Enable, "enables a breakpoint")
+    .def("Disable", &CDebugControl::CBreakpoint::Disable, "disable a breakpoint")
     ;
 
   class_<CDebugControl::CEvent>("Event", no_init)
@@ -499,7 +501,7 @@ const tuple CDebugControl::CBreakpoint::GetType(void) const
 
   return make_tuple((BreakpointType) BreakType, (ProcessorType) ProcType);
 }
-const CDebugClient CDebugControl::CBreakpoint::GetOwer(void) const
+const CDebugClient CDebugControl::CBreakpoint::GetOwner(void) const
 {
   CComPtr<IDebugClient> owner;
 
@@ -614,30 +616,48 @@ void CDebugControl::CBreakpoint::SetDataParameters(tuple params) const
   Check(m_bp->SetDataParameters(extract<ULONG>(params[0]), (ULONG)extract<AccessType>(params[1])));
 }
 
-const object CDebugControl::CBreakpoint::Repr(const CBreakpoint& bp)
+const object CDebugControl::CBreakpoint::Repr(void)
 {
   std::ostringstream oss;
 
-  oss << "(Breakpoint #" << bp.GetId() << " "
-      << (bp.GetFlags().count(BREAKPOINT_ENABLED) > 0 ? "enabled" : "disabled") << " ";
+  oss << "(Breakpoint #" << this->GetId() << " "
+      << (this->GetFlags().count(BREAKPOINT_ENABLED) > 0 ? "enabled" : "disabled") << " ";
 
   static const char * BreakpointTypeNames[] = { "code", "data", "time" };
 
-  BreakpointType type = extract<BreakpointType>(bp.GetType()[0]);
+  BreakpointType type = extract<BreakpointType>(this->GetType()[0]);
 
   oss << BreakpointTypeNames[type] << " @ "
-      << std::hex << std::setfill('0') << std::setw(8) << bp.GetOffset();
+      << std::hex << std::setfill('0') << std::setw(8) << this->GetOffset();
 
-  oss << " " << std::setfill('0') << std::setw(4) << bp.GetCurrentPassCount()
-      << "/" << std::setfill('0') << std::setw(4) << bp.GetPassCount() << " ";
+  oss << " " << std::setfill('0') << std::setw(4) << this->GetCurrentPassCount()
+      << "/" << std::setfill('0') << std::setw(4) << this->GetPassCount() << " ";
 
-  tuple name = bp.GetOwer().GetSymbols().GetNameByOffset(bp.GetOffset());
+  
+  try {
+    tuple name = this->GetOwner().GetSymbols().GetNameByOffset(this->GetOffset());
+    oss << extract<char *>(name[0]) << ":" << extract<ULONG64>(name[1]);
 
-  oss << extract<char *>(name[0]) << ":" << extract<ULONG64>(name[1]);
+  } catch (...) {
+      /*
+         XXX: if we can't get a name, we ignore it since it's not
+                really important (?)
+      */
+    ::PyErr_Clear();    // FIXME: we probably shouldn't be using python to fetch the name, heh...
+  }
 
   oss << ")";
 
   return object(oss.str());
+}
+
+void CDebugControl::CBreakpoint::Enable(void)
+{
+    return this->AddFlags( CDebugControl::BREAKPOINT_ENABLED );
+}
+void CDebugControl::CBreakpoint::Disable(void)
+{
+    return this->RemoveFlags( CDebugControl::BREAKPOINT_ENABLED );
 }
 
 const std::string CDebugControl::CEvent::GetName(void) const

@@ -54,6 +54,11 @@ BOOL APIENTRY DllMain( HANDLE hModule, DWORD dwReason, LPVOID lpReserved )
   return TRUE;
 }
 
+const std::string repr(const object& obj)
+{
+  return std::string(extract<char *>(object(handle<>(allow_null(::PyObject_Repr(obj.ptr()))))));
+}
+
 extern "C" HRESULT CALLBACK DebugExtensionInitialize(PULONG Version, PULONG Flags)
 {
   if (g_engine.get() != 0) {
@@ -83,6 +88,7 @@ extern "C" HRESULT CALLBACK DebugExtensionInitialize(PULONG Version, PULONG Flag
   g_engine->Acquire();
   g_global.reset(new CPythonContext());
 
+  /* add the install directory to the import path */
   list currentpath = extract<list>(import("sys").attr("path"));
   currentpath.append( str("./winext") );
 
@@ -118,12 +124,26 @@ extern "C" void CALLBACK DebugExtensionNotify(ULONG Notify, ULONG64 Argument)
   switch (Notify)
   {
   case DEBUG_NOTIFY_SESSION_ACTIVE:
-  case DEBUG_NOTIFY_SESSION_INACTIVE:
-  case DEBUG_NOTIFY_SESSION_ACCESSIBLE:
-  case DEBUG_NOTIFY_SESSION_INACCESSIBLE:
-    {
-      break;
+    /* locate and execute the rc script in our homedirectory */
+    g_engine->Acquire();
+    try {
+      object result = g_global->ExecuteFile( std::string(getenv("USERPROFILE")) + "\\pydbgextrc.py");
+      if (result)         
+        dprintf("%s\n", repr(result).c_str());    
+    } catch(error_already_set) {
+      PyErr_Print();
     }
+    g_engine->Release();
+   break;  
+
+  case DEBUG_NOTIFY_SESSION_INACTIVE:
+    break;  
+
+  case DEBUG_NOTIFY_SESSION_ACCESSIBLE:
+    break;
+
+  case DEBUG_NOTIFY_SESSION_INACCESSIBLE:
+    break;
   }
 }
 
@@ -196,11 +216,6 @@ std::ostream& operator << (std::ostream& os, const DEBUG_VALUE& value)
   return os;
 }
 
-const std::string repr(const object& obj)
-{
-  return std::string(extract<char *>(object(handle<>(allow_null(::PyObject_Repr(obj.ptr()))))));
-}
-
 HRESULT evaluate(PDEBUG_CLIENT4 Client, PCSTR args)
 {
   CDebugClient::Scope use(Client);
@@ -210,7 +225,7 @@ HRESULT evaluate(PDEBUG_CLIENT4 Client, PCSTR args)
   {
     object result = g_global->Execute(args);
 
-    if (result)         
+    if (result)
       dprintf("%s\n", repr(result).c_str());    
 
     g_engine->Release();
@@ -238,12 +253,16 @@ extern "C" HRESULT CALLBACK exec(PDEBUG_CLIENT4 Client, PCSTR args)
 {
   CDebugClient::Scope use(Client); 
   g_engine->Acquire();
+
   try
   {
     object result = g_global->ExecuteFile(args);
 
-    if (result)
-      dprintf("%s\n", repr(result).c_str());
+    if (result) {
+//      dprintf("%s\n", repr(result).c_str());
+      g_global->AddSymbol("_", result);   /* FIXME: this doesn't seem to work... */
+
+    }
 
     g_engine->Release();
     return S_OK;
