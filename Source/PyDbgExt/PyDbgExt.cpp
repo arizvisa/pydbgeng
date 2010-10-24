@@ -59,6 +59,21 @@ const std::string repr(const object& obj)
   return std::string(extract<char *>(object(handle<>(allow_null(::PyObject_Repr(obj.ptr()))))));
 }
 
+/* for executing an rc file, and outputting a friendly error message */
+void
+PyExecuteFile( std::string path )
+{
+    g_engine->Acquire();
+    try {
+      object result = g_global->ExecuteFile(path);
+      if (result)         
+        dprintf("%s\n", repr(result).c_str());
+    } catch(error_already_set) {
+      PyErr_Print();
+    }
+    g_engine->Release();
+}
+
 extern "C" HRESULT CALLBACK DebugExtensionInitialize(PULONG Version, PULONG Flags)
 {
   if (g_engine.get() != 0) {
@@ -100,19 +115,18 @@ extern "C" HRESULT CALLBACK DebugExtensionInitialize(PULONG Version, PULONG Flag
   import("sys").attr("stdout") = objDebugOutput;
   import("sys").attr("stderr") = objDebugOutput;
 
+  /* execute the user's rc file now that our namespace is prepared */
+  PyExecuteFile(std::string(getenv("USERPROFILE")) + "\\pydbgextrc.py");
+
   g_engine->Release();
   return hr;
 }
 
 extern "C" void CALLBACK DebugExtensionUninitialize(void)
 {
+  CDebugOutput::SetCallback(NULL);
   g_global.reset();
   g_engine.reset();
-
-  // XXX: g_engine->m_threadstate should be alread released and freed by now.
-
-  CDebugOutput::SetCallback(NULL);
-  
   memset(&ExtensionApis, 0, sizeof(ExtensionApis));
 }
 
@@ -125,16 +139,8 @@ extern "C" void CALLBACK DebugExtensionNotify(ULONG Notify, ULONG64 Argument)
   {
   case DEBUG_NOTIFY_SESSION_ACTIVE:
     /* locate and execute the rc script in our homedirectory */
-    g_engine->Acquire();
-    try {
-      object result = g_global->ExecuteFile( std::string(getenv("USERPROFILE")) + "\\pydbgextrc.py");
-      if (result)         
-        dprintf("%s\n", repr(result).c_str());    
-    } catch(error_already_set) {
-      PyErr_Print();
-    }
-    g_engine->Release();
-   break;  
+    PyExecuteFile(std::string(getenv("USERPROFILE")) + "\\pydbgextsess.py");
+    break;  
 
   case DEBUG_NOTIFY_SESSION_INACTIVE:
     break;  
@@ -180,6 +186,7 @@ extern "C" HRESULT CALLBACK help(PDEBUG_CLIENT4 Client, PCSTR args)
           "\teval\t\t\t: Evaluate a python expression\n"
           "\timport\t\t\t: Import a python module\n"
           "\tfrom\t\t\t: Import a list of symbols from a python module\n"
+          "\tprint\t\t\t: Evaluate and then print a python expression\n"
           "\texec\t\t\t: Execute a python script\n"
           "\thelp\t\t\t: Shows this help\n"
           "\tpy\t\t\t: Evaluate a python expression\n",
@@ -401,4 +408,23 @@ extern "C" HRESULT CALLBACK from(PDEBUG_CLIENT4 Client, PCSTR args)
     g_engine->Release();
     return E_FAIL;
   }  
+}
+
+extern "C" HRESULT CALLBACK print(PDEBUG_CLIENT4 Client, PCSTR args)
+{
+  /* FIXME: This function probably doesn't work as intended... */
+  g_engine->Acquire();
+  
+  try {
+    
+    object result = g_global->Execute(args);
+    dprintf("%s\n", repr(result).c_str());
+    g_engine->Release();
+    return S_OK;
+
+  } catch(error_already_set) {
+    PyErr_Print();
+    g_engine->Release();
+    return E_FAIL;
+  }
 }

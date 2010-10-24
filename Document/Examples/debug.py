@@ -1,7 +1,3 @@
-import sys
-sys.path.append('f:/work/pydbgext')
-sys.path.append('f:/work/pydbgext/Binary/Release')
-
 import PyDbgEng
 from PyDbgEng import *
 

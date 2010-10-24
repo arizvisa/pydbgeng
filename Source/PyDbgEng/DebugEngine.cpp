@@ -16,6 +16,42 @@ using namespace boost::python;
 #include "DebugSystemObjects.h"
 #include "DebugAdvanced.h"
 
+CDebugClient*
+Create()
+{
+    return new CDebugClient();    // XXX: i umm hope boost & python manage these references
+}
+
+CDebugClient*
+Connect(const std::string& remoteOptions)
+{
+    CComPtr<IDebugClient> intf;
+    HRESULT r;
+    
+    r = ::DebugConnect( remoteOptions.c_str(), __uuidof(IDebugClient), (PVOID*)&intf);
+    if (r != S_OK) {
+        ::PyErr_SetFromWindowsErr(r);
+        throw_error_already_set();  
+        assert(false == true);
+    }
+    assert(intf);
+
+    return new CDebugClient(intf);
+}
+
+CDebugClient*
+ConnectKernel(const std::string& connectOptions)
+{
+    CDebugClient::AttachKernelFlag flags;
+    CDebugClient* p;
+
+    // if no string is specified, assume that the user specified local
+    flags = ( connectOptions.empty())? CDebugClient::ATTACH_LOCAL_KERNEL : CDebugClient::ATTACH_KERNEL_CONNECTION;
+    p = new CDebugClient();
+    p->AttachKernel(flags, connectOptions);
+    return p;
+}
+
 BOOST_PYTHON_MODULE(PyDbgEng)
 {
   CDebugOutput::Export();
@@ -27,4 +63,8 @@ BOOST_PYTHON_MODULE(PyDbgEng)
   CDebugDataSpaces::Export();
   CDebugSystemObjects::Export();
   CDebugAdvanced::Export();
+
+  def("Create", Create, return_value_policy<manage_new_object>());
+  def("Connect", Connect, args("remoteOptions"), return_value_policy<manage_new_object>());
+  def("ConnectKernel", ConnectKernel, arg("connectOptions")=std::string(), return_value_policy<manage_new_object>());
 }

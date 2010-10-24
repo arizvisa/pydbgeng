@@ -6,6 +6,7 @@
 	ProjectGUID="{1E82557C-EAF5-402A-B21D-44EF7F6379B6}"
 	RootNamespace="PyDbgEng"
 	Keyword="Win32Proj"
+	AssemblyReferenceSearchPaths="&quot;C:\Program Files (x86)\Debugging Tools for Windows (x86)&quot;"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
@@ -26,6 +27,8 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				Description="Copying binary dependencies to intermediary directory"
+				CommandLine="xcopy /Y &quot;$(SolutionDir)\Modules\boost\libs\boost_python-vc90-mt-gd-1_42.dll&quot; &quot;$(IntDir)&quot;&#x0D;&#x0A;xcopy /Y &quot;$(SolutionDir)\Modules\windbg\dbgeng.dll&quot; &quot;$(IntDir)&quot;&#x0D;&#x0A;xcopy /Y &quot;$(SolutionDir)\Modules\windbg\dbghelp.dll&quot; &quot;$(IntDir)&quot;&#x0D;&#x0A;exit 0"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -68,8 +71,11 @@
 				AdditionalDependencies="dbgeng.lib Rpcrt4.lib"
 				OutputFile="$(OutDir)/PyDbgEng.pyd"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Modules\python\libs&quot;;&quot;$(SolutionDir)\Modules\boost\libs&quot;"
+				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Modules\python\libs&quot;;&quot;$(SolutionDir)\Modules\boost\libs&quot;;&quot;$(SolutionDir)\Modules\windbg\libs\i386&quot;"
+				GenerateManifest="true"
 				IgnoreDefaultLibraryNames=""
+				AddModuleNamesToAssembly="C:\Program Files (x86)\Debugging Tools for Windows (x86)\dbgeng.dll;C:\Program Files (x86)\Debugging Tools for Windows (x86)\dbghelp.dll"
+				DelayLoadDLLs=""
 				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/PyDbgEng.pdb"
 				SubSystem="2"
@@ -83,6 +89,9 @@
 			/>
 			<Tool
 				Name="VCManifestTool"
+				EmbedManifest="true"
+				AssemblyIdentity="PyDbgEng.pyd"
+				UpdateFileHashes="true"
 			/>
 			<Tool
 				Name="VCXDCMakeTool"
@@ -98,6 +107,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Moving binary dependencies into output directory"
+				CommandLine="move &quot;$(IntDir)\boost_python-vc90-mt-gd-1_42.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;move &quot;$(IntDir)\dbgeng.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;move &quot;$(IntDir)\dbghelp.dll&quot; &quot;$(OutDir)&quot;"
 			/>
 		</Configuration>
 		<Configuration
@@ -331,7 +342,11 @@
 			</File>
 		</Filter>
 		<File
-			RelativePath=".\ReadMe.txt"
+			RelativePath="..\..\Modules\windbg\kldbgdrv.sys"
+			>
+		</File>
+		<File
+			RelativePath="..\PyDbgEng.manifest"
 			>
 		</File>
 	</Files>

@@ -1,7 +1,3 @@
-if False:
-    import sys
-    sys.path.append('f:/work/syringe.git/lib')
-
 import ptypes
 import PyDbgEng
 class debugclientprovider(object):

@@ -33,7 +33,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="xcopy /Y &quot;$(ProjectDir)*.py&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /Y &quot;$(SolutionDir)\Modules\boost\libs\boost_python-vc90-mt-gd-1_42.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;xcopy /Y &quot;$(SolutionDir)\Modules\boost\libs\boost_python-vc90-mt-gd-1_42.pdb&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
+				Description="Copying default scripts into Output directory"
+				CommandLine="xcopy /Y &quot;$(ProjectDir)*.py&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;exit 0&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -68,18 +69,12 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\PyDbgToy.py"
-				DeploymentContent="true"
+				RelativePath=".\pydbgextrc.py"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCustomBuildTool"
-						CommandLine=""
-						Outputs=""
-					/>
-				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\pydbgextsess.py"
+				>
 			</File>
 		</Filter>
 		<Filter

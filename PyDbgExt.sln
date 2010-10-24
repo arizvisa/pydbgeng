@@ -2,10 +2,10 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Document", "Document", "{EEF2962F-B6C6-4981-AACB-970D2D51B775}"
 	ProjectSection(SolutionItems) = preProject
-		Document\ChangeLog.txt = Document\ChangeLog.txt
 		Document\Copyright.txt = Document\Copyright.txt
-		Document\FAQ.txt = Document\FAQ.txt
-		Document\HowToBuild.txt = Document\HowToBuild.txt
+		Document\Examples.txt = Document\Examples.txt
+		Document\Readme-Building.txt = Document\Readme-Building.txt
+		Document\Readme.txt = Document\Readme.txt
 	EndProjectSection
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
@@ -37,6 +37,22 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Script", "Source\Script\Scr
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{4D2DEFE3-BC8E-4948-9B2D-38A5A6C39860}"
+	ProjectSection(SolutionItems) = preProject
+		Document\Examples\debug.py = Document\Examples\debug.py
+		Document\Examples\debug2.py = Document\Examples\debug2.py
+		Document\Examples\debug3.py = Document\Examples\debug3.py
+		Document\Examples\PyDbgToy.py = Document\Examples\PyDbgToy.py
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Archived", "Archived", "{A4E7FCBF-B01A-4B99-9E17-8D5789A88F57}"
+	ProjectSection(SolutionItems) = preProject
+		Document\Attic\ChangeLog.txt = Document\Attic\ChangeLog.txt
+		Document\Attic\FAQ.txt = Document\Attic\FAQ.txt
+		Document\Attic\HowToBuild.txt = Document\Attic\HowToBuild.txt
+		Document\Attic\Readme-PyDbgEng.txt = Document\Attic\Readme-PyDbgEng.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -58,6 +74,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4D2DEFE3-BC8E-4948-9B2D-38A5A6C39860} = {EEF2962F-B6C6-4981-AACB-970D2D51B775}
+		{A4E7FCBF-B01A-4B99-9E17-8D5789A88F57} = {EEF2962F-B6C6-4981-AACB-970D2D51B775}
 	EndGlobalSection
 	GlobalSection(DPCodeReviewSolutionGUID) = preSolution
 		DPCodeReviewSolutionGUID = {00000000-0000-0000-0000-000000000000}
