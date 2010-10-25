@@ -6,7 +6,6 @@
 	ProjectGUID="{1E82557C-EAF5-402A-B21D-44EF7F6379B6}"
 	RootNamespace="PyDbgEng"
 	Keyword="Win32Proj"
-	AssemblyReferenceSearchPaths="&quot;C:\Program Files (x86)\Debugging Tools for Windows (x86)&quot;"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
@@ -28,7 +27,7 @@
 			<Tool
 				Name="VCPreBuildEventTool"
 				Description="Copying binary dependencies to intermediary directory"
-				CommandLine="xcopy /Y &quot;$(SolutionDir)\Modules\boost\libs\boost_python-vc90-mt-gd-1_42.dll&quot; &quot;$(IntDir)&quot;&#x0D;&#x0A;xcopy /Y &quot;$(SolutionDir)\Modules\windbg\dbgeng.dll&quot; &quot;$(IntDir)&quot;&#x0D;&#x0A;xcopy /Y &quot;$(SolutionDir)\Modules\windbg\dbghelp.dll&quot; &quot;$(IntDir)&quot;&#x0D;&#x0A;exit 0"
+				CommandLine="xcopy /Y &quot;$(SolutionDir)\Modules\boost\libs\boost_python-vc90-mt-gd-1_42.dll&quot; &quot;$(IntDir)&quot;&#x0D;&#x0A;xcopy /Y &quot;$(SolutionDir)\Modules\windbg\dbgeng.dll&quot; &quot;$(IntDir)&quot;&#x0D;&#x0A;xcopy /Y &quot;$(SolutionDir)\Modules\windbg\dbghelp.dll&quot; &quot;$(IntDir)&quot;&#x0D;&#x0A;exit 0&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -65,6 +64,8 @@
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
+				Description="Copying binary dependencies to intermediary directory"
+				CommandLine="xcopy /Y &quot;$(SolutionDir)\Modules\windbg\dbgeng.dll&quot; &quot;$(IntDir)&quot;&#x0D;&#x0A;xcopy /Y &quot;$(SolutionDir)\Modules\windbg\dbghelp.dll&quot; &quot;$(IntDir)&quot;&#x0D;&#x0A;xcopy /Y &quot;$(SolutionDir)\Modules\boost\libs\boost_python-*.dll&quot; &quot;$(IntDir)&quot;&#x0D;&#x0A;exit 0&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCLinkerTool"
@@ -108,7 +109,7 @@
 			<Tool
 				Name="VCPostBuildEventTool"
 				Description="Moving binary dependencies into output directory"
-				CommandLine="move &quot;$(IntDir)\boost_python-vc90-mt-gd-1_42.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;move &quot;$(IntDir)\dbgeng.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;move &quot;$(IntDir)\dbghelp.dll&quot; &quot;$(OutDir)&quot;"
+				CommandLine="move &quot;$(IntDir)\boost_python-*.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;move &quot;$(IntDir)\dbgeng.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;move &quot;$(IntDir)\dbghelp.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;exit 0&#x0D;&#x0A;"
 			/>
 		</Configuration>
 		<Configuration
@@ -153,6 +154,8 @@
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
+				Description="Copying binary dependencies to intermediary directory"
+				CommandLine="xcopy /Y &quot;$(SolutionDir)\Modules\windbg\dbgeng.dll&quot; &quot;$(IntDir)&quot;&#x0D;&#x0A;xcopy /Y &quot;$(SolutionDir)\Modules\windbg\dbghelp.dll&quot; &quot;$(IntDir)&quot;&#x0D;&#x0A;xcopy /Y &quot;$(SolutionDir)\Modules\boost\libs\boost_python-*.dll&quot; &quot;$(IntDir)&quot;&#x0D;&#x0A;exit 0&#x0D;&#x0A;"
 			/>
 			<Tool
 				Name="VCLinkerTool"
@@ -160,11 +163,11 @@
 				OutputFile="$(OutDir)/PyDbgEng.pyd"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="&quot;$(SolutionDir)\Modules\python\libs&quot;;&quot;$(SolutionDir)\Modules\boost\libs&quot;"
-				GenerateDebugInformation="true"
+				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				RandomizedBaseAddress="1"
+				RandomizedBaseAddress="2"
 				DataExecutionPrevention="0"
 				ImportLibrary="$(OutDir)/PyDbgEng.lib"
 				TargetMachine="1"
@@ -189,6 +192,8 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				Description="Moving binary dependencies into output directory"
+				CommandLine="move &quot;$(IntDir)\boost_python-*.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;move &quot;$(IntDir)\dbgeng.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;move &quot;$(IntDir)\dbghelp.dll&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;exit 0&#x0D;&#x0A;"
 			/>
 		</Configuration>
 	</Configurations>

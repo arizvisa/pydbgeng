@@ -32,4 +32,7 @@ windbg/
 
 This will allow one to build the project with full functionality.
 
+By the way, when building a Debug Release, "sometimes" Microsoft's linker will crash. But,
+just keep hitting rebuild anyways, because sometimes it doesn't crash. ;)
+
 Thanks for reading!
