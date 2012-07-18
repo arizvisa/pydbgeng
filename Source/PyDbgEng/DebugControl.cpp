@@ -339,6 +339,7 @@ void CDebugControl::Export(void)
     .def("__repr__", &CDebugControl::CBreakpoint::Repr)
     .def("Enable", &CDebugControl::CBreakpoint::Enable, "enables a breakpoint")
     .def("Disable", &CDebugControl::CBreakpoint::Disable, "disable a breakpoint")
+    .def("Remove", &CDebugControl::CBreakpoint::Remove, "disable a breakpoint")
     ;
 
   class_<CDebugControl::CEvent>("Event", no_init)
@@ -478,11 +479,6 @@ void CDebugControl::CExceptionFilter::SetHandled(bool handled) const
   param.ContinueOption = handled ? DEBUG_FILTER_GO_HANDLED : DEBUG_FILTER_GO_NOT_HANDLED;
 
   Check(m_intf->SetExceptionFilterParameters(1, &param));
-}
-
-void CDebugControl::CBreakpoint::Remove(void) 
-{
-  Check(m_intf->RemoveBreakpoint(m_bp));
 }
 
 ULONG CDebugControl::CBreakpoint::GetId(void) const
@@ -658,6 +654,11 @@ void CDebugControl::CBreakpoint::Enable(void)
 void CDebugControl::CBreakpoint::Disable(void)
 {
     return this->RemoveFlags( CDebugControl::BREAKPOINT_ENABLED );
+}
+
+HRESULT CDebugControl::CBreakpoint::Remove(void)
+{
+    return m_intf->RemoveBreakpoint(m_bp.Detach());
 }
 
 const std::string CDebugControl::CEvent::GetName(void) const
@@ -972,12 +973,9 @@ const list CDebugControl::GetBreakpoints(void) const
 const CDebugControl::CBreakpoint CDebugControl::AddBreakpoint(CDebugControl::BreakpointType type, ULONG id) 
 {
   CComPtr<IDebugBreakpoint> intf;
-
   Check(m_intf->AddBreakpoint((ULONG) type, id, &intf));
-
   return CBreakpoint(this, intf);
 }
-
 void CDebugControl::Output(const std::string& text, OutputMask mask, OutputTarget target) const
 {
   if (TARGET_ALL_CLIENTS == target) {
@@ -1011,13 +1009,10 @@ const CDebugControl::CEvent CDebugControl::GetCurrentEvent(void) const
   return CEvent(this, idx);
 }
 
-bool CDebugControl::WaitForEvent(ULONG timeout) const
+ULONG CDebugControl::WaitForEvent(ULONG timeout) const
 {
   HRESULT hr = m_intf->WaitForEvent(0, timeout);
-
-  Check(hr);
-
-  return hr == S_OK;
+  return hr;
 }
 
 bool CDebugControl::HasInterrupt(void) const
@@ -1026,7 +1021,7 @@ bool CDebugControl::HasInterrupt(void) const
 
   if (FAILED(hr)) Check(hr);
 
-  return S_OK == hr;
+  return hr;
 }
 void CDebugControl::SetInterrupt(InterruptType type) const
 {

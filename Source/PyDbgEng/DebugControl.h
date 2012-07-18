@@ -6,8 +6,7 @@
 
 class CDebugClient;
 
-class PYDBGENG_API CDebugControl
-  : public CDebugObject<IDebugControl>
+class CDebugControl : public CDebugObject<IDebugControl>
 {
   typedef CDebugObject<IDebugControl> __inherited;
 
@@ -249,6 +248,7 @@ public:
   {
     CComPtr<IDebugBreakpoint> m_bp;
   public:
+
     CBreakpoint(const CDebugControl *owner, size_t idx)
       : __inherited(owner->GetInterface())
     {
@@ -258,12 +258,11 @@ public:
     CBreakpoint(const CDebugControl *owner, IDebugBreakpoint *bp)
       : __inherited(owner->GetInterface()), m_bp(bp)
     {
+        /* FIXME: Create a CBreakpoint object from an IDebugBreakpoint object */
 
     }
 
     bool operator ==(const CBreakpoint& ctrl) const { return m_bp.p == ctrl.m_bp.p; }
-
-    void Remove(void);
 
     ULONG GetId(void) const;
     const tuple GetType(void) const;
@@ -296,6 +295,7 @@ public:
 
     void Disable(void);
     void Enable(void);
+    HRESULT Remove(void);
   };
 
   class CEvent : public __inherited
@@ -394,7 +394,7 @@ public:
   const list GetEvents(void) const;
   const CEvent GetCurrentEvent(void) const;
 
-  bool WaitForEvent(ULONG timeout = INFINITE) const;
+  ULONG WaitForEvent(ULONG timeout = INFINITE) const;
 
   bool HasInterrupt(void) const;
   void SetInterrupt(InterruptType type = INTR_ACTIVE) const;

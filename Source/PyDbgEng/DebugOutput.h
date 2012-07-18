@@ -1,24 +1,28 @@
+
 #pragma once
 
+#include <atlbase.h>
+#include <dbgeng.h>
 #include <string>
 
 #define KDEXT_64BIT
 #include <wdbgexts.h>
 
-#include "PyDbgEng.h"
+#include "PythonHelper.h"
 
-class PYDBGENG_API CDebugOutput
+typedef void (*PSetOutput)(PWINDBG_OUTPUT_ROUTINE);
+typedef PWINDBG_OUTPUT_ROUTINE (*PGetOutput)();
+
+class CDebugOutput
 {
   static PWINDBG_OUTPUT_ROUTINE s_callback;
+
 public:
-  CDebugOutput(void)
-  {
-  }
-  
+  CDebugOutput(void) {};
+
+  static PWINDBG_OUTPUT_ROUTINE getCallback();
+  static void setCallback(PWINDBG_OUTPUT_ROUTINE c);
+
   static void Export(void);
-
-  void Write(const char *text);
-
-  static PWINDBG_OUTPUT_ROUTINE GetCallback(void) { return s_callback; }
-  static void SetCallback(PWINDBG_OUTPUT_ROUTINE callback) { s_callback = callback; }
+  static void Write(const char *text);
 };

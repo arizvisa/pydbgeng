@@ -2,8 +2,7 @@
 
 #include "DebugObject.h"
 
-class PYDBGENG_API CDebugAdvanced
-  : public CDebugObject<IDebugAdvanced>
+class CDebugAdvanced : public CDebugObject<IDebugAdvanced>
 {
   typedef CDebugObject<IDebugAdvanced> __inherited;
 public:

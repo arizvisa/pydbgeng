@@ -18,4 +18,4 @@ EXPORTS
 	eval
 	exec
 	import
-	from
+;	from

@@ -1,11 +1,11 @@
-import PyDbgEng
-from PyDbgEng import *
+import _PyDbgEng
+from _PyDbgEng import *
 
 TINYUNITOFTIME=1
 class client(object):
     def __init__(self, client=None):
         if client is None:
-            client = PyDbgEng.DebugClient()
+            client = _PyDbgEng.DebugClient()
         self.c = client
         self.__breakpoints = {}
 

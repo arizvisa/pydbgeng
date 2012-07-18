@@ -25,6 +25,10 @@ Binary ->	target executables
 == PyDbgEng ==
 This provides the interface to the windbg engine. It depends on dbgeng.dll being
 available. For building this will depend on the binaries located in Modules/windbg.
+As far as I can tell, there's no effort in this module to pretty up the dbgeng
+IDebugClient api. So if you want to add a function that doesn't exist, try and
+keep it as minimal as possible. Any features should be handled in the python module
+that wraps it.
 
 == PyDbgExt ==
 This module will provide python support within your debugger's commandline.

@@ -1,4 +1,5 @@
 #pragma once
+#include <iostream>
 
 #include <atlbase.h>
 
@@ -7,11 +8,9 @@
 #include <boost/static_assert.hpp>
 #include <boost/type_traits.hpp>
 
-#include "PyDbgEng.h"
-
 #include "PythonHelper.h"
 
-struct PYDBGENG_API CDebugHelper
+struct CDebugHelper
 {
   enum ValueType
   {
@@ -82,7 +81,7 @@ struct PYDBGENG_API CDebugHelper
 };
 
 template <typename I>
-class PYDBGENG_API CDebugObject : public CDebugHelper, public CPythonHelper
+class CDebugObject : public CDebugHelper, public CPythonHelper
 {
 protected:
   typedef I DefaultInterface;
@@ -119,9 +118,7 @@ protected:
   CComQIPtr<I> m_intf;
 
   CDebugObject(IUnknown *intf) : m_intf(intf)
-  {
-
-  }  
+  {}  
 public:
   virtual ~CDebugObject(void)
   {

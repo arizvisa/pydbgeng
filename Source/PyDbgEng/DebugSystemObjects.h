@@ -6,10 +6,10 @@
 
 #include "DebugDataSpaces.h"
 
-class PYDBGENG_API CDebugSystemObjects
-  : public CDebugObject<IDebugSystemObjects>
+class CDebugSystemObjects
+  : public CDebugObject<IDebugSystemObjects3>
 {
-  typedef CDebugObject<IDebugSystemObjects> __inherited;
+  typedef CDebugObject<IDebugSystemObjects3> __inherited;
 public:
   class CDebugSystem : public __inherited
   {
@@ -127,6 +127,8 @@ public:
   const CDebugSystem GetCurrentSystem(void) const;
   void SetCurrentSystem(const CDebugSystem& system) const;
   const CCurrentProcess GetCurrentProcess(void) const;
+  const ULONG GetCurrentProcessSystemId(void) const;
+  const ULONG GetCurrentThreadSystemId(void) const;
   void SetCurrentProcess(const CProcess& process) const;
   const CCurrentThread GetCurrentThread(void) const;
   void SetCurrentThread(const CThread& thread) const;
@@ -152,7 +154,26 @@ public:
   const CThread GetThreadByTeb(ULONG64 offset) const;
   const CProcess GetProcessByPeb(ULONG64 offset) const;
 
+  //
+  const ULONG GetProcessIdByHandle(ULONG64 handle) const;
+  const ULONG GetProcessIdBySystemId(ULONG SysId) const;
+  const ULONG GetThreadIdByHandle(ULONG64 handle) const;
+  const ULONG GetThreadIdBySystemId(ULONG SysId) const;
+
+  const ULONG GetCurrentProcessId(void) const;
+  const ULONG GetCurrentThreadId(void) const;
+  const ULONG64 GetCurrentProcessHandle() const;
+  const ULONG64 GetCurrentThreadHandle() const;
+
+  const HRESULT SetCurrentProcessId(ULONG id) const;
+  const HRESULT SetCurrentThreadId(ULONG id) const;
+  const ULONG64 GetCurrentProcessPeb() const;
+  const ULONG64 GetCurrentThreadTeb() const;
+  //
   const CThread GetThreadByProcessor(ULONG processor) const;
+
+  ULONG GetNumberThreads(void) const;
+  const list CDebugSystemObjects::GetThreadIdsByIndex(ULONG start, ULONG count) const;
 };
 
 template <>

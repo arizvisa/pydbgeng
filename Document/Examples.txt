@@ -19,7 +19,7 @@ True
 
 #!/usr/bin/env python
 import sys
-from PyDbgEng import *
+from _PyDbgEng import *
 
 c = DebugClient()
 

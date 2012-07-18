@@ -6,7 +6,7 @@
 #include "DebugObject.h"
 #include "DebugSymbols.h"
 
-class PYDBGENG_API CDebugRegisters
+class CDebugRegisters
   : public CDebugObject<IDebugRegisters>
 {
   typedef CDebugObject<IDebugRegisters> __inherited;

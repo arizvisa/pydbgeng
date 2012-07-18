@@ -14,5 +14,31 @@ void CDebugOutput::Export(void)
 
 void CDebugOutput::Write(const char * text)
 {
-  if (s_callback) s_callback(text);
+	s_callback("%s", text);
+}
+
+PWINDBG_OUTPUT_ROUTINE CDebugOutput::getCallback()
+{
+	return s_callback;
+}
+
+void CDebugOutput::setCallback(PWINDBG_OUTPUT_ROUTINE c)
+{
+	s_callback = c;
+}
+
+/* exported */
+extern "C" {
+	__declspec(dllexport) PWINDBG_OUTPUT_ROUTINE SetOutput(PWINDBG_OUTPUT_ROUTINE c)
+	{
+		PWINDBG_OUTPUT_ROUTINE result;
+		result = CDebugOutput::getCallback();
+		CDebugOutput::setCallback(c);
+		return result;
+	}
+
+	__declspec(dllexport) PWINDBG_OUTPUT_ROUTINE GetOutput()
+	{
+		return CDebugOutput::getCallback();
+	}
 }

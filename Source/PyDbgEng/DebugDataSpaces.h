@@ -2,8 +2,7 @@
 
 #include "DebugObject.h"
 
-class PYDBGENG_API CDebugDataSpaces
-  : public CDebugObject<IDebugDataSpaces>
+class CDebugDataSpaces : public CDebugObject<IDebugDataSpaces>
 {
   typedef CDebugObject<IDebugDataSpaces> __inherited;
 public:
@@ -235,5 +234,4 @@ public:
   const list GetTranslationPages(ULONG64 address) const;
 };
 
-template <>
-CDebugObject<IDebugDataSpaces>::operator IDebugDataSpaces*(void) const { return m_intf; }
+//template <> CDebugObject<IDebugDataSpaces>::operator IDebugDataSpaces*(void) const { return m_intf; }

@@ -16,12 +16,14 @@ using namespace boost::python;
 #include "DebugSystemObjects.h"
 #include "DebugAdvanced.h"
 
+/** returns a new IDebugClient interface */
 CDebugClient*
 Create()
 {
     return new CDebugClient();    // XXX: i umm hope boost & python manage these references
 }
 
+/** Creates a new IDebugClient interface via calling ::DebugConnect */
 CDebugClient*
 Connect(const std::string& remoteOptions)
 {
@@ -39,6 +41,7 @@ Connect(const std::string& remoteOptions)
     return new CDebugClient(intf);
 }
 
+/** Create a new IDebugClient, and attach it to the kernel specified in the connectOptions */
 CDebugClient*
 ConnectKernel(const std::string& connectOptions)
 {
@@ -52,7 +55,7 @@ ConnectKernel(const std::string& connectOptions)
     return p;
 }
 
-BOOST_PYTHON_MODULE(PyDbgEng)
+BOOST_PYTHON_MODULE(_PyDbgEng)
 {
   CDebugOutput::Export();
   CDebugHelper::Export();
@@ -67,4 +70,21 @@ BOOST_PYTHON_MODULE(PyDbgEng)
   def("Create", Create, return_value_policy<manage_new_object>());
   def("Connect", Connect, args("remoteOptions"), return_value_policy<manage_new_object>());
   def("ConnectKernel", ConnectKernel, arg("connectOptions")=std::string(), return_value_policy<manage_new_object>());
+}
+
+BOOL APIENTRY DllMain( HANDLE hModule, DWORD  dwReason, LPVOID lpReserved )
+{
+  UNREFERENCED_PARAMETER(hModule);
+  UNREFERENCED_PARAMETER(lpReserved);
+
+	switch (dwReason)
+	{
+	case DLL_PROCESS_ATTACH:
+	case DLL_THREAD_ATTACH:
+	case DLL_THREAD_DETACH:
+	case DLL_PROCESS_DETACH:
+		break;
+	}
+    
+  return TRUE;
 }

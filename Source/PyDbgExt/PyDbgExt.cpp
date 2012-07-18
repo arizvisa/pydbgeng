@@ -2,7 +2,6 @@
 //
 
 #include "stdafx.h"
-#include "PyDbgExt.h"
 
 #include <memory>
 #include <sstream>
@@ -36,6 +35,26 @@ WINDBG_EXTENSION_APIS ExtensionApis;
 
 std::auto_ptr<CPythonEngine> g_engine;
 std::auto_ptr<CPythonContext> g_global;
+
+namespace DbgEng {
+	PSetOutput SetOutput;
+	PGetOutput GetOutput;
+	PUseClient UseClient;
+	PReleaseClient ReleaseClient;
+}
+
+bool InitDbgEng()
+{
+	HMODULE m;
+
+	m = ::GetModuleHandle("_PyDbgEng.pyd");
+	DbgEng::GetOutput = (PGetOutput) ::GetProcAddress(m, "GetOutput");
+	DbgEng::SetOutput = (PSetOutput) ::GetProcAddress(m, "SetOutput");
+	DbgEng::UseClient = (PUseClient) ::GetProcAddress(m, "UseClient");
+	DbgEng::ReleaseClient = (PReleaseClient) ::GetProcAddress(m, "ReleaseClient");
+
+	return true;
+}
 
 BOOL APIENTRY DllMain( HANDLE hModule, DWORD dwReason, LPVOID lpReserved )
 {
@@ -74,7 +93,7 @@ PyExecuteFile( std::string path )
     g_engine->Release();
 }
 
-extern "C" HRESULT CALLBACK DebugExtensionInitialize(PULONG Version, PULONG Flags)
+extern "C" __declspec(dllexport) HRESULT CALLBACK DebugExtensionInitialize(PULONG Version, PULONG Flags)
 {
   if (g_engine.get() != 0) {
     /* XXX: already initialized? */
@@ -87,29 +106,29 @@ extern "C" HRESULT CALLBACK DebugExtensionInitialize(PULONG Version, PULONG Flag
   CComPtr<IDebugClient> client;
 
   HRESULT hr = ::DebugCreate(__uuidof(IDebugClient), (PVOID*) &client);
-
-  if (FAILED(hr)) return hr;
-
+  if (FAILED(hr))
+	  return hr;
   CComQIPtr<IDebugControl> control = client;
-
-  if (control)
-  {
-    ExtensionApis.nSize = sizeof(ExtensionApis);
-
-    hr = control->GetWindbgExtensionApis64(&ExtensionApis);
-  }
+  
+  ExtensionApis.nSize = sizeof(ExtensionApis);
+  hr = control->GetWindbgExtensionApis64(&ExtensionApis);
+  if (FAILED(hr))
+	  return hr;
 
   g_engine.reset(new CPythonEngine(EXT_NAME));
   g_engine->Acquire();
   g_global.reset(new CPythonContext());
 
-  /* add the install directory to the import path */
-  list currentpath = extract<list>(import("sys").attr("path"));
-  currentpath.append( str("./winext") );
+  /*
+		FIXME: if the following import fails, then output an error message
+		saying that we were unable to locate the _PyDbgEng module instead of
+		just dying stupidly like we do..
+  */
 
-  CDebugOutput::SetCallback(ExtensionApis.lpOutputRoutine);
+  dict lookup = dict(g_global->Import("_PyDbgEng").attr("__dict__"));
+  InitDbgEng();
+  DbgEng::SetOutput(dprintf);
 
-  dict lookup = dict(g_global->Import("PyDbgEng").attr("__dict__"));
   object objDebugOutput = lookup.get("DebugOutput")();
 
   import("sys").attr("stdout") = objDebugOutput;
@@ -122,15 +141,15 @@ extern "C" HRESULT CALLBACK DebugExtensionInitialize(PULONG Version, PULONG Flag
   return hr;
 }
 
-extern "C" void CALLBACK DebugExtensionUninitialize(void)
+extern "C" __declspec(dllexport) void CALLBACK DebugExtensionUninitialize(void)
 {
-  CDebugOutput::SetCallback(NULL);
+  //CDebugOutput::controller.operator=( CDebugControl
   g_global.reset();
   g_engine.reset();
   memset(&ExtensionApis, 0, sizeof(ExtensionApis));
 }
 
-extern "C" void CALLBACK DebugExtensionNotify(ULONG Notify, ULONG64 Argument)
+extern "C" __declspec(dllexport) void CALLBACK DebugExtensionNotify(ULONG Notify, ULONG64 Argument)
 {
   UNREFERENCED_PARAMETER(Argument);
 
@@ -156,7 +175,7 @@ extern "C" void CALLBACK DebugExtensionNotify(ULONG Notify, ULONG64 Argument)
 /*
 A built-in help for the extension dll
 */
-extern "C" HRESULT CALLBACK help(PDEBUG_CLIENT4 Client, PCSTR args)
+extern "C" __declspec(dllexport) HRESULT CALLBACK help(PDEBUG_CLIENT Client, PCSTR args)
 {
   UNREFERENCED_PARAMETER(Client);
   UNREFERENCED_PARAMETER(args);
@@ -223,208 +242,188 @@ std::ostream& operator << (std::ostream& os, const DEBUG_VALUE& value)
   return os;
 }
 
-HRESULT evaluate(PDEBUG_CLIENT4 Client, PCSTR args)
+HRESULT evaluate(PDEBUG_CLIENT Client, PCSTR args)
 {
-  CDebugClient::Scope use(Client);
+  HRESULT result(E_FAIL);
+
+  //CDebugClient::Scope use(Client);
+  DbgEng::UseClient(Client);
   g_engine->Acquire();
 
   try
   {
-    object result = g_global->Execute(args);
-
-    if (result)
-      dprintf("%s\n", repr(result).c_str());    
-
-    g_engine->Release();
-    return S_OK;
+    object r = g_global->Execute(args);
+    if (r)
+      dprintf("%s\n", repr(r).c_str());    
+    result = S_OK;
   }
   catch(error_already_set)
   {
     PyErr_Print();
-    g_engine->Release();
-    return E_FAIL;
   }
+
+  g_engine->Release();
+  DbgEng::ReleaseClient();
+  return result;
 }
 
-extern "C" HRESULT CALLBACK eval(PDEBUG_CLIENT4 Client, PCSTR args)
+extern "C" __declspec(dllexport) HRESULT CALLBACK eval(PDEBUG_CLIENT Client, PCSTR args)
 {
     return evaluate(Client, args);
 }
 
-extern "C" HRESULT CALLBACK py(PDEBUG_CLIENT4 Client, PCSTR args)
+extern "C" __declspec(dllexport) HRESULT CALLBACK py(PDEBUG_CLIENT Client, PCSTR args)
 {
     return evaluate(Client, args);
 }
 
-extern "C" HRESULT CALLBACK exec(PDEBUG_CLIENT4 Client, PCSTR args)
+extern "C" __declspec(dllexport) HRESULT CALLBACK exec(PDEBUG_CLIENT Client, PCSTR args)
 {
-  CDebugClient::Scope use(Client); 
+  //CDebugClient::Scope use(Client); 
+  HRESULT result = E_FAIL;
+  DbgEng::UseClient(Client);
   g_engine->Acquire();
 
   try
   {
-    object result = g_global->ExecuteFile(args);
+    object r = g_global->ExecuteFile(args);
 
-    if (result) {
-//      dprintf("%s\n", repr(result).c_str());
-      g_global->AddSymbol("_", result);   /* FIXME: this doesn't seem to work... */
+    if (r) {
+      dprintf("%s\n", repr(r).c_str());
+      g_global->AddSymbol("_", r);   /* FIXME: this doesn't seem to work... */
 
     }
-
-    g_engine->Release();
-    return S_OK;
+    result = S_OK;
   }
   catch(error_already_set)
   {
     PyErr_Print();
-    g_engine->Release();
-    return E_FAIL;
-  }  
+  }
+  g_engine->Release();
+  return result;
 }
 
-extern "C" HRESULT CALLBACK import(PDEBUG_CLIENT4 Client, PCSTR args)
+extern "C" __declspec(dllexport) HRESULT CALLBACK import(PDEBUG_CLIENT Client, PCSTR args)
 {
-  CDebugClient::Scope use(Client); 
+  //CDebugClient::Scope use(Client); 
+  DbgEng::UseClient(Client);
+  HRESULT result = E_FAIL;
+  
   g_engine->Acquire();
   try
   {
     std::vector<std::string> modules;
-
     split(modules, std::string(args), is_any_of(", "));
 
-    for (std::vector<std::string>::const_iterator it = modules.begin(); 
-         it != modules.end(); it++)
-    {
+    for (std::vector<std::string>::const_iterator it = modules.begin(); it != modules.end(); it++) {
       const std::string name = *it;
-
-      if (name.empty()) continue;
+      if (name.empty())
+	    continue;
 
       object mod;
-
-      if (g_global->Import(name, mod))
-      {
+      if (g_global->Import(name, mod)) {
         g_global->AddSymbol(name, mod);
-
         dprintf("Import %s succeeded.\n", repr(mod).c_str());    
-      }
-      else
-      {
+	  } else {
         dprintf("No module named %s.\n", name.c_str());
       }
     }
-    g_engine->Release();
-    return S_OK;
+    result = S_OK;
   }
   catch(error_already_set)
   {
     PyErr_Print();
-    g_engine->Release();
-    return E_FAIL;
-  }  
+  }
+  DbgEng::ReleaseClient();
+  g_engine->Release();
+  return result;
 }
 
-extern "C" HRESULT CALLBACK from(PDEBUG_CLIENT4 Client, PCSTR args)
+#if 0
+extern "C" __declspec(dllexport) HRESULT CALLBACK from(PDEBUG_CLIENT Client, PCSTR args)
 {
-  CDebugClient::Scope use(Client); 
+  //CDebugClient::Scope use(Client); 
+  DbgEng::UseClient(Client);
+  HRESULT result = E_FAIL;
 
   const char *pszImport = strstr(args, " import ");
-
-  if (!pszImport)
-  {
+  if (!pszImport) {
     dprintf("invalid syntax, 'from' command must has a import section");
-
-    return E_FAIL;
+    return result;
   }
 
   std::string modName = std::string(args, pszImport-args);
-
   trim(modName);
 
   std::vector<std::string> symbols;
-
   split(symbols, std::string(pszImport+strlen(" import ")), is_any_of(", "));
 
-  if (symbols.empty())
-  {
+  if (symbols.empty()) {
     dprintf("invalid syntax, 'from' command must follow a imported symbol list");
-
-    return E_FAIL;
+    return result;
   }
 
   g_engine->Acquire();
-
-  try
-  {
+  try  {
     object mod = g_global->Import(modName);
 
-    if (mod)
-    {
+    if (mod) {
       dict modSymbols(mod.attr("__dict__"));
       std::string symbolList, missingList;
 
-      if (symbols.end() != std::find(symbols.begin(), symbols.end(), "*"))
-      {
+      if (symbols.end() != std::find(symbols.begin(), symbols.end(), "*")) {
         g_global->AddSymbols(modSymbols);
-
         symbolList = "all symbols";
-      }
-      else
-      {
+      } else {
         std::ostringstream oss, mss;        
 
-        for (size_t i=0; i<symbols.size(); i++)
-        {
+        for (size_t i=0; i<symbols.size(); i++) {
           const std::string symbolName = symbols[i];          
 
-          if (symbolName.empty()) continue;
+          if (symbolName.empty())
+			continue;
 
-          if (::PyObject_HasAttr(mod.ptr(), str(symbolName.c_str()).ptr()))
-          {
+          if (::PyObject_HasAttr(mod.ptr(), str(symbolName.c_str()).ptr())) {
             g_global->AddSymbol(symbolName, modSymbols[symbolName]);
-
             oss << (oss.str().size() == 0 ? "" : ", ") << symbolName;
-          }
-          else
-          {
+          } else {
             mss << (mss.str().size() == 0 ? "" : ", ") << symbolName;
           }
         }
-
         symbolList = oss.str();
         missingList = mss.str();
       }
 
       dprintf("Import %s from %s succeeded.\n", symbolList.c_str(), repr(mod).c_str()); 
-
       if (!missingList.empty())
         dprintf("Symbols %s are not exist in the module.\n", missingList.c_str());
     }
-    g_engine->Release();
-    return S_OK;
+    result = S_OK;
   }
   catch(error_already_set)
   {
     PyErr_Print();
-    g_engine->Release();
-    return E_FAIL;
-  }  
+  }
+  DbgEng::ReleaseClient();
+  g_engine->Release();
+  return result;
 }
+#endif
 
-extern "C" HRESULT CALLBACK print(PDEBUG_CLIENT4 Client, PCSTR args)
+extern "C" __declspec(dllexport) HRESULT CALLBACK print(PDEBUG_CLIENT Client, PCSTR args)
 {
   /* FIXME: This function probably doesn't work as intended... */
+  DbgEng::UseClient(Client);
   g_engine->Acquire();
-  
+  HRESULT result = E_FAIL;
   try {
-    
-    object result = g_global->Execute(args);
-    dprintf("%s\n", repr(result).c_str());
-    g_engine->Release();
-    return S_OK;
-
+    object r = g_global->Execute(args);
+    dprintf("%s\n", repr(r).c_str());
+    result = S_OK;
   } catch(error_already_set) {
     PyErr_Print();
-    g_engine->Release();
-    return E_FAIL;
   }
+  g_engine->Release();
+  DbgEng::ReleaseClient();
+  return result;
 }

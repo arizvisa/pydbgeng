@@ -3,9 +3,7 @@
 #include <boost/python.hpp>
 using namespace boost::python;
 
-#include "PyDbgEng.h"
-
-struct PYDBGENG_API CPythonHelper
+struct CPythonHelper
 {
   static void RaiseException(const std::string& msg, PyObject *type = PyExc_RuntimeError) throw(...);
   static void RaiseException(errno_t err, std::string s, PyObject *type = PyExc_RuntimeError) throw(...);

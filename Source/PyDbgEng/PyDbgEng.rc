@@ -52,6 +52,8 @@ END
 // 17476
 //
 
+//1                       24                      "../../Source/PyDbgEng.pyd.manifest"
+2                       24                      "../../Source/PyDbgEng.pyd.manifest"
 30583                   17476                   "../../Modules/windbg/kldbgdrv.sys"
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
