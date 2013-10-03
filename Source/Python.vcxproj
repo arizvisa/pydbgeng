@@ -76,35 +76,21 @@ exit 0
     <PostBuildEvent>
       <Message>Copying default scripts into Output directory</Message>
       <Command>xcopy /Y "$(ProjectDir)*.py" "$(OutDir)"
-exit 0
-</Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <PostBuildEvent>
-      <Command>xcopy /Y "$(ProjectDir)*.py" "$(OutDir)"
-xcopy /Y "$(SolutionDir)\Modules\boost\stage\lib\boost_python-*.dll" "$(OutDir)"
-</Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <PostBuildEvent>
-      <Command>xcopy /Y "$(ProjectDir)*.py" "$(OutDir)"
-xcopy /Y "$(SolutionDir)\Modules\boost\stage\lib\boost_python-*.dll" "$(OutDir)"
+xcopy /Y "$(SolutionDir)Modules\boost\lib\boost_python-*.dll" "$(OutDir)"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="PyDbgEng.py" />
-    <None Include="pydbgextrc.py" />
-    <None Include="pydbgextsess.py" />
+    <None Include="$(ProjectDir)Python\PyDbgEng.py" />
+    <None Include="$(ProjectDir)Python\PyDbgExtRc.py" />
+    <None Include="$(ProjectDir)Python\PyDbgExtSession.py" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PyDbgEng\PyDbgEng.vcxproj">
+    <ProjectReference Include="_PyDbgEng.vcxproj">
       <Project>{1e82557c-eaf5-402a-b21d-44ef7f6379b6}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
-    <ProjectReference Include="..\PyDbgExt\PyDbgExt.vcxproj">
+    <ProjectReference Include="PyDbgExt.vcxproj">
       <Project>{55939fc5-3cf3-4b96-99e5-2230b430d78a}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>

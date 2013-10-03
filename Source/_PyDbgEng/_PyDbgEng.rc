@@ -1,0 +1,32 @@
+#include "resource.h"
+#include "afxres.h"
+
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+// resources
+    1 TEXTINCLUDE 
+    BEGIN
+        "resource.h\0"
+    END
+
+    2 TEXTINCLUDE 
+    BEGIN
+        "#include ""afxres.h""\r\n"
+        "\0"
+    END
+
+    3 TEXTINCLUDE 
+    BEGIN
+        "\r\n"
+        "\0"
+    END
+
+// exe
+//1                       24                      "_PyDbgEng.pyd.manifest"
+
+// dll
+    2                       24                      "_PyDbgEng.pyd.manifest"
+
+#define KLDBGDRV SOLUTIONDIR##\modules\windbg\kldbgdrv.sys
+    30583                   17476                   KLDBGDRV
