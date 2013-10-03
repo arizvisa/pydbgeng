@@ -15,94 +15,96 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DebugAdvanced.cpp">
+    <ClCompile Include="_PyDbgEng\DebugAdvanced.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DebugClient.cpp">
+    <ClCompile Include="_PyDbgEng\DebugClient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DebugControl.cpp">
+    <ClCompile Include="_PyDbgEng\DebugControl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DebugDataSpaces.cpp">
+    <ClCompile Include="_PyDbgEng\DebugDataSpaces.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DebugEngine.cpp">
+    <ClCompile Include="_PyDbgEng\DebugEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DebugObject.cpp">
+    <ClCompile Include="_PyDbgEng\DebugObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DebugOutput.cpp">
+    <ClCompile Include="_PyDbgEng\DebugOutput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DebugRegisters.cpp">
+    <ClCompile Include="_PyDbgEng\DebugRegisters.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DebugSymbols.cpp">
+    <ClCompile Include="_PyDbgEng\DebugSymbols.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DebugSystemObjects.cpp">
+    <ClCompile Include="_PyDbgEng\DebugSystemObjects.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PythonHelper.cpp">
+    <ClCompile Include="_PyDbgEng\PythonHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="stdafx.cpp">
+    <ClCompile Include="_PyDbgEng\stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DebugAdvanced.h">
+    <ClInclude Include="_PyDbgEng\DebugAdvanced.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DebugClient.h">
+    <ClInclude Include="_PyDbgEng\DebugClient.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DebugControl.h">
+    <ClInclude Include="_PyDbgEng\DebugControl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DebugDataSpaces.h">
+    <ClInclude Include="_PyDbgEng\DebugDataSpaces.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DebugEngine.h">
+    <ClInclude Include="_PyDbgEng\DebugEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DebugObject.h">
+    <ClInclude Include="_PyDbgEng\DebugObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DebugOutput.h">
+    <ClInclude Include="_PyDbgEng\DebugOutput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DebugRegisters.h">
+    <ClInclude Include="_PyDbgEng\DebugRegisters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DebugSymbols.h">
+    <ClInclude Include="_PyDbgEng\DebugSymbols.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DebugSystemObjects.h">
+    <ClInclude Include="_PyDbgEng\DebugSystemObjects.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PythonHelper.h">
+    <ClInclude Include="_PyDbgEng\PythonHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
+    <ClInclude Include="_PyDbgEng\resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="stdafx.h">
+    <ClInclude Include="_PyDbgEng\stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="PyDbgEng.rc">
+    <ResourceCompile Include="_PyDbgEng\_PyDbgEng.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\Modules\windbg\kldbgdrv.sys" />
-    <None Include="PyDbgEng.def" />
+    <None Include="$(SolutionDir)Modules\windbg\kldbgdrv.sys" />
+    <None Include="_PyDbgEng\_PyDbgEng.def">
+      <Filter>Source Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <Manifest Include="..\PyDbgEng.pyd.manifest" />
+    <Manifest Include="_PyDbgEng\_PyDbgEng.pyd.manifest" />
   </ItemGroup>
 </Project>

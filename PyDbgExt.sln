@@ -28,19 +28,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Archived", "Archived", "{A4
 		Document\Attic\Readme-PyDbgEng.txt = Document\Attic\Readme-PyDbgEng.txt
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PyDbgEng", "Source\PyDbgEng\PyDbgEng.vcxproj", "{1E82557C-EAF5-402A-B21D-44EF7F6379B6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "_PyDbgEng", "Source\_PyDbgEng.vcxproj", "{1E82557C-EAF5-402A-B21D-44EF7F6379B6}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PyDbgExt", "Source\PyDbgExt\PyDbgExt.vcxproj", "{55939FC5-3CF3-4B96-99E5-2230B430D78A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PyDbgExt", "Source\PyDbgExt.vcxproj", "{55939FC5-3CF3-4B96-99E5-2230B430D78A}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Script", "Source\Script\Script.vcxproj", "{788985FC-73AB-44E5-8DC2-1011A011EEE0}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Python", "Source\Python.vcxproj", "{788985FC-73AB-44E5-8DC2-1011A011EEE0}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
@@ -57,9 +57,7 @@ Global
 		{1E82557C-EAF5-402A-B21D-44EF7F6379B6}.Release|Win32.ActiveCfg = Release|Win32
 		{1E82557C-EAF5-402A-B21D-44EF7F6379B6}.Release|Win32.Build.0 = Release|Win32
 		{55939FC5-3CF3-4B96-99E5-2230B430D78A}.Debug|Win32.ActiveCfg = Debug|Win32
-		{55939FC5-3CF3-4B96-99E5-2230B430D78A}.Debug|Win32.Build.0 = Debug|Win32
 		{55939FC5-3CF3-4B96-99E5-2230B430D78A}.Release|Win32.ActiveCfg = Release|Win32
-		{55939FC5-3CF3-4B96-99E5-2230B430D78A}.Release|Win32.Build.0 = Release|Win32
 		{788985FC-73AB-44E5-8DC2-1011A011EEE0}.Debug|Win32.ActiveCfg = Debug|Win32
 		{788985FC-73AB-44E5-8DC2-1011A011EEE0}.Debug|Win32.Build.0 = Debug|Win32
 		{788985FC-73AB-44E5-8DC2-1011A011EEE0}.Release|Win32.ActiveCfg = Release|Win32

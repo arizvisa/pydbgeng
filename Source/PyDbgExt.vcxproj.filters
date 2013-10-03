@@ -15,48 +15,48 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FileVersion.h">
+    <ClInclude Include="PyDbgExt\FileVersion.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PythonContext.h">
+    <ClInclude Include="PyDbgExt\PythonContext.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PythonEngine.h">
+    <ClInclude Include="PyDbgExt\PythonEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
+    <ClInclude Include="PyDbgExt\resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="stdafx.h">
+    <ClInclude Include="PyDbgExt\stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="PyDbgExt.rc">
+    <ResourceCompile Include="PyDbgExt\PyDbgExt.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="FileVersion.cpp">
+    <ClCompile Include="PyDbgExt\FileVersion.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PyDbgExt.cpp">
+    <ClCompile Include="PyDbgExt\PyDbgExt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PythonContext.cpp">
+    <ClCompile Include="PyDbgExt\PythonContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="PythonEngine.cpp">
+    <ClCompile Include="PyDbgExt\PythonEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="stdafx.cpp">
+    <ClCompile Include="PyDbgExt\stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Manifest Include="..\PyDbgExt.dll.manifest" />
+    <Manifest Include="PyDbgExt\PyDbgExt.dll.manifest" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="PyDbgExt.def" />
+    <None Include="PyDbgExt\PyDbgExt.def" />
   </ItemGroup>
 </Project>

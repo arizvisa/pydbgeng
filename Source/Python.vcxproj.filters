@@ -15,13 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="pydbgextrc.py">
+    <None Include="Python\PyDbgExtRc.py">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="pydbgextsess.py">
+    <None Include="Python\PyDbgExtSess.py">
       <Filter>Source Files</Filter>
     </None>
-    <None Include="PyDbgEng.py">
+    <None Include="Python\PyDbgEng.py">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>

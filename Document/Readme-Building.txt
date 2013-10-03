@@ -1,8 +1,12 @@
 this library depends on 3 modules and 2 dlls in order to work.
 
 boost provides boost_python which is a c++ template-interface to python. this is
-a giant library, and it's located at http://www.boost.org. one can find an
-installer at http://www.boostpro.com/download
+a giant template library, and it's located at http://www.boost.org. one can find an
+installer at http://www.boostpro.com/download. if you want to build boost from source,
+make sure you enable python support, and are building shared multithreaded dll's.
+
+	./bjam.exe --address-model=32 --with-python --toolset=msvc-10.0
+	./b2 link=shared threading=single,multi
 
 python provides the ability to utilize the python language. this can be fetched
 from http://www.python.org. the latest version tested is 2.6
@@ -17,7 +21,7 @@ to link and compile with. in each of the installed directories
 
 boost/
     include/boost - at $INSTALLDIR/$boost_ver/boost
-    libs - at $INSTALLDIR/$boost_ver/lib
+    lib - at $INSTALLDIR/$boost_ver/lib
 
 python/
     include - located at $INSTALLDIR/include
