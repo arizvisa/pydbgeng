@@ -2,7 +2,6 @@
 #include "DebugDataSpaces.h"
 
 #include <vector>
-
 #include <rpc.h>
 
 #include "DebugControl.h"
@@ -188,7 +187,6 @@ ULONG CDebugDataSpaces::CVirtualDataSpace::Fill(ULONG64 offset, ULONG size, cons
     throw_error_already_set();
 
   Check(CComQIPtr<IDebugDataSpaces2>(m_intf)->FillVirtual(offset, size, const_cast<LPVOID>(data), len, &filled));
-
   return filled;
 }
 
@@ -255,7 +253,6 @@ ULONG CDebugDataSpaces::CPhysicalDataSpace::Fill(ULONG64 offset, ULONG size, con
     throw_error_already_set();
 
   Check(CComQIPtr<IDebugDataSpaces2>(m_intf)->FillPhysical(offset, size, const_cast<LPVOID>(data), len, &filled));
-
   return filled;
 }
 
@@ -269,7 +266,6 @@ const list CDebugDataSpaces::CVirtualDataSpace::ReadPointers(ULONG64 offset, ULO
 
   for (size_t i=0; i<ptrs.size(); i++)
     result.append(ptrs[i]);
-
   return result;
 }
 void CDebugDataSpaces::CVirtualDataSpace::WritePointers(ULONG64 offset, const list& ptrs) const
@@ -280,7 +276,6 @@ void CDebugDataSpaces::CVirtualDataSpace::WritePointers(ULONG64 offset, const li
   {
     buf[i] = extract<ULONG64>(ptrs[i]);
   }
-
   Check(m_intf->WritePointersVirtual(buf.size(), offset, &buf[0]));
 }
 
@@ -291,7 +286,6 @@ const std::string CDebugDataSpaces::CVirtualDataSpace::ReadMultiByteString(ULONG
 
   Check(CComQIPtr<IDebugDataSpaces4>(m_intf)->ReadMultiByteStringVirtual(
     offset, str.size(), const_cast<PSTR>(str.c_str()), str.size(), &len));
-
   return str.substr(len-1);
 }
 const std::wstring CDebugDataSpaces::CVirtualDataSpace::ReadUnicodeString(ULONG64 offset, ULONG maxBytes) const
@@ -301,7 +295,6 @@ const std::wstring CDebugDataSpaces::CVirtualDataSpace::ReadUnicodeString(ULONG6
 
   Check(CComQIPtr<IDebugDataSpaces4>(m_intf)->ReadUnicodeStringVirtualWide(
     offset, str.size()*sizeof(wchar_t), const_cast<PWSTR>(str.c_str()), str.size(), &len));
-
   return str.substr(len/sizeof(wchar_t)-1);
 }
 
@@ -311,7 +304,6 @@ CDebugDataSpaces::AddressType CDebugDataSpaces::CVirtualDataSpace::GetOffsetInfo
 
   Check(CComQIPtr<IDebugDataSpaces4>(m_intf)->GetOffsetInformation(
     DEBUG_DATA_SPACE_VIRTUAL, DEBUG_OFFSINFO_VIRTUAL_SOURCE, offset, &type, sizeof(type), NULL));
-
   return static_cast<AddressType>(type);
 }
 
@@ -321,7 +313,6 @@ const tuple CDebugDataSpaces::CVirtualDataSpace::GetValidRegion(ULONG64 base, UL
   ULONG validSize;
 
   Check(CComQIPtr<IDebugDataSpaces4>(m_intf)->GetValidRegionVirtual(base, size, &validBase, &validSize));
-
   return make_tuple(validBase, validSize);
 }
 
@@ -330,7 +321,6 @@ ULONG64 CDebugDataSpaces::CVirtualDataSpace::GetNextDifferentlyValidOffset(ULONG
   ULONG64 next;
 
   Check(CComQIPtr<IDebugDataSpaces4>(m_intf)->GetNextDifferentlyValidOffsetVirtual(offset, &next));
-
   return next;
 }
 
@@ -345,7 +335,6 @@ const object CDebugDataSpaces::CVirtualDataSpace::ReadImageNtHeaders(ULONG64 bas
     throw_error_already_set();
 
   Check(CComQIPtr<IDebugDataSpaces3>(m_intf)->ReadImageNtHeaders(base, static_cast<PIMAGE_NT_HEADERS64>(data)));
-
   return buffer;
 }
 
@@ -363,7 +352,6 @@ const object CDebugDataSpaces::CBusDataSpace::Read(ULONG offset, ULONG size, Cac
     throw_error_already_set();
 
   Check(m_intf->ReadBusData(m_uBusDataType, m_uBusNumber, m_uSlotNumber, offset, data, len, NULL));
-
   return buffer;
 }
 const object CDebugDataSpaces::CBusDataSpace::Read(ULONG64 offset, ULONG size, CacheType type) const
@@ -384,7 +372,6 @@ ULONG CDebugDataSpaces::CBusDataSpace::Write(ULONG offset, const object& buffer,
     throw_error_already_set();
 
   Check(m_intf->WriteBusData(m_uBusDataType, m_uBusNumber, m_uSlotNumber, offset, const_cast<LPVOID>(data), len, &written));
-
   return written;
 }
 ULONG CDebugDataSpaces::CBusDataSpace::Write(ULONG64 offset, const object& buffer, CacheType type) const
@@ -394,8 +381,6 @@ ULONG CDebugDataSpaces::CBusDataSpace::Write(ULONG64 offset, const object& buffe
 ULONG CDebugDataSpaces::CBusDataSpace::Fill(ULONG64 offset, ULONG size, const object& pattern) const
 {
   RaiseException("The system bus don't support fill operation.", PyExc_NotImplementedError);
-
-  return 0;
 }
 
 const object CDebugDataSpaces::CControlDataSpace::Read(ULONG64 offset, ULONG size, CacheType type) const
@@ -412,7 +397,6 @@ const object CDebugDataSpaces::CControlDataSpace::Read(ULONG64 offset, ULONG siz
     throw_error_already_set();
 
   Check(m_intf->ReadControl(m_processor, offset, data, len, NULL));
-
   return buffer;
 }
 ULONG CDebugDataSpaces::CControlDataSpace::Write(ULONG64 offset, const object& buffer, CacheType type) const
@@ -434,8 +418,6 @@ ULONG CDebugDataSpaces::CControlDataSpace::Write(ULONG64 offset, const object& b
 ULONG CDebugDataSpaces::CControlDataSpace::Fill(ULONG64 offset, ULONG size, const object& pattern) const
 {
   RaiseException("The processor data space don't support fill operation.", PyExc_NotImplementedError);
-
-  return 0;
 }
 
 const dict CDebugDataSpaces::CControlDataSpace::GetProcessorDescription(void) const
@@ -491,7 +473,6 @@ const dict CDebugDataSpaces::CControlDataSpace::GetProcessorDescription(void) co
       break;
     }
   }
-
   return desc;
 }
 
@@ -509,7 +490,6 @@ const object CDebugDataSpaces::CIoDataSpace::Read(ULONG64 offset, ULONG size, Ca
     throw_error_already_set();
 
   Check(m_intf->ReadIo(m_uInterfaceType, m_uBusNumber, m_uAddressSpace, offset, data, len, NULL));
-
   return buffer;
 }
 ULONG CDebugDataSpaces::CIoDataSpace::Write(ULONG64 offset, const object& buffer, CacheType type) const
@@ -525,22 +505,17 @@ ULONG CDebugDataSpaces::CIoDataSpace::Write(ULONG64 offset, const object& buffer
     throw_error_already_set();
 
   Check(m_intf->WriteIo(m_uInterfaceType, m_uBusNumber, m_uAddressSpace, offset, const_cast<LPVOID>(data), len, &written));
-
   return written;
 }
 ULONG CDebugDataSpaces::CIoDataSpace::Fill(ULONG64 offset, ULONG size, const object& pattern) const
 {
   RaiseException("The I/O data space don't support fill operation.", PyExc_NotImplementedError);
-
-  return 0;
 }
 
 ULONG64 CDebugDataSpaces::CMsrDataSpace::Read(ULONG msr) const
 {
   ULONG64 value;
-
   Check(m_intf->ReadMsr(msr, &value));
-
   return value;
 }
 void CDebugDataSpaces::CMsrDataSpace::Write(ULONG msr, ULONG64 value) const
@@ -572,35 +547,24 @@ const object CDebugDataSpaces::CTaggedDataSpace::Read(ULONG64 offset, ULONG size
 ULONG CDebugDataSpaces::CTaggedDataSpace::Write(ULONG64 offset, const object& buffer, CacheType type) const
 {
   RaiseException("The tagged data space don't support write operation.", PyExc_NotImplementedError);
-
-  return 0;
 }
 ULONG CDebugDataSpaces::CTaggedDataSpace::Fill(ULONG64 offset, ULONG size, const object& pattern) const
 {
   RaiseException("The tagged data space don't support fill operation.", PyExc_NotImplementedError);
-
-  return 0;
 }
 
 const std::string CDebugDataSpaces::CTaggedDataSpace::GetTagString(void) const
 {
-  unsigned char *str;
-
-  ::UuidToString(const_cast<GUID *>(&m_tag), &str);
-
-  std::string result((LPSTR) str);
-
-  ::RpcStringFree(&str);
-
-  return result;
+    OLECHAR result[sizeof(GUID)*2+4+2+1];
+    if ( ::StringFromGUID2(m_tag, result, sizeof(result)) == 0 )
+        return std::string();
+    return std::string((LPSTR) result);
 }
 
 const DEBUG_HANDLE_DATA_BASIC CDebugDataSpaces::CHandle::GetBasicData(void) const
 {
   DEBUG_HANDLE_DATA_BASIC data;
-
   Check(m_intf->ReadHandleData(m_object, DEBUG_HANDLE_DATA_TYPE_BASIC, &data, sizeof(data), NULL));
-
   return data;
 }
 
@@ -608,35 +572,27 @@ const std::string CDebugDataSpaces::CHandle::GetTypeName(void) const
 {
   char szName[256];
   ULONG nName = _countof(szName);
-
   Check(m_intf->ReadHandleData(m_object, DEBUG_HANDLE_DATA_TYPE_TYPE_NAME, szName, nName, &nName));
-
   return std::string(szName, nName-1);
 }
 const std::string CDebugDataSpaces::CHandle::GetObjectName(void) const
 {
   char szName[1024];
   ULONG nName = _countof(szName);
-
   Check(m_intf->ReadHandleData(m_object, DEBUG_HANDLE_DATA_TYPE_OBJECT_NAME, szName, nName, &nName));
-
   return std::string(szName, nName-1);
 }
 ULONG CDebugDataSpaces::CHandle::GetHandleCount(void) const
 {
   ULONG count;
-
   Check(m_intf->ReadHandleData(m_object, DEBUG_HANDLE_DATA_TYPE_HANDLE_COUNT, &count, sizeof(count), NULL));
-
   return count;
 }
 
 ULONG64 CDebugDataSpaces::VirtualToPhysical(ULONG64 address) const
 {
   ULONG64 physical;
-
   Check(CComQIPtr<IDebugDataSpaces2>(m_intf)->VirtualToPhysical(address, &physical));
-
   return physical;
 }
 
@@ -651,24 +607,18 @@ const list CDebugDataSpaces::GetTranslationPages(ULONG64 address) const
     address, offsets, levels, &levels));
 
   list result;
-
   for (ULONG i=0; i<levels; i++)
     result.append(offsets[i]);
-
   return result;
 }
 
 const dict CDebugDataSpaces::GetTaggedData(void) const
 {
   CComQIPtr<IDebugDataSpaces3> intf(m_intf);
-
   ULONG64 handle;
-
   Check(intf->StartEnumTagged(&handle));
 
-  GUID tag;
-  ULONG size;
-
+  GUID tag; ULONG size;
   dict tags;
 
   while (S_OK == intf->GetNextTagged(handle, &tag, &size))
@@ -677,8 +627,6 @@ const dict CDebugDataSpaces::GetTaggedData(void) const
 
     tags[data.GetTagString()] = data;
   }
-
   Check(intf->EndEnumTagged(handle));
-
   return tags;
 }

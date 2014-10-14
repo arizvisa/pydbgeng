@@ -5,11 +5,11 @@ a giant template library, and it's located at http://www.boost.org. one can find
 installer at http://www.boostpro.com/download. if you want to build boost from source,
 make sure you enable python support, and are building shared multithreaded dll's.
 
-	./bjam.exe --address-model=32 --with-python --toolset=msvc-10.0
-	./b2 link=shared threading=single,multi
+	./bjam.exe --address-model=32 --with-python --toolset=msvc-11.0
+	./b2 link=shared,static threading=single,multi --with-python --toolset=msvc-11.0
 
 python provides the ability to utilize the python language. this can be fetched
-from http://www.python.org. the latest version tested is 2.6
+from http://www.python.org. the latest version tested is 2.7
 
 windbg will allow one to use the debugging api. unfortunately this library has only
 been developed/tested on WoW64. the x86 version of the debugging tools can be downloaded

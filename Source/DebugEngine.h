@@ -1,5 +1,6 @@
 #pragma once
 #include <cassert>
+#include <dbgeng.h>
 
 class CDebugEngine
 {
@@ -11,7 +12,6 @@ public:
   static CComPtr<I> CreateInstance()
   {
     CComPtr<I> instance;
-
     HRESULT hr = ::DebugCreate(__uuidof(I), (PVOID*) &instance);
 
     if (SUCCEEDED(hr) && instance)
@@ -21,7 +21,6 @@ public:
     throw_error_already_set();  
 
     assert(false); // never run to here, throw exception on previous line
-
     return instance; 
   }
 };

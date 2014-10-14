@@ -94,9 +94,9 @@ exit 0
 </Command>
     </PreLinkEvent>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>i386\dbgeng.lib;i386\dbghelp.lib;i386\engextcpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)_PyDbgEng.pyd</OutputFile>
-      <AdditionalLibraryDirectories>$(WindowsSdkDir)lib;$(SolutionDir)Modules\python\libs;$(SolutionDir)Modules\boost\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(WindowsSdkDir)lib\winv6.3\um\x86;$(SolutionDir)Modules\windbg\lib;$(SolutionDir)Modules\python\libs;$(SolutionDir)Modules\boost\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <AddModuleNamesToAssembly>%(AddModuleNamesToAssembly)</AddModuleNamesToAssembly>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
@@ -142,9 +142,9 @@ exit 0
 </Command>
     </PreLinkEvent>
     <Link>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>i386\dbgeng.lib;i386\dbghelp.lib;i386\engextcpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)_PyDbgEng.pyd</OutputFile>
-      <AdditionalLibraryDirectories>$(WindowsSdkDir)lib\winv6.3\um\x86;$(SolutionDir)Modules\python\libs;$(SolutionDir)Modules\boost\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(WindowsSdkDir)lib\winv6.3\um\x86;$(SolutionDir)Modules\windbg\lib;$(SolutionDir)Modules\python\libs;$(SolutionDir)Modules\boost\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
