@@ -24,24 +24,34 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Archived", "Archived", "{A4
 		Document\Attic\Readme-PyDbgEng.txt = Document\Attic\Readme-PyDbgEng.txt
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "_PyDbgEng.pyd", "Source\_PyDbgEng.vcxproj", "{1E82557C-EAF5-402A-B21D-44EF7F6379B6}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "_PyDbgEng", "Source\_PyDbgEng.vcxproj", "{1E82557C-EAF5-402A-B21D-44EF7F6379B6}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Python", "Python\Python.vcxproj", "{788985FC-73AB-44E5-8DC2-1011A011EEE0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Debug|Win32 = Debug|Win32
-		Release|Win32 = Release|Win32
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1E82557C-EAF5-402A-B21D-44EF7F6379B6}.Debug|Win32.ActiveCfg = Debug|Win32
-		{1E82557C-EAF5-402A-B21D-44EF7F6379B6}.Debug|Win32.Build.0 = Debug|Win32
-		{1E82557C-EAF5-402A-B21D-44EF7F6379B6}.Release|Win32.ActiveCfg = Release|Win32
-		{1E82557C-EAF5-402A-B21D-44EF7F6379B6}.Release|Win32.Build.0 = Release|Win32
-		{788985FC-73AB-44E5-8DC2-1011A011EEE0}.Debug|Win32.ActiveCfg = Debug|Win32
-		{788985FC-73AB-44E5-8DC2-1011A011EEE0}.Debug|Win32.Build.0 = Debug|Win32
-		{788985FC-73AB-44E5-8DC2-1011A011EEE0}.Release|Win32.ActiveCfg = Release|Win32
-		{788985FC-73AB-44E5-8DC2-1011A011EEE0}.Release|Win32.Build.0 = Release|Win32
+		{1E82557C-EAF5-402A-B21D-44EF7F6379B6}.Debug|x64.ActiveCfg = Debug|x64
+		{1E82557C-EAF5-402A-B21D-44EF7F6379B6}.Debug|x64.Build.0 = Debug|x64
+		{1E82557C-EAF5-402A-B21D-44EF7F6379B6}.Debug|x86.ActiveCfg = Debug|Win32
+		{1E82557C-EAF5-402A-B21D-44EF7F6379B6}.Debug|x86.Build.0 = Debug|Win32
+		{1E82557C-EAF5-402A-B21D-44EF7F6379B6}.Release|x64.ActiveCfg = Release|x64
+		{1E82557C-EAF5-402A-B21D-44EF7F6379B6}.Release|x64.Build.0 = Release|x64
+		{1E82557C-EAF5-402A-B21D-44EF7F6379B6}.Release|x86.ActiveCfg = Release|Win32
+		{1E82557C-EAF5-402A-B21D-44EF7F6379B6}.Release|x86.Build.0 = Release|Win32
+		{788985FC-73AB-44E5-8DC2-1011A011EEE0}.Debug|x64.ActiveCfg = Debug|x64
+		{788985FC-73AB-44E5-8DC2-1011A011EEE0}.Debug|x64.Build.0 = Debug|x64
+		{788985FC-73AB-44E5-8DC2-1011A011EEE0}.Debug|x86.ActiveCfg = Debug|Win32
+		{788985FC-73AB-44E5-8DC2-1011A011EEE0}.Debug|x86.Build.0 = Debug|Win32
+		{788985FC-73AB-44E5-8DC2-1011A011EEE0}.Release|x64.ActiveCfg = Release|x64
+		{788985FC-73AB-44E5-8DC2-1011A011EEE0}.Release|x64.Build.0 = Release|x64
+		{788985FC-73AB-44E5-8DC2-1011A011EEE0}.Release|x86.ActiveCfg = Release|Win32
+		{788985FC-73AB-44E5-8DC2-1011A011EEE0}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

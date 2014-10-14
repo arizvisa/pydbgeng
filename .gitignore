@@ -1,4 +1,5 @@
 Modules/windbg/inc/*.h
+Modules/windbg/inc/*.hpp
 Modules/windbg/lib/*.lib
 Modules/boost/include/*.h
 Modules/boost/lib/*.lib

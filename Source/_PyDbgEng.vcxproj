@@ -5,9 +5,17 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -23,7 +31,19 @@
     <PlatformToolset>v110</PlatformToolset>
     <UseOfAtl>Static</UseOfAtl>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
+    <UseOfAtl>Static</UseOfAtl>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
+    <UseOfAtl>Static</UseOfAtl>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <PlatformToolset>v110</PlatformToolset>
@@ -36,7 +56,15 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
     <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
   </ImportGroup>
@@ -46,26 +74,45 @@
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)Binary\$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)Output\Obj\$(ProjectName)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</GenerateManifest>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</GenerateManifest>
     <EmbedManifest Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</EmbedManifest>
+    <EmbedManifest Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</EmbedManifest>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)Binary\$(Configuration)\</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)Output\Obj\$(ProjectName)\$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     </LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|x64'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectName)</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectName)</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectName)</TargetName>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</GenerateManifest>
+    <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetExt>.pyd</TargetExt>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetExt>.pyd</TargetExt>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetExt>.pyd</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetExt>.pyd</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -77,7 +124,7 @@
     </PreBuildEvent>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(WindowsSdkDir)\Include;$(WindowsSdkDir)include;$(WindowsSdkDir)include\um;$(WindowsSdkDir)include\shared;$(SolutionDir)Modules\python\include;$(SolutionDir)Modules\boost\include;$(SolutionDir)Modules\windbg\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WindowsSdkDir)include;$(WindowsSdkDir)include\um;$(WindowsSdkDir)include\shared;$(SolutionDir)Modules\python\include;$(SolutionDir)Modules\boost\include;$(SolutionDir)Modules\windbg\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PYDBGENG;WIN32;_DEBUG;_WINDOWS;_USRDLL;_USE_32BIT_TIME_T;PYDBGENG_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -86,6 +133,7 @@
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <SuppressStartupBanner>false</SuppressStartupBanner>
     </ClCompile>
     <PreLinkEvent>
       <Message>Copying binary dependencies to intermediary directory</Message>
@@ -94,9 +142,8 @@ exit 0
 </Command>
     </PreLinkEvent>
     <Link>
-      <AdditionalDependencies>i386\dbgeng.lib;i386\dbghelp.lib;i386\engextcpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)_PyDbgEng.pyd</OutputFile>
-      <AdditionalLibraryDirectories>$(WindowsSdkDir)lib\winv6.3\um\x86;$(SolutionDir)Modules\windbg\lib;$(SolutionDir)Modules\python\libs;$(SolutionDir)Modules\boost\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Modules\python\libs;$(SolutionDir)Modules\boost\lib;$(SolutionDir)Modules\windbg\lib\i386;$(WindowsSdkDir)lib\winv6.3\um\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <AddModuleNamesToAssembly>%(AddModuleNamesToAssembly)</AddModuleNamesToAssembly>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
@@ -111,6 +158,66 @@ exit 0
       <UACExecutionLevel>AsInvoker</UACExecutionLevel>
       <ModuleDefinitionFile>$(ProjectDir)_PyDbgEng.def</ModuleDefinitionFile>
       <ShowProgress>LinkVerbose</ShowProgress>
+      <AdditionalDependencies>dbgeng.lib;dbghelp.lib;engextcpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SuppressStartupBanner>false</SuppressStartupBanner>
+    </Link>
+    <Manifest>
+      <AssemblyIdentity>_PyDbgEng.pyd</AssemblyIdentity>
+      <UpdateFileHashes>true</UpdateFileHashes>
+    </Manifest>
+    <PostBuildEvent>
+      <Message>Moving binary dependencies into output directory</Message>
+      <Command>move "$(IntDir)boost_python-*-mt-gd-*.dll" "$(OutDir)"
+exit 0
+</Command>
+    </PostBuildEvent>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_VC80_UPGRADE=0x0710;PROJECTDIR=$(ProjectDir);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <PreBuildEvent>
+      <Message>
+      </Message>
+      <Command>
+      </Command>
+    </PreBuildEvent>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(WindowsSdkDir)include;$(WindowsSdkDir)include\um;$(WindowsSdkDir)include\shared;$(SolutionDir)Modules\python\include;$(SolutionDir)Modules\boost\include;$(SolutionDir)Modules\windbg\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>PYDBGENG;WIN32;_DEBUG;_WINDOWS;_USRDLL;_USE_32BIT_TIME_T;PYDBGENG_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <ForceConformanceInForLoopScope>true</ForceConformanceInForLoopScope>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <SuppressStartupBanner>false</SuppressStartupBanner>
+    </ClCompile>
+    <PreLinkEvent>
+      <Message>Copying binary dependencies to intermediary directory</Message>
+      <Command>xcopy /Y "$(SolutionDir)Modules\boost\lib\boost_python-*-mt-gd-*.dll" "$(IntDir)"
+exit 0
+</Command>
+    </PreLinkEvent>
+    <Link>
+      <OutputFile>$(OutDir)_PyDbgEng.pyd</OutputFile>
+      <AdditionalLibraryDirectories>$(SolutionDir)Modules\python\libs;$(SolutionDir)Modules\boost\lib;$(SolutionDir)Modules\windbg\lib\ia64;$(WindowsSdkDir)lib\winv6.3\um\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <AddModuleNamesToAssembly>%(AddModuleNamesToAssembly)</AddModuleNamesToAssembly>
+      <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(OutDir)_PyDbgEng.pdb</ProgramDatabaseFile>
+      <SubSystem>Windows</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <ImportLibrary>$(OutDir)_PyDbgEng.lib</ImportLibrary>
+      <UACExecutionLevel>AsInvoker</UACExecutionLevel>
+      <ModuleDefinitionFile>$(ProjectDir)_PyDbgEng.def</ModuleDefinitionFile>
+      <ShowProgress>LinkVerbose</ShowProgress>
+      <AdditionalDependencies>dbgeng.lib;dbghelp.lib;engextcpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SuppressStartupBanner>false</SuppressStartupBanner>
     </Link>
     <Manifest>
       <AssemblyIdentity>_PyDbgEng.pyd</AssemblyIdentity>
@@ -128,12 +235,13 @@ exit 0
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(WindowsSdkDir)\Include;$(WindowsSdkDir)include;$(WindowsSdkDir)include\um;$(WindowsSdkDir)include\shared;$(SolutionDir)Modules\python\include;$(SolutionDir)Modules\boost\include;$(SolutionDir)Modules\windbg\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WindowsSdkDir)include;$(WindowsSdkDir)include\um;$(WindowsSdkDir)include\shared;$(SolutionDir)Modules\python\include;$(SolutionDir)Modules\boost\include;$(SolutionDir)Modules\windbg\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PYDBGENG;WIN32;NDEBUG;_WINDOWS;_USRDLL;_USE_32BIT_TIME_T;PYDBGENG_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <OpenMPSupport>false</OpenMPSupport>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <SuppressStartupBanner>false</SuppressStartupBanner>
     </ClCompile>
     <PreLinkEvent>
       <Message>Copying binary dependencies to intermediary directory</Message>
@@ -142,9 +250,8 @@ exit 0
 </Command>
     </PreLinkEvent>
     <Link>
-      <AdditionalDependencies>i386\dbgeng.lib;i386\dbghelp.lib;i386\engextcpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)_PyDbgEng.pyd</OutputFile>
-      <AdditionalLibraryDirectories>$(WindowsSdkDir)lib\winv6.3\um\x86;$(SolutionDir)Modules\windbg\lib;$(SolutionDir)Modules\python\libs;$(SolutionDir)Modules\boost\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Modules\python\libs;$(SolutionDir)Modules\boost\lib;$(SolutionDir)Modules\windbg\lib\i386;$(WindowsSdkDir)lib\winv6.3\um\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -160,6 +267,55 @@ exit 0
       <AddModuleNamesToAssembly>%(AddModuleNamesToAssembly)</AddModuleNamesToAssembly>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
       <ShowProgress>LinkVerbose</ShowProgress>
+      <AdditionalDependencies>dbgeng.lib;dbghelp.lib;engextcpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SuppressStartupBanner>false</SuppressStartupBanner>
+    </Link>
+    <PostBuildEvent>
+      <Message>Moving binary dependencies into output directory</Message>
+      <Command>move "$(IntDir)boost_python-*-mt-1*.dll" "$(OutDir)"
+exit 0
+</Command>
+    </PostBuildEvent>
+    <Manifest />
+    <ResourceCompile>
+      <PreprocessorDefinitions>_VC80_UPGRADE=0x0710;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(WindowsSdkDir)include;$(WindowsSdkDir)include\um;$(WindowsSdkDir)include\shared;$(SolutionDir)Modules\python\include;$(SolutionDir)Modules\boost\include;$(SolutionDir)Modules\windbg\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>PYDBGENG;WIN32;NDEBUG;_WINDOWS;_USRDLL;_USE_32BIT_TIME_T;PYDBGENG_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <OpenMPSupport>false</OpenMPSupport>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <SuppressStartupBanner>false</SuppressStartupBanner>
+    </ClCompile>
+    <PreLinkEvent>
+      <Message>Copying binary dependencies to intermediary directory</Message>
+      <Command>xcopy /Y "$(SolutionDir)Modules\boost\lib\boost_python-*-mt-1*.dll" "$(IntDir)"
+exit 0
+</Command>
+    </PreLinkEvent>
+    <Link>
+      <OutputFile>$(OutDir)_PyDbgEng.pyd</OutputFile>
+      <AdditionalLibraryDirectories>$(SolutionDir)Modules\python\libs;$(SolutionDir)Modules\boost\lib;$(SolutionDir)Modules\windbg\lib\ia64;$(WindowsSdkDir)lib\winv6.3\um\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <RandomizedBaseAddress>true</RandomizedBaseAddress>
+      <DataExecutionPrevention>
+      </DataExecutionPrevention>
+      <ImportLibrary>$(OutDir)_PyDbgEng.lib</ImportLibrary>
+      <UACExecutionLevel>AsInvoker</UACExecutionLevel>
+      <ModuleDefinitionFile>$(ProjectDir)_PyDbgEng.def</ModuleDefinitionFile>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <AddModuleNamesToAssembly>%(AddModuleNamesToAssembly)</AddModuleNamesToAssembly>
+      <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
+      <ShowProgress>LinkVerbose</ShowProgress>
+      <AdditionalDependencies>dbgeng.lib;dbghelp.lib;engextcpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <SuppressStartupBanner>false</SuppressStartupBanner>
     </Link>
     <PostBuildEvent>
       <Message>Moving binary dependencies into output directory</Message>
@@ -180,7 +336,9 @@ exit 0
     <ClCompile Include="DebugEngine.cpp" />
     <ClCompile Include="DebugObject.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)Modules\python\include;$(SolutionDir)Modules\boost\include;$(SolutionDir)Modules\windbg\inc;$(WindowsSdk_Dir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)Modules\python\include;$(SolutionDir)Modules\boost\include;$(SolutionDir)Modules\windbg\inc;$(WindowsSdk_Dir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)Modules\python\include;$(SolutionDir)Modules\boost\include;$(SolutionDir)Modules\windbg\inc;$(WindowsSdk_Dir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)Modules\python\include;$(SolutionDir)Modules\boost\include;$(SolutionDir)Modules\windbg\inc;$(WindowsSdk_Dir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="DebugOutput.cpp" />
     <ClCompile Include="DebugRegisters.cpp" />
@@ -189,7 +347,9 @@ exit 0
     <ClCompile Include="PythonHelper.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="FileVersion.cpp" />
     <ClCompile Include="main.cpp" />
