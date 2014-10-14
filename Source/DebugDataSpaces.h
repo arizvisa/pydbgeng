@@ -127,6 +127,8 @@ public:
     virtual const object Read(ULONG64 offset, ULONG size, CacheType type = TYPE_DEFAULT) const;
     virtual ULONG Write(ULONG64 offset, const object& buffer, CacheType type = TYPE_DEFAULT) const;
     virtual ULONG Fill(ULONG64 offset, ULONG size, const object& pattern) const;
+    ULONG Write(ULONG offset, const object& buffer, CacheType type = TYPE_DEFAULT) const;
+    const object Read(ULONG offset, ULONG size, CacheType type = TYPE_DEFAULT) const;
   };
 
   class CControlDataSpace : public CDataSpace
@@ -213,6 +215,8 @@ public:
     virtual const object Read(ULONG64 offset, ULONG size, CacheType type = TYPE_DEFAULT) const;
     virtual ULONG Write(ULONG64 offset, const object& buffer, CacheType type = TYPE_DEFAULT) const;
     virtual ULONG Fill(ULONG64 offset, ULONG size, const object& pattern) const;
+
+    const object Read(ULONG offset, ULONG size, CacheType type = TYPE_DEFAULT) const;
   };
 public:
   CDebugDataSpaces(IUnknown *intf) : __inherited(intf)

@@ -1,8 +1,6 @@
 #pragma once
 #include <iostream>
 
-#include <atlbase.h>
-
 #include <DbgEng.h>
 
 #include <boost/static_assert.hpp>

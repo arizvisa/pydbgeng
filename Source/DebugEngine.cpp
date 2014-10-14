@@ -71,20 +71,3 @@ BOOST_PYTHON_MODULE(_PyDbgEng)
   def("Connect", Connect, args("remoteOptions"), return_value_policy<manage_new_object>());
   def("ConnectKernel", ConnectKernel, arg("connectOptions")=std::string(), return_value_policy<manage_new_object>());
 }
-
-BOOL APIENTRY DllMain( HANDLE hModule, DWORD  dwReason, LPVOID lpReserved )
-{
-  UNREFERENCED_PARAMETER(hModule);
-  UNREFERENCED_PARAMETER(lpReserved);
-
-	switch (dwReason)
-	{
-	case DLL_PROCESS_ATTACH:
-	case DLL_THREAD_ATTACH:
-	case DLL_THREAD_DETACH:
-	case DLL_PROCESS_DETACH:
-		break;
-	}
-    
-  return TRUE;
-}

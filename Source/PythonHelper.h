@@ -5,8 +5,11 @@ using namespace boost::python;
 
 struct CPythonHelper
 {
+  __declspec(noreturn)
   static void RaiseException(const std::string& msg, PyObject *type = PyExc_RuntimeError) throw(...);
+  __declspec(noreturn)
   static void RaiseException(errno_t err, std::string s, PyObject *type = PyExc_RuntimeError) throw(...);
+  __declspec(noreturn)
   static void RaiseException(const std::string& msg, std::string s, PyObject *type = PyExc_RuntimeError) throw(...);
 
   static void RealCheck(HRESULT hr, std::string s);

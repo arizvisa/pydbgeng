@@ -1,0 +1,12 @@
+Modules/windbg/inc/*
+Modules/windbg/lib/*
+Modules/boost/include/*
+Modules/boost/lib/*
+Modules/python/include/*
+Modules/python/lib/*
+*.lib
+*.exe
+*.dll
+*.obj
+*.filters
+*.user

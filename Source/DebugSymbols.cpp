@@ -539,7 +539,7 @@ const tuple CDebugSymbols::GetNameByOffset(ULONG64 offset, LONG delta) const
     Check(m_intf->GetNameByOffset(offset, szName, size, &size, &displacement));
   }
 
-  return make_tuple(std::string(szName, size-1), displacement);
+  return make_tuple( boost::python::str(szName, size-1), displacement);
 }
 
 const dict CDebugSymbols::GetSymbolOffsets(const std::string& pattern) const

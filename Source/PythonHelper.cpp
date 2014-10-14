@@ -29,6 +29,7 @@ const std::string CPythonHelper::repr(const object& obj)
   return std::string(extract<char *>(object(handle<>(allow_null(::PyObject_Repr(obj.ptr()))))));
 }
 
+__declspec(noreturn)
 void CPythonHelper::RaiseException(errno_t err, std::string s, PyObject *type) throw(...)
 {
   _set_errno(err);
@@ -38,6 +39,7 @@ void CPythonHelper::RaiseException(errno_t err, std::string s, PyObject *type) t
   throw_error_already_set();
 }
 
+__declspec(noreturn)
 void CPythonHelper::RaiseException(const std::string& msg, std::string s, PyObject *type) throw(...)
 {
   ::PyErr_SetString(type, msg.c_str());
@@ -45,6 +47,7 @@ void CPythonHelper::RaiseException(const std::string& msg, std::string s, PyObje
   throw_error_already_set();
 }
 
+__declspec(noreturn)
 void CPythonHelper::RaiseException(const std::string& msg, PyObject *type) throw(...)
 {
   ::PyErr_SetString(type, msg.c_str());

@@ -349,7 +349,7 @@ const object CDebugDataSpaces::CVirtualDataSpace::ReadImageNtHeaders(ULONG64 bas
   return buffer;
 }
 
-const object CDebugDataSpaces::CBusDataSpace::Read(ULONG64 offset, ULONG size, CacheType type) const
+const object CDebugDataSpaces::CBusDataSpace::Read(ULONG offset, ULONG size, CacheType type) const
 {
   if (TYPE_DEFAULT != type)
     RaiseException("The system bus data space don't support cache type.", PyExc_NotImplementedError);
@@ -366,7 +366,12 @@ const object CDebugDataSpaces::CBusDataSpace::Read(ULONG64 offset, ULONG size, C
 
   return buffer;
 }
-ULONG CDebugDataSpaces::CBusDataSpace::Write(ULONG64 offset, const object& buffer, CacheType type) const
+const object CDebugDataSpaces::CBusDataSpace::Read(ULONG64 offset, ULONG size, CacheType type) const
+{
+    return this->Read((ULONG)offset, size, type);
+}
+
+ULONG CDebugDataSpaces::CBusDataSpace::Write(ULONG offset, const object& buffer, CacheType type) const
 {
   if (TYPE_DEFAULT != type)
     RaiseException("The system bus data space don't support cache type.", PyExc_NotImplementedError);
@@ -381,6 +386,10 @@ ULONG CDebugDataSpaces::CBusDataSpace::Write(ULONG64 offset, const object& buffe
   Check(m_intf->WriteBusData(m_uBusDataType, m_uBusNumber, m_uSlotNumber, offset, const_cast<LPVOID>(data), len, &written));
 
   return written;
+}
+ULONG CDebugDataSpaces::CBusDataSpace::Write(ULONG64 offset, const object& buffer, CacheType type) const
+{
+    return this->Write((ULONG)offset, buffer, type);
 }
 ULONG CDebugDataSpaces::CBusDataSpace::Fill(ULONG64 offset, ULONG size, const object& pattern) const
 {
@@ -453,8 +462,9 @@ const dict CDebugDataSpaces::CControlDataSpace::GetProcessorDescription(void) co
     }
   case IMAGE_FILE_MACHINE_ARM:
     {
-      desc["Type"] = info.Arm.Type;
+      desc["Model"] = info.Arm.Model;
       desc["Revision"] = info.Arm.Revision;
+      desc["VendorString"] = info.Arm.VendorString;
       break;
     }
   case IMAGE_FILE_MACHINE_IA64:
@@ -538,7 +548,7 @@ void CDebugDataSpaces::CMsrDataSpace::Write(ULONG msr, ULONG64 value) const
   Check(m_intf->WriteMsr(msr, value));
 }
 
-const object CDebugDataSpaces::CTaggedDataSpace::Read(ULONG64 offset, ULONG size, CacheType type) const
+const object CDebugDataSpaces::CTaggedDataSpace::Read(ULONG offset, ULONG size, CacheType type) const
 {
   if (TYPE_DEFAULT != type)
     RaiseException("The tagged data space don't support cache type.", PyExc_NotImplementedError);
@@ -554,6 +564,10 @@ const object CDebugDataSpaces::CTaggedDataSpace::Read(ULONG64 offset, ULONG size
   Check(CComQIPtr<IDebugDataSpaces3>(m_intf)->ReadTagged(const_cast<LPGUID>(&m_tag), offset, data, len, NULL));
 
   return buffer;
+}
+const object CDebugDataSpaces::CTaggedDataSpace::Read(ULONG64 offset, ULONG size, CacheType type) const
+{
+    return this->Read((ULONG)offset, size, type);
 }
 ULONG CDebugDataSpaces::CTaggedDataSpace::Write(ULONG64 offset, const object& buffer, CacheType type) const
 {

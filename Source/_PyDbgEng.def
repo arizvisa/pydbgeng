@@ -1,11 +1,10 @@
-LIBRARY	PyDbgExt
+LIBRARY	_PyDbgEng.pyd
 
 ;--------------------------------------------------------------------
-; Core exports provided by the ExtCpp framework.
+; Core exports used for the windbg extension
 ;--------------------------------------------------------------------
-
 EXPORTS
-	DebugExtensionInitialize
+    DebugExtensionInitialize
     DebugExtensionUninitialize
     DebugExtensionNotify
     help
@@ -13,9 +12,18 @@ EXPORTS
 ;--------------------------------------------------------------------
 ; Extension commands.
 ;--------------------------------------------------------------------
-
 	py
 	eval
 	exec
 	import
 ;	from
+
+;--------------------------------------------------------------------
+; PyDbgEng.def
+;--------------------------------------------------------------------
+	UseClient
+	ReleaseClient
+
+	SetOutput
+	GetOutput
+

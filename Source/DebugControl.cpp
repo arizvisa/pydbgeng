@@ -1154,8 +1154,7 @@ const tuple CDebugControl::Disassemble(ULONG64 offset, DisassembleFlag flags, si
   Check(m_intf->Disassemble(offset, (ULONG) flags, const_cast<char *>(buf.c_str()), size, &size, &end));
 
   buf.resize(size-1);
-
-  return make_tuple(buf, end);
+  return make_tuple(boost::python::str(buf), size);
 }
 ULONG64 CDebugControl::OutputDisassembly(ULONG64 offset, DisassembleFlag flags, OutputTarget target) const
 {
@@ -1227,7 +1226,7 @@ const dict CDebugControl::GetTextMacros(void) const
 
   for (int i=0; i<10; i++)
   {
-    szName[2] = '0' + i;
+    szName[2] = '0' + (char)i;
 
     Check(m_intf->GetTextMacro(i, szMacro, _countof(szMacro), &nMacro));
 
@@ -1246,7 +1245,7 @@ void CDebugControl::SetTextMacroByName(const std::string& name, const std::strin
 
   for (int i=0; i<10; i++)
   {
-    szName[2] = '0' + i;
+    szName[2] = '0' + (char)i;
 
     if (0 == strcmp(szName, name.c_str()))
     {

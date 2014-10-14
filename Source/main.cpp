@@ -313,7 +313,7 @@ extern "C" __declspec(dllexport) HRESULT CALLBACK import(PDEBUG_CLIENT Client, P
   try
   {
     std::vector<std::string> modules;
-    split(modules, std::string(args), is_any_of(", "));
+    boost::split(modules, std::string(args), is_any_of(", "));
 
     for (std::vector<std::string>::const_iterator it = modules.begin(); it != modules.end(); it++) {
       const std::string name = *it;

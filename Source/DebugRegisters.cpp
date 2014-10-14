@@ -60,8 +60,6 @@ CDebugRegisters::CAbstractRegister::operator long(void) const
   }
 
   RaiseException("Cannot convert the value of register to int type.", PyExc_ValueError);
-
-  return 0;
 }
 
 CDebugRegisters::CAbstractRegister::operator double() const
@@ -87,8 +85,6 @@ CDebugRegisters::CAbstractRegister::operator double() const
   }
 
   RaiseException("Cannot convert the value of register to float type.", PyExc_ValueError);
-
-  return 0;
 }
 
 const object CDebugRegisters::CAbstractRegister::GetValue(void) const

@@ -1,8 +1,5 @@
 #pragma once
-
 #include <cassert>
-
-#include <atlbase.h>
 
 class CDebugEngine
 {

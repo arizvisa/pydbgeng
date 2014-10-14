@@ -1,7 +1,5 @@
-
 #pragma once
 
-#include <atlbase.h>
 #include <dbgeng.h>
 #include <string>
 

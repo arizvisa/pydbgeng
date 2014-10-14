@@ -3,9 +3,6 @@
 #include <string>
 #include <map>
 
-#include <atlbase.h>
-#include <atlcom.h>
-
 #include "DebugObject.h"
 
 #include "DebugEngine.h"

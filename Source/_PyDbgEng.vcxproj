@@ -20,10 +20,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
+    <UseOfAtl>Static</UseOfAtl>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v110</PlatformToolset>
+    <UseOfAtl>Static</UseOfAtl>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -56,9 +60,13 @@
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectName)</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectName)</TargetName>
-    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">pyd</TargetExt>
-    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.pyd</TargetExt>
     <GenerateManifest Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</GenerateManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetExt>.pyd</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <TargetExt>.pyd</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PreBuildEvent>
@@ -69,8 +77,8 @@
     </PreBuildEvent>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)Modules\python\include;$(SolutionDir)Modules\boost\include;$(SolutionDir)Modules\windbg\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>PYDBGENG;WIN32;SOLUTIONDIR=$(SolutionDir);_DEBUG;_WINDOWS;_USRDLL;_USE_32BIT_TIME_T;PYDBGENG_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(WindowsSdkDir)\Include;$(WindowsSdkDir)include;$(WindowsSdkDir)include\um;$(WindowsSdkDir)include\shared;$(SolutionDir)Modules\python\include;$(SolutionDir)Modules\boost\include;$(SolutionDir)Modules\windbg\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>PYDBGENG;WIN32;_DEBUG;_WINDOWS;_USRDLL;_USE_32BIT_TIME_T;PYDBGENG_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
@@ -86,9 +94,9 @@ exit 0
 </Command>
     </PreLinkEvent>
     <Link>
-      <AdditionalDependencies>dbgeng.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)_PyDbgEng.pyd</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)Modules\python\libs;$(SolutionDir)Modules\boost\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(WindowsSdkDir)lib;$(SolutionDir)Modules\python\libs;$(SolutionDir)Modules\boost\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <AddModuleNamesToAssembly>%(AddModuleNamesToAssembly)</AddModuleNamesToAssembly>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
@@ -101,7 +109,8 @@ exit 0
       <ImportLibrary>$(OutDir)_PyDbgEng.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
       <UACExecutionLevel>AsInvoker</UACExecutionLevel>
-      <ModuleDefinitionFile>$(ProjectDir)_PyDbgEng\_PyDbgEng.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>$(ProjectDir)_PyDbgEng.def</ModuleDefinitionFile>
+      <ShowProgress>LinkVerbose</ShowProgress>
     </Link>
     <Manifest>
       <AssemblyIdentity>_PyDbgEng.pyd</AssemblyIdentity>
@@ -114,13 +123,13 @@ exit 0
 </Command>
     </PostBuildEvent>
     <ResourceCompile>
-      <PreprocessorDefinitions>_VC80_UPGRADE=0x0710;SOLUTIONDIR=$(SolutionDir);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_VC80_UPGRADE=0x0710;PROJECTDIR=$(ProjectDir);%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Modules\python\include;$(SolutionDir)Modules\boost\include;$(SolutionDir)Modules\windbg\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>PYDBGENG;WIN32;SOLUTIONDIR=$(SolutionDir);NDEBUG;_WINDOWS;_USRDLL;_USE_32BIT_TIME_T;PYDBGENG_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(WindowsSdkDir)\Include;$(WindowsSdkDir)include;$(WindowsSdkDir)include\um;$(WindowsSdkDir)include\shared;$(SolutionDir)Modules\python\include;$(SolutionDir)Modules\boost\include;$(SolutionDir)Modules\windbg\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>PYDBGENG;WIN32;NDEBUG;_WINDOWS;_USRDLL;_USE_32BIT_TIME_T;PYDBGENG_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <OpenMPSupport>false</OpenMPSupport>
       <WarningLevel>Level4</WarningLevel>
@@ -133,9 +142,9 @@ exit 0
 </Command>
     </PreLinkEvent>
     <Link>
-      <AdditionalDependencies>dbgeng.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)_PyDbgEng.pyd</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)Modules\python\libs;$(SolutionDir)Modules\boost\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(WindowsSdkDir)lib\winv6.3\um\x86;$(SolutionDir)Modules\python\libs;$(SolutionDir)Modules\boost\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -146,10 +155,11 @@ exit 0
       <ImportLibrary>$(OutDir)_PyDbgEng.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
       <UACExecutionLevel>AsInvoker</UACExecutionLevel>
-      <ModuleDefinitionFile>$(ProjectDir)_PyDbgEng\_PyDbgEng.def</ModuleDefinitionFile>
+      <ModuleDefinitionFile>$(ProjectDir)_PyDbgEng.def</ModuleDefinitionFile>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <AddModuleNamesToAssembly>%(AddModuleNamesToAssembly)</AddModuleNamesToAssembly>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
+      <ShowProgress>LinkVerbose</ShowProgress>
     </Link>
     <PostBuildEvent>
       <Message>Moving binary dependencies into output directory</Message>
@@ -159,52 +169,61 @@ exit 0
     </PostBuildEvent>
     <Manifest />
     <ResourceCompile>
-      <PreprocessorDefinitions>_VC80_UPGRADE=0x0710;SOLUTIONDIR=$(SolutionDir);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_VC80_UPGRADE=0x0710;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="$(ProjectDir)_PyDbgEng\DebugAdvanced.cpp" />
-    <ClCompile Include="$(ProjectDir)_PyDbgEng\DebugClient.cpp" />
-    <ClCompile Include="$(ProjectDir)_PyDbgEng\DebugControl.cpp" />
-    <ClCompile Include="$(ProjectDir)_PyDbgEng\DebugDataSpaces.cpp" />
-    <ClCompile Include="$(ProjectDir)_PyDbgEng\DebugEngine.cpp" />
-    <ClCompile Include="$(ProjectDir)_PyDbgEng\DebugObject.cpp" />
-    <ClCompile Include="$(ProjectDir)_PyDbgEng\DebugOutput.cpp" />
-    <ClCompile Include="$(ProjectDir)_PyDbgEng\DebugRegisters.cpp" />
-    <ClCompile Include="$(ProjectDir)_PyDbgEng\DebugSymbols.cpp" />
-    <ClCompile Include="$(ProjectDir)_PyDbgEng\DebugSystemObjects.cpp" />
-    <ClCompile Include="$(ProjectDir)_PyDbgEng\PythonHelper.cpp" />
-    <ClCompile Include="$(ProjectDir)_PyDbgEng\stdafx.cpp">
+    <ClCompile Include="DebugAdvanced.cpp" />
+    <ClCompile Include="DebugClient.cpp" />
+    <ClCompile Include="DebugControl.cpp" />
+    <ClCompile Include="DebugDataSpaces.cpp" />
+    <ClCompile Include="DebugEngine.cpp" />
+    <ClCompile Include="DebugObject.cpp">
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)Modules\python\include;$(SolutionDir)Modules\boost\include;$(SolutionDir)Modules\windbg\inc;$(WindowsSdk_Dir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)Modules\python\include;$(SolutionDir)Modules\boost\include;$(SolutionDir)Modules\windbg\inc;$(WindowsSdk_Dir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <ClCompile Include="DebugOutput.cpp" />
+    <ClCompile Include="DebugRegisters.cpp" />
+    <ClCompile Include="DebugSymbols.cpp" />
+    <ClCompile Include="DebugSystemObjects.cpp" />
+    <ClCompile Include="PythonHelper.cpp" />
+    <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="FileVersion.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="PythonContext.cpp" />
+    <ClCompile Include="PythonEngine.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="$(ProjectDir)_PyDbgEng\DebugAdvanced.h" />
-    <ClInclude Include="$(ProjectDir)_PyDbgEng\DebugClient.h" />
-    <ClInclude Include="$(ProjectDir)_PyDbgEng\DebugControl.h" />
-    <ClInclude Include="$(ProjectDir)_PyDbgEng\DebugDataSpaces.h" />
-    <ClInclude Include="$(ProjectDir)_PyDbgEng\DebugEngine.h" />
-    <ClInclude Include="$(ProjectDir)_PyDbgEng\DebugObject.h" />
-    <ClInclude Include="$(ProjectDir)_PyDbgEng\DebugOutput.h" />
-    <ClInclude Include="$(ProjectDir)_PyDbgEng\DebugRegisters.h" />
-    <ClInclude Include="$(ProjectDir)_PyDbgEng\DebugSymbols.h" />
-    <ClInclude Include="$(ProjectDir)_PyDbgEng\DebugSystemObjects.h" />
-    <ClInclude Include="$(ProjectDir)_PyDbgEng\PythonHelper.h" />
-    <ClInclude Include="$(ProjectDir)_PyDbgEng\resource.h" />
-    <ClInclude Include="$(ProjectDir)_PyDbgEng\stdafx.h" />
+    <ClInclude Include="DebugAdvanced.h" />
+    <ClInclude Include="DebugClient.h" />
+    <ClInclude Include="DebugControl.h" />
+    <ClInclude Include="DebugDataSpaces.h" />
+    <ClInclude Include="DebugEngine.h" />
+    <ClInclude Include="DebugObject.h" />
+    <ClInclude Include="DebugOutput.h" />
+    <ClInclude Include="DebugRegisters.h" />
+    <ClInclude Include="DebugSymbols.h" />
+    <ClInclude Include="DebugSystemObjects.h" />
+    <ClInclude Include="PythonHelper.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="FileVersion.h" />
+    <ClInclude Include="PythonContext.h" />
+    <ClInclude Include="PythonEngine.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="$(ProjectDir)_PyDbgEng\_PyDbgEng.rc" />
+    <None Include="_PyDbgEng.def" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="$(SolutionDir)Modules\windbg\kldbgdrv.sys" />
-    <None Include="$(ProjectDir)_PyDbgEng\_PyDbgEng.def" />
-  </ItemGroup>
-  <ItemGroup>
-    <Manifest Include="$(ProjectDir)_PyDbgEng\_PyDbgEng.pyd.manifest">
+    <Manifest Include="_PyDbgEng.pyd.manifest">
       <SubType>Designer</SubType>
     </Manifest>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="_PyDbgEng.pyd.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

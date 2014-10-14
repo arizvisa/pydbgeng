@@ -1,8 +1,0 @@
-LIBRARY	_PyDbgEng.pyd
-
-EXPORTS
-	UseClient
-	ReleaseClient
-
-	SetOutput
-	GetOutput
