@@ -1,9 +1,9 @@
-Modules/windbg/inc/*
-Modules/windbg/lib/*
-Modules/boost/include/*
-Modules/boost/lib/*
-Modules/python/include/*
-Modules/python/lib/*
+Modules/windbg/inc/*.h
+Modules/windbg/lib/*.lib
+Modules/boost/include/*.h
+Modules/boost/lib/*.lib
+Modules/python/include/*.h
+Modules/python/lib/*.lib
 *.lib
 *.exe
 *.dll
