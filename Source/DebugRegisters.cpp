@@ -71,17 +71,17 @@ CDebugRegisters::CAbstractRegister::operator double() const
   switch (value.Type)
   {
   case DEBUG_VALUE_INT8:
-    return value.I8;
+    return (double) value.I8;
   case DEBUG_VALUE_INT16:
-    return value.I16;
+    return (double) value.I16;
   case DEBUG_VALUE_INT32:
-    return value.I32;    
+    return (double) value.I32;    
   case DEBUG_VALUE_INT64:
-    return value.I64;
+    return (double) value.I64;
   case DEBUG_VALUE_FLOAT32:
-    return value.F32;
+    return (double) value.F32;
   case DEBUG_VALUE_FLOAT64:
-    return value.F64;    
+    return (double) value.F64;    
   }
 
   RaiseException("Cannot convert the value of register to float type.", PyExc_ValueError);
