@@ -56,7 +56,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Modules\python\include;$(SolutionDir)\Modules\boost\include;$(SolutionDir)\Modules\windbg\inc;$(SolutionDir)\Source\PyDbgEng;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Modules\python\include;$(SolutionDir)\Modules\boost;$(SolutionDir)\Modules\windbg\inc;$(SolutionDir)\Source\PyDbgEng;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;_USE_32BIT_TIME_T;PYDBGEXT_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -69,7 +69,7 @@
     <Link>
       <AdditionalDependencies>dbgeng.lib</AdditionalDependencies>
       <OutputFile>$(OutDir)PyDbgExt.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)\Modules\python\libs;$(SolutionDir)\Modules\boost\libs;$(SolutionDir)\Modules\windbg\lib\i386;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Modules\python\libs;$(SolutionDir)\Modules\boost\stage\lib;$(SolutionDir)\Modules\windbg\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <ModuleDefinitionFile>PyDbgExt.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -94,7 +94,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <OmitFramePointers>true</OmitFramePointers>
-      <AdditionalIncludeDirectories>$(SolutionDir)\Modules\python\include;$(SolutionDir)\Modules\boost\include;$(SolutionDir)\Modules\windbg\inc;$(SolutionDir)\Source\PyDbgEng;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\Modules\python\include;$(SolutionDir)\Modules\boost;$(SolutionDir)\Modules\windbg\inc;$(SolutionDir)\Source\PyDbgEng;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;_USE_32BIT_TIME_T;PYDBGEXT_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>
@@ -105,7 +105,7 @@
     <Link>
       <AdditionalDependencies>dbgeng.lib</AdditionalDependencies>
       <OutputFile>$(OutDir)PyDbgExt.dll</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)\Modules\python\libs;$(SolutionDir)\Modules\boost\libs;$(SolutionDir)\Modules\windbg\lib\i386;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\Modules\python\libs;$(SolutionDir)\Modules\boost\stage\lib;$(SolutionDir)\Modules\windbg\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ModuleDefinitionFile>PyDbgExt.def</ModuleDefinitionFile>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>

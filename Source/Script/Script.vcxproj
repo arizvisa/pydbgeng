@@ -52,7 +52,7 @@ exit 0
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <PostBuildEvent>
       <Command>xcopy /Y "$(ProjectDir)*.py" "$(OutDir)"
-xcopy /Y "$(SolutionDir)\Modules\boost\libs\boost_python-*.dll" "$(OutDir)"
+xcopy /Y "$(SolutionDir)\Modules\boost\stage\lib\boost_python-*.dll" "$(OutDir)"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
