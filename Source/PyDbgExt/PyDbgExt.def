@@ -9,7 +9,7 @@ EXPORTS
     DebugExtensionUninitialize
     DebugExtensionNotify
     help
-    
+
 ;--------------------------------------------------------------------
 ; Extension commands.
 ;--------------------------------------------------------------------

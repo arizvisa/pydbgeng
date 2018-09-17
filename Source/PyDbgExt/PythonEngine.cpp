@@ -6,10 +6,8 @@
 CPythonEngine::CPythonEngine(LPCSTR name)
 {
   PyThreadState* threadstate;
-
   ::Py_SetProgramName(const_cast<LPSTR>(name));
   ::Py_Initialize();
-
   ::PyEval_InitThreads();
   threadstate = ::PyThreadState_Get();
   m_interpreter = threadstate->interp;
@@ -23,11 +21,9 @@ CPythonEngine::~CPythonEngine(void)
     try {
       ::Py_Finalize();  /* XXX: for some reason this crashes occasionally */
     } catch (...) {
-        /*
-            XXX: FIXME: WTF: this isn't right, but I acquired the lock..
-                 what else do i need to do?
-        */
+      handle_exception();
     }
+    // XXX: FIXME: WTF: this isn't right, but I acquired the lock..  what else do i need to do?
     m_threadstate = static_cast<PyGILState_STATE>(0);
     return;
   }

@@ -1,3 +1,5 @@
+#ifndef __PythonEngine_h
+#define __PythonEngine_h
 #pragma once
 
 #include <string>
@@ -10,7 +12,7 @@ using namespace boost::python;
 class CPythonEngine : public boost::noncopyable
 {
   PyInterpreterState* m_interpreter;
-  PyGILState_STATE m_threadstate;  
+  PyGILState_STATE m_threadstate;
 
 public:
   CPythonEngine(LPCSTR name);
@@ -32,3 +34,4 @@ public:
   LPCSTR GetCompiler(void) const;
   LPCSTR GetBuildInfo(void) const;
 };
+#endif

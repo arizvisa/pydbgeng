@@ -1,4 +1,5 @@
-
+#ifndef __DebugOutput_h
+#define __DebugOutput_h
 #pragma once
 
 #include <atlbase.h>
@@ -7,8 +8,6 @@
 
 #define KDEXT_64BIT
 #include <wdbgexts.h>
-
-#include "PythonHelper.h"
 
 typedef void (*PSetOutput)(PWINDBG_OUTPUT_ROUTINE);
 typedef PWINDBG_OUTPUT_ROUTINE (*PGetOutput)();
@@ -26,3 +25,4 @@ public:
   static void Export(void);
   static void Write(const char *text);
 };
+#endif

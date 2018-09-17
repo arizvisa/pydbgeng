@@ -2,6 +2,6 @@ Q. What is PyDbgExt
 
 A. PyDbgExt is a WinDbg extention which support use Python script in WinDbg command line. Through this extention, we can call some predefine Python script to control the debug session, or directly evaluate expression or call other method.
 
-Q. What is PyDbgEng? 
+Q. What is PyDbgEng?
 
 A. PyDbgEng is a python module which is the wrapper of WinDbg interfaces. Through this module, we can write python script to control the debug engine. PyDbgExt use this module to support debug session control, user also can use it isolate to implement a custom debugger.

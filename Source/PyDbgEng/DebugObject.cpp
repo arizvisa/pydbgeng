@@ -1,116 +1,216 @@
 #include "StdAfx.h"
 #include "DebugObject.h"
+using namespace boost::python;
 
-void CDebugHelper::Export(void)
+void utils::Export(void)
 {
   enum_<ValueType>("ValueType")
-    .value("INVALID",   INVALID)
-    .value("INT8",      INT8)
-    .value("INT16",     INT16)
-    .value("INT32",     INT32)
-    .value("INT64",     INT64)
-    .value("FLOAT32",   FLOAT32)
-    .value("FLOAT64",   FLOAT64)
-    .value("FLOAT80",   FLOAT80)
-    .value("FLOAT82",   FLOAT82)
-    .value("FLOAT128",  FLOAT128)
-    .value("VECTOR64",  VECTOR64)
-    .value("VECTOR128", VECTOR128)
-    ;
-
-  enum_<OutputMask>("OutputMask")
-    .value("NORMAL",            MASK_NORMAL)
-    .value("ERROR",             MASK_ERROR)
-    .value("WARNING",           MASK_WARNING)
-    .value("VERBOSE",           MASK_VERBOSE)
-    .value("PROMPT",            MASK_PROMPT)
-    .value("REGISTERS",         MASK_REGISTERS)
-    .value("EXTENSION_WARNING", MASK_EXTENSION_WARNING)
-    .value("DEBUGGEE",          MASK_DEBUGGEE)
-    .value("DEBUGGEE_PROMPT",   MASK_DEBUGGEE_PROMPT)
-    .value("SYMBOLS",           MASK_SYMBOLS)
-    ;
-
-
-  enum_<OutputTarget>("OutputTarget")
-    .value("THIS_CLIENT",       TARGET_THIS_CLIENT)
-    .value("ALL_CLIENTS",       TARGET_ALL_CLIENTS)
-    .value("ALL_OTHER_CLIENTS", TARGET_ALL_OTHER_CLIENTS)
-    .value("IGNORE",            TARGET_IGNORE)
-    .value("LOG_ONLY",          TARGET_LOG_ONLY)
-    ;
-
-  enum_<KernelQualifier>("KernelQualifier")
-    .value("CONNECTION",  KERNEL_CONNECTION)
-    .value("LOCAL",       KERNEL_LOCAL)
-    .value("EXDI_DRIVER", KERNEL_EXDI_DRIVER)
-    .value("SMALL_DUMP",  KERNEL_SMALL_DUMP)
-    .value("DUMP",        KERNEL_DUMP)
-    .value("FULL_DUMP",   KERNEL_FULL_DUMP)
-    .value("TRACE_LOG",   KERNEL_TRACE_LOG)
-    ;
-
-  enum_<UserQualifier>("UserQualifier")  
-    .value("PROCESS",         USER_PROCESS)
-    .value("PROCESS_SERVER",  USER_PROCESS_SERVER)
-    .value("IDNA",            USER_IDNA)
-    .value("SMALL_DUMP",      USER_SMALL_DUMP)
-    .value("DUMP",            USER_DUMP)
-    .value("DUMP_WINDOWS_CE", USER_DUMP_WINDOWS_CE)
+    .value("INVALID",   ValueType::INVALID)
+    .value("INT8",      ValueType::INT8)
+    .value("INT16",     ValueType::INT16)
+    .value("INT32",     ValueType::INT32)
+    .value("INT64",     ValueType::INT64)
+    .value("FLOAT32",   ValueType::FLOAT32)
+    .value("FLOAT64",   ValueType::FLOAT64)
+    .value("FLOAT80",   ValueType::FLOAT80)
+    .value("FLOAT82",   ValueType::FLOAT82)
+    .value("FLOAT128",  ValueType::FLOAT128)
+    .value("VECTOR64",  ValueType::VECTOR64)
+    .value("VECTOR128", ValueType::VECTOR128)
     ;
 
 }
 
-size_t CDebugHelper::GetSize(const DEBUG_VALUE& value)
+/** Python helpers */
+// utils::len
+template<>
+size_t utils::len(const dict& obj)
 {
-  static const size_t s_ValueSize[] = 
-  { 
-    0, 
-    sizeof(value.I8), 
-    sizeof(value.I16), 
-    sizeof(value.I32), 
-    sizeof(value.I64),
-    sizeof(value.F32), 
-    sizeof(value.F64), 
-    _countof(value.F80Bytes), 
-    _countof(value.F82Bytes),
-    _countof(value.F128Bytes),
-    _countof(value.VI8) / 2,
-    _countof(value.VI8)
-  };
-
-  return value.Type < DEBUG_VALUE_TYPES ? s_ValueSize[value.Type] : 0;
+  return obj? ::PyDict_Size(obj.ptr()) : 0;
+}
+template<>
+size_t utils::len(const list& obj)
+{
+  return obj? ::PyList_Size(obj.ptr()) : 0;
 }
 
-const object CDebugHelper::ToObject(const DEBUG_VALUE& value)
+// utils::empty
+template <>
+bool utils::empty(const dict& obj)
 {
-  switch (value.Type)
-  {
-  case DEBUG_VALUE_INT8:    
-    return object(value.I8);
-  case DEBUG_VALUE_INT16:
-    return object(value.I16);
-  case DEBUG_VALUE_INT32:
-    return object(value.I32);
-  case DEBUG_VALUE_INT64:
-    return object(value.I64);
-  case DEBUG_VALUE_FLOAT32:
-    return object(value.F32);
-  case DEBUG_VALUE_FLOAT64:
-    return object(value.F64);
+  return !obj || ::PyDict_Size(obj.ptr()) == 0;
+}
+template <>
+bool utils::empty(const list& obj)
+{
+  return !obj || ::PyList_Size(obj.ptr()) == 0;
+}
+
+const std::string utils::str(const object& obj)
+{
+  return std::string(extract<char *>(object(handle<>(allow_null(::PyObject_Str(obj.ptr()))))));
+}
+
+const std::string utils::repr(const object& obj)
+{
+  return std::string(extract<char *>(object(handle<>(allow_null(::PyObject_Repr(obj.ptr()))))));
+}
+
+// utils::RaiseException
+void utils::RaiseException(errno_t err, std::string s, PyObject *type) throw(...)
+{
+  _set_errno(err);
+  ::PyErr_SetFromErrno(type);
+  throw_error_already_set();
+}
+
+void utils::RaiseException(const std::string& msg, std::string s, PyObject *type) throw(...)
+{
+  ::PyErr_SetString(type, msg.c_str());
+  throw_error_already_set();
+}
+
+void utils::RaiseException(const std::string& msg, PyObject *type) throw(...)
+{
+  ::PyErr_SetString(type, msg.c_str());
+  throw_error_already_set();
+}
+
+// utils::RealCheck
+template <>
+void utils::RealCheck(errno_t res, std::string s) throw(...)
+{
+  if (res != 0)
+    RaiseException(res, s);
+}
+
+template <>
+void utils::RealCheck(HRESULT res, std::string s) throw(...)
+{
+  if (SUCCEEDED(res)) {
+    ::PyErr_Clear();
+    return;
+  }
+  if (res == E_OUTOFMEMORY) {
+    ::PyErr_NoMemory();
+  } else if (res == E_INVALIDARG) {
+    ::PyErr_BadArgument();
+  } else {
+    PyObject *type = PyExc_RuntimeError;
+    const char *msg = NULL;
+
+    if (::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, res, 0, (LPTSTR) &msg, 0, NULL) > 0 &&
+			msg && strlen(msg) > 0) {
+      ::PyErr_SetString(type, msg);
+      ::LocalFree((HLOCAL) msg);
+    } else {
+      switch (res) {
+				case E_FAIL:
+					msg = "The operation could not be performed.";
+					break;
+				case E_NOINTERFACE:
+					msg = "The object searched for was not found.";
+					break;
+				case E_UNEXPECTED:
+					type = PyExc_SystemError;
+					msg = "The target was not accessible, or the engine was not in a state where the function or method could be processed.";
+					break;
+				case E_NOTIMPL:
+					type = PyExc_NotImplementedError;
+					msg = "Not implemented.";
+					break;
+      }
+      if (msg)
+        ::PyErr_SetString(type, msg);
+      else
+        ::PyErr_SetFromWindowsErr(res);
+    }
+  }
+  throw_error_already_set();
+}
+
+/** DbgEng Helpers */
+const object utils::ToObject(const DEBUG_VALUE& value)
+{
+  size_t size(0);
+  switch (value.Type) {
+    case DEBUG_VALUE_INVALID:
+      size = 0;
+      return object();
+    case DEBUG_VALUE_INT8:
+      size = sizeof(value.I8);
+      return object(value.I8);
+    case DEBUG_VALUE_INT16:
+      size = sizeof(value.I16);
+      return object(value.I16);
+    case DEBUG_VALUE_INT32:
+      size = sizeof(value.I32);
+      return object(value.I32);
+    case DEBUG_VALUE_INT64:
+      size = sizeof(value.I64);
+      return object(value.I64);
+    case DEBUG_VALUE_FLOAT32:
+      size = sizeof(value.F32);
+      return object(value.F32);
+    case DEBUG_VALUE_FLOAT64:
+      size = sizeof(value.F64);
+      return object(value.F64);
+
+    case DEBUG_VALUE_FLOAT80:
+      size = sizeof(value.F80Bytes);
+      break;
+    case DEBUG_VALUE_FLOAT82:
+      size = sizeof(value.F82Bytes);
+      break;
+    case DEBUG_VALUE_FLOAT128:
+      size = sizeof(value.F128Bytes);
+      break;
+    case DEBUG_VALUE_VECTOR64:
+      size = sizeof(value.VI8) / 2;
+      break;
+    case DEBUG_VALUE_VECTOR128:
+      size = sizeof(value.VI8);
+      break;
   }
 
-  size_t size = GetSize(value);
-
+  LPVOID data(NULL); Py_ssize_t len(0);
   object buffer(handle<>(::PyBuffer_New(size)));
-
-  LPVOID data = NULL;
-  Py_ssize_t len = 0;
 
   if (0 != ::PyObject_AsWriteBuffer(buffer.ptr(), &data, &len))
     throw_error_already_set();
-
   memcpy(data, &value, size);
-
   return buffer;
 }
+
+template<>
+static void utils::warning(boost::python::str message)
+{
+  object m;
+  m = import("logging");
+  m.attr("warn")(message);
+}
+template<>
+static void utils::fatal(boost::python::str message)
+{
+  object m;
+  m = import("logging");
+  m.attr("fatal")(message);
+  if (PyErr_Occurred()) {
+    PyErr_Print();
+    throw_error_already_set();
+  }
+}
+
+template<>
+static void utils::warning(const std::string& message)
+{ return utils::warning(boost::python::str(message.c_str())); }
+template<>
+static void utils::fatal(const std::string& message)
+{ return utils::fatal(boost::python::str(message.c_str())); }
+
+template<>
+static void utils::warning(const char* message)
+{ return utils::warning(boost::python::str(message)); }
+template<>
+static void utils::fatal(const char* message)
+{ return utils::fatal(boost::python::str(message)); }

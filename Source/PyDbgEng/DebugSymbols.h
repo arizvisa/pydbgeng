@@ -1,23 +1,17 @@
+#ifndef __DebugSymbols_h
+#define __DebugSymbols_h
 #pragma once
-
-#include <string>
-#include <vector>
-
-#include <DbgHelp.h>
 
 #include "DebugObject.h"
 #include "DebugControl.h"
 
-class CDebugSymbols 
-  : public CDebugObject<IDebugSymbols>
+class CDebugSymbols : public CDebugObject<IDebugSymbols>
 {
-  typedef CDebugObject<IDebugSymbols> __inherited;
 public:
   static const size_t MAX_PATH_LENGTH = 4096;
   static const size_t MAX_NAME_LENGTH = 1024;
-  
-  enum SymbolOption
-  {
+
+  enum class SymbolOption : ULONG {
     OPT_CASE_INSENSITIVE           = SYMOPT_CASE_INSENSITIVE,
     OPT_UNDNAME                    = SYMOPT_UNDNAME,
     OPT_DEFERRED_LOADS             = SYMOPT_DEFERRED_LOADS,
@@ -44,11 +38,10 @@ public:
     OPT_FAVOR_COMPRESSED           = SYMOPT_FAVOR_COMPRESSED,
     OPT_ALLOW_ZERO_ADDRESS         = SYMOPT_ALLOW_ZERO_ADDRESS,
     OPT_DISABLE_SYMSRV_AUTODETECT  = SYMOPT_DISABLE_SYMSRV_AUTODETECT,
-    OPT_DEBUG                      = SYMOPT_DEBUG                     
+    OPT_DEBUG                      = SYMOPT_DEBUG
   };
 
-  enum TypeOption
-  {
+  enum class TypeOption : ULONG {
     OPT_TYPE_DEFAULT       = 0,
     OPT_UNICODE_DISPLAY    = DEBUG_TYPEOPTS_UNICODE_DISPLAY,
     OPT_LONGSTATUS_DISPLAY = DEBUG_TYPEOPTS_LONGSTATUS_DISPLAY,
@@ -58,52 +51,48 @@ public:
 
   class CType;
 
-  class CModule : public __inherited
+  class CModule : public DebugInterface
   {
     ULONG64 m_base;
     std::string m_imageName, m_moduleName, m_LoadedImageName;
 
-    void Init(void); 
+    void Init(void);
 
     const std::string GetModuleNameString(ULONG which) const;
   public:
-    CModule(IUnknown *intf, ULONG idx, ULONG64 base = 0)
-      : __inherited(intf), m_base(base)
+    CModule(IUnknown *intf, ULONG idx, ULONG64 base = 0) : DebugInterface(intf),
+      m_base(base)
     {
       if (!m_base)
         Check(m_intf->GetModuleByIndex(idx, &m_base));
     }
 
-    ULONG64 GetBase(void) const { return m_base; }
+    ULONG64 GetBase(void) const;
 
-    const std::string GetImageName(void) const { return GetModuleNameString(DEBUG_MODNAME_IMAGE); }
-    const std::string GetModuleName(void) const { return GetModuleNameString(DEBUG_MODNAME_MODULE); }
-    const std::string GetLoadedImageName(void) const { return GetModuleNameString(DEBUG_MODNAME_LOADED_IMAGE); }
-    const std::string GetSymbolFileName(void) const { return GetModuleNameString(DEBUG_MODNAME_SYMBOL_FILE); }
-    const std::string GetMappedImageName(void) const { return GetModuleNameString(DEBUG_MODNAME_MAPPED_IMAGE); }
+    const std::string GetImageName(void) const;
+    const std::string GetModuleName(void) const;
+    const std::string GetLoadedImageName(void) const;
+    const std::string GetSymbolFileName(void) const;
+    const std::string GetMappedImageName(void) const;
 
     const CType GetTypeByName(const std::string& name) const;
 
-    void Reload(void) const { m_intf->Reload(GetModuleName().c_str()); }
+    void Reload(void) const;
 
-    static const object Repr(const CModule& module) 
-    {
-      return "(Module %s @ %08x)" % make_tuple(module.GetModuleName().c_str(), module.GetBase());
-    }
+    static const object Repr(const CModule& module);
   };
- 
-  class CType : public __inherited
+
+  class CType : public DebugInterface
   {
     ULONG64 m_module;
     ULONG m_id;
   public:
-    CType(IUnknown *intf, ULONG64 module, ULONG id)
-      : __inherited(intf), m_module(module), m_id(id)
-    {
-    }
+    CType(IUnknown *intf, ULONG64 module, ULONG id) : DebugInterface(intf),
+      m_module(module), m_id(id)
+    {}
 
-    const CModule GetModule(void) const { return CModule(m_intf, DEBUG_ANY_ID, m_module); }
-    ULONG GetId(void) const { return m_id; }
+    const CModule GetModule(void) const;
+    ULONG GetId(void) const;
 
     const std::string GetName(void) const;
     ULONG GetSize(void) const;
@@ -116,45 +105,39 @@ public:
     const object ReadVirtual(ULONG64 offset) const;
     ULONG WriteVirtual(ULONG64 offset, const object buffer) const;
 
-    void OutputPhysical(ULONG64 offset, TypeOption options = OPT_TYPE_DEFAULT, OutputTarget target = TARGET_ALL_CLIENTS);
-    void OutputVirtual(ULONG64 offset, TypeOption options = OPT_TYPE_DEFAULT, OutputTarget target = TARGET_ALL_CLIENTS);
+    void OutputPhysical(ULONG64 offset, TypeOption options=TypeOption::OPT_TYPE_DEFAULT, CDebugControl::OutputTarget target=CDebugControl::OutputTarget::TARGET_ALL_CLIENTS);
+    void OutputVirtual(ULONG64 offset, TypeOption options=TypeOption::OPT_TYPE_DEFAULT, CDebugControl::OutputTarget target=CDebugControl::OutputTarget::TARGET_ALL_CLIENTS);
 
-    static const object Repr(const CType& type) 
-    {
-      return "(Type %s!%s)" % make_tuple(type.GetModule().GetModuleName().c_str(), type.GetName().c_str());
-    }
+    static const object Repr(const CType& type);
   };
 
   class CSymbol : public CDebugObject<IDebugSymbols3>
   {
-    typedef CDebugObject<IDebugSymbols3> __inherited;
+    typedef CDebugObject<IDebugSymbols3> DebugInterface;
 
     DEBUG_SYMBOL_ENTRY m_entry;
   public:
-    CSymbol(IUnknown *intf, DEBUG_MODULE_AND_ID& id)
-      : __inherited(intf)
+    CSymbol(IUnknown *intf, DEBUG_MODULE_AND_ID& id) :
+      DebugInterface(intf)
     {
       Check(m_intf->GetSymbolEntryInformation(&id, &m_entry));
     }
 
     const std::string GetName(void) const;
 
-    const CModule GetModule(void) const { return CModule(m_intf, DEBUG_ANY_ID, m_entry.ModuleBase); }
-    ULONG64 GetModuleBase(void) const { return m_entry.ModuleBase; }
-    ULONG64 GetId(void) const { return m_entry.Id; }
+    const CModule GetModule(void) const;
+    ULONG64 GetModuleBase(void) const;
+    ULONG64 GetId(void) const;
 
-    ULONG64 GetOffset(void) const { return m_entry.Offset; }
-    ULONG GetSize(void) const { return m_entry.Size; }
-    ULONG GetTypeId(void) const { return m_entry.TypeId; }    
-    ULONG GetToken(void) const { return m_entry.Token; }
-    ULONG GetTag(void) const { return m_entry.Tag; }
-    ULONG GetArg32(void) const { return m_entry.Arg32; }
-    ULONG64 GetArg64(void) const { return m_entry.Arg64; }
+    ULONG64 GetOffset(void) const;
+    ULONG GetSize(void) const;
+    ULONG GetTypeId(void) const;
+    ULONG GetToken(void) const;
+    ULONG GetTag(void) const;
+    ULONG GetArg32(void) const;
+    ULONG64 GetArg64(void) const;
 
-    static const object Repr(const CSymbol& symbol) 
-    {
-      return "(Symbol %s!%s)" % make_tuple(symbol.GetModule().GetModuleName().c_str(), symbol.GetName().c_str());
-    }
+    static const object Repr(const CSymbol& symbol);
   };
 
   struct SymbolMatcher
@@ -169,33 +152,14 @@ public:
     }
     ~SymbolMatcher()
     {
-      if (m_handle) Check(m_intf->EndSymbolMatch(m_handle));
+      if (m_handle)
+        Check(m_intf->EndSymbolMatch(m_handle));
     }
-
-    bool Next(std::string& name, ULONG64& offset)
-    {
-      char szName[MAX_NAME_LENGTH];
-      ULONG size = _countof(szName);
-
-      HRESULT hr = m_intf->GetNextSymbolMatch(m_handle, szName, _countof(szName), &size, &offset);
-
-      if (SUCCEEDED(hr))
-      {
-        name = std::string(szName, size-1);
-      }
-      else
-      {
-        name.clear();
-        offset = 0;
-      }
-
-      return S_OK == hr;
-    }
+    bool Next(std::string& name, ULONG64& offset);
   };
 public:
-  CDebugSymbols(IUnknown *intf) : __inherited(intf)
-  {
-  }
+  CDebugSymbols(IUnknown *intf) : DebugInterface(intf)
+  {}
 
   static void Export(void);
 
@@ -237,6 +201,4 @@ public:
   const dict GetSymbolsByName(const std::string& pattern) const;
   const dict GetSymbolsByOffset(ULONG64 offset) const;
 };
-
-template <>
-CDebugObject<IDebugSymbols>::operator IDebugSymbols*(void) const { return m_intf; }
+#endif

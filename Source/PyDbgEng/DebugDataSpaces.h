@@ -1,23 +1,22 @@
+#ifndef __DebugDataSpaces_h
+#define __DebugDataSpaces_h
 #pragma once
 
 #include "DebugObject.h"
 
 class CDebugDataSpaces : public CDebugObject<IDebugDataSpaces>
 {
-  typedef CDebugObject<IDebugDataSpaces> __inherited;
+
 public:
   class CHandle : public CDebugObject<IDebugDataSpaces2>
   {
-    typedef CDebugObject<IDebugDataSpaces2> __inherited;
-
     ULONG64 m_object;
 
     const DEBUG_HANDLE_DATA_BASIC GetBasicData(void) const;
   public:
-    CHandle(IUnknown *intf, ULONG64 object) 
-      : __inherited(intf), m_object(object)
-    {      
-    }
+    CHandle(IUnknown *intf, ULONG64 object)
+      : DebugInterface(intf), m_object(object)
+    { }
 
     ULONG64 GetObject(void) const { return m_object; }
 
@@ -28,41 +27,38 @@ public:
     ULONG GetHandleCount(void) const;
     ULONG GetPointerCount(void) const { return GetBasicData().PointerCount; }
 
-    static const object Repr(const CHandle& handle)
-    {
-      return "(Handle %08x %s:%s)" % make_tuple(handle.GetObject(), 
+    static const object Repr(const CHandle& handle) {
+      return "(Handle %08x %s:%s)" % make_tuple(handle.GetObject(),
         handle.GetTypeName().c_str(), handle.GetObjectName().c_str());
     }
   };
 
-  enum CacheType
-  {
+  enum CacheType {
     TYPE_DEFAULT        = DEBUG_PHYSICAL_DEFAULT,
     TYPE_CACHED         = DEBUG_PHYSICAL_CACHED,
     TYPE_UNCACHED       = DEBUG_PHYSICAL_UNCACHED,
-    TYPE_WRITE_COMBINED = DEBUG_PHYSICAL_WRITE_COMBINED 
+    TYPE_WRITE_COMBINED = DEBUG_PHYSICAL_WRITE_COMBINED
   };
 
-  enum SearchFlag
-  {
+  enum SearchFlag {
     SEARCH_DEFAULT        = DEBUG_VSEARCH_DEFAULT,
     SEARCH_WRITABLE_ONLY  = DEBUG_VSEARCH_WRITABLE_ONLY
   };
 
-  enum AddressType
-  {
+  enum AddressType {
     VSOURCE_INVALID = DEBUG_VSOURCE_INVALID,
     VSOURCE_DEBUGGEE = DEBUG_VSOURCE_DEBUGGEE,
-    VSOURCE_MAPPED_IMAGE = DEBUG_VSOURCE_MAPPED_IMAGE 
+    VSOURCE_MAPPED_IMAGE = DEBUG_VSOURCE_MAPPED_IMAGE
   };
 
-  class CDataSpace : public __inherited
+  class CDataSpace : public DebugInterface
   {
+
   protected:
-    CDataSpace(const CDebugDataSpaces *owner) 
-      : __inherited(owner->GetInterface())
-    {
-    }
+    CDataSpace(const CDebugDataSpaces *owner)
+      : DebugInterface(owner->GetInterface())
+    { }
+
   public:
     virtual const object Read(ULONG64 offset, ULONG size, CacheType type = TYPE_DEFAULT) const = 0;
     virtual ULONG Write(ULONG64 offset, const object& buffer, CacheType type = TYPE_DEFAULT) const = 0;
@@ -73,9 +69,7 @@ public:
   {
   public:
     CVirtualDataSpace(const CDebugDataSpaces *owner) : CDataSpace(owner)
-    {
-
-    }
+    { }
 
     virtual const object Read(ULONG64 offset, ULONG size, CacheType type = TYPE_DEFAULT) const;
     virtual ULONG Write(ULONG64 offset, const object& buffer, CacheType type = TYPE_DEFAULT) const;
@@ -87,8 +81,8 @@ public:
     const std::string ReadMultiByteString(ULONG64 offset, ULONG maxBytes) const;
     const std::wstring ReadUnicodeString(ULONG64 offset, ULONG maxBytes) const;
 
-    ULONG64 Search(ULONG64 offset, ULONG64 length, const object& pattern, 
-      SearchFlag flags = SEARCH_DEFAULT, ULONG granularity = 1) const;    
+    ULONG64 Search(ULONG64 offset, ULONG64 length, const object& pattern,
+      SearchFlag flags = SEARCH_DEFAULT, ULONG granularity = 1) const;
 
     AddressType GetOffsetInformation(ULONG64 offset) const;
     const tuple GetValidRegion(ULONG64 base, ULONG size) const;
@@ -114,11 +108,9 @@ public:
   {
     ULONG m_uBusDataType, m_uBusNumber, m_uSlotNumber;
   public:
-    CBusDataSpace(const CDebugDataSpaces *owner, ULONG BusDataType, ULONG BusNumber, ULONG SlotNumber) 
+    CBusDataSpace(const CDebugDataSpaces *owner, ULONG BusDataType, ULONG BusNumber, ULONG SlotNumber)
       : CDataSpace(owner), m_uBusDataType(BusDataType), m_uBusNumber(BusNumber), m_uSlotNumber(SlotNumber)
-    {
-
-    }
+    { }
 
     ULONG GetBusDataType(void) const { return m_uBusDataType; }
     ULONG GetBusNumber(void) const { return m_uBusNumber; }
@@ -137,17 +129,13 @@ public:
     T ReadSystemData(ULONG index) const
     {
       T value;
-
       Check(m_intf->ReadProcessorSystemData(m_processor, index, &value, sizeof(T), NULL));
-
       return value;
     }
   public:
-    CControlDataSpace(const CDebugDataSpaces *owner, ULONG processor) 
+    CControlDataSpace(const CDebugDataSpaces *owner, ULONG processor)
       : CDataSpace(owner), m_processor(processor)
-    {
-
-    }
+    { }
 
     ULONG GetProcssor(void) const { return m_processor; }
 
@@ -167,11 +155,9 @@ public:
   {
     ULONG m_uInterfaceType, m_uBusNumber, m_uAddressSpace;
   public:
-    CIoDataSpace(const CDebugDataSpaces *owner, ULONG InterfaceType, ULONG BusNumber, ULONG AddressSpace) 
+    CIoDataSpace(const CDebugDataSpaces *owner, ULONG InterfaceType, ULONG BusNumber, ULONG AddressSpace)
       : CDataSpace(owner), m_uInterfaceType(InterfaceType), m_uBusNumber(BusNumber), m_uAddressSpace(AddressSpace)
-    {
-
-    }
+    { }
 
     ULONG GetInterfaceType(void) const { return m_uInterfaceType; }
     ULONG GetBusNumber(void) const { return m_uBusNumber; }
@@ -182,14 +168,12 @@ public:
     virtual ULONG Fill(ULONG64 offset, ULONG size, const object& pattern) const;
   };
 
-  class CMsrDataSpace : public __inherited
+  class CMsrDataSpace : public DebugInterface
   {
   public:
-    CMsrDataSpace(const CDebugDataSpaces *owner) 
-      : __inherited(owner->GetInterface())
-    {
-
-    }
+    CMsrDataSpace(const CDebugDataSpaces *owner)
+      : DebugInterface(owner->GetInterface())
+    { }
 
     ULONG64 Read(ULONG msr) const;
     void Write(ULONG msr, ULONG64 value) const;
@@ -199,12 +183,11 @@ public:
   {
     GUID m_tag;
     ULONG m_size;
-  public:
-    CTaggedDataSpace(const CDebugDataSpaces *owner, const GUID& tag, ULONG size) 
-      : CDataSpace(owner), m_tag(tag), m_size(size)
-    {
 
-    }
+  public:
+    CTaggedDataSpace(const CDebugDataSpaces *owner, const GUID& tag, ULONG size)
+      : CDataSpace(owner), m_tag(tag), m_size(size)
+    { }
 
     const GUID GetTag(void) const { return m_tag; }
     const std::string GetTagString(void) const;
@@ -215,10 +198,8 @@ public:
     virtual ULONG Fill(ULONG64 offset, ULONG size, const object& pattern) const;
   };
 public:
-  CDebugDataSpaces(IUnknown *intf) : __inherited(intf)
-  {
-
-  }
+  CDebugDataSpaces(IUnknown *intf) : DebugInterface(intf)
+  { }
 
   static void Export(void);
 
@@ -233,5 +214,4 @@ public:
   ULONG64 VirtualToPhysical(ULONG64 address) const;
   const list GetTranslationPages(ULONG64 address) const;
 };
-
-//template <> CDebugObject<IDebugDataSpaces>::operator IDebugDataSpaces*(void) const { return m_intf; }
+#endif

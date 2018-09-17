@@ -106,12 +106,12 @@ if __name__ == '__main__':
     import debug; reload(debug)
     module=debug
 
-    address = 0x76c61126 
+    address = 0x76c61126
 
     import sys
     pid = int(sys.argv[1])
 #    pid = 1868
-    
+
     self = module.client()
     self.setcallbacks()
 

@@ -27,7 +27,7 @@ c.CreateProcess("ftp.exe", createFlags=[CreateFlags.ATTACH_ONLY_THIS_PROCESS, Cr
 
 while c.Control.WaitForEvent():
  pass
- 
+
 ### for handling different debugger events
 
 def onCreateProcess(args):
@@ -75,7 +75,7 @@ def onLoadModule(args):
  print "ModLoad: %08x-%08x %s\t%s" % ( args.BaseOffset, args.BaseOffset+args.ModuleSize, args.ModuleName, args.ImageName)
 
 if "WS2_32" == args.ModuleName:
-  bp = c.Control.AddBreakpoint(flags=[BreakpointFlag.ENABLED], offset=c.Symbols.GetOffsetByName("WS2_32!socket")) 
+  bp = c.Control.AddBreakpoint(flags=[BreakpointFlag.ENABLED], offset=c.Symbols.GetOffsetByName("WS2_32!socket"))
 
   symbol = c.Symbols.GetNameByOffset(bp.Offset)
   print "Add Breakpoint: %s %d @ %08x %s:%d" % (str(bp.Type[0]), bp.Id, bp.Offset, symbol[0], symbol[1])

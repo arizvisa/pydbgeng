@@ -1,3 +1,5 @@
+#ifndef __PythonContext_h
+#define __PythonContext_h
 #pragma once
 
 #include <boost/python.hpp>
@@ -10,36 +12,28 @@ class CPythonContext
 public:
   CPythonContext(void);
   ~CPythonContext(void)
-  {
-  }
+  { }
 
   bool Import(const std::string& name, object& mod);
   object Import(const std::string& name);
 
-  object ExecuteFile( const std::string& filename)
-  {
+  object ExecuteFile( const std::string& filename) {
     return exec_file( str(filename), m_objMainNamespace, m_objLocalNamespace );
   }
 
-  object Execute(const std::string& command)
-  {
-    return exec( str(command), m_objMainNamespace, m_objLocalNamespace );    
+  object Execute(const std::string& command) {
+    return exec( str(command), m_objMainNamespace, m_objLocalNamespace );
   }
 
   template <typename T>
   bool Execute(const std::string& command, T& value)
   {
-    try
-    {
+    try {
       object result( exec( str(command.cstr()), m_objMainNamespace, m_objLocalNamespace ) );
-
       if (result)
         value = extract<T>(result);
-
       return true;
-    }
-    catch(error_already_set)
-    {
+    } catch(error_already_set) {
       return false;
     }
   }
@@ -47,3 +41,4 @@ public:
   void AddSymbol(const std::string& name, object obj);
   void AddSymbols(const dict& symbols);
 };
+#endif

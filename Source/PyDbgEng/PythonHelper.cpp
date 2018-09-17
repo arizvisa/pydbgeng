@@ -78,7 +78,7 @@ void CPythonHelper::RealCheck(HRESULT hr, std::string s) throw(...)
     PyObject *type = PyExc_RuntimeError;
     const char *msg = NULL;
 
-    if (::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, 
+    if (::FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
       NULL, hr, 0, (LPTSTR) &msg, 0, NULL) > 0 && msg && strlen(msg) > 0)
     {
       ::PyErr_SetString(type, msg);
@@ -92,7 +92,7 @@ void CPythonHelper::RealCheck(HRESULT hr, std::string s) throw(...)
       case E_FAIL:
         msg = "The operation could not be performed.";
         break;
-      case E_NOINTERFACE:    
+      case E_NOINTERFACE:
         msg = "The object searched for was not found.";
         break;
       case E_UNEXPECTED:
@@ -105,7 +105,7 @@ void CPythonHelper::RealCheck(HRESULT hr, std::string s) throw(...)
         break;
       }
 
-      if (msg) 
+      if (msg)
         ::PyErr_SetString(type, msg);
       else
         ::PyErr_SetFromWindowsErr(hr);

@@ -1,3 +1,5 @@
+#ifndef __FileVersion_h
+#define __FileVersion_h
 #pragma once
 
 #include <string>
@@ -7,12 +9,11 @@
 
 namespace util
 {
-  struct VS_VERSIONINFO
-  {
-    WORD  wLength; 
-    WORD  wValueLength; 
-    WORD  wType; 
-    WCHAR szKey[1]; 
+  struct VS_VERSIONINFO {
+    WORD  wLength;
+    WORD  wValueLength;
+    WORD  wType;
+    WCHAR szKey[1];
   };
 
   struct LANGANDCODEPAGE {
@@ -37,9 +38,9 @@ namespace util
     CFileVersion(const char *szFileName);
     ~CFileVersion(void);
 
-    ULARGE_INTEGER GetFileVersionValue(void) const; 
+    ULARGE_INTEGER GetFileVersionValue(void) const;
     const std::string GetFileVersionString(void) const { return FormatVersionString(GetFileVersionValue()); }
-    ULARGE_INTEGER GetProductVersionValue(void) const; 
+    ULARGE_INTEGER GetProductVersionValue(void) const;
     const std::string GetProductVersionString(void) const { return FormatVersionString(GetProductVersionValue()); }
 
     const std::string GetComments(void) const { return GetStringValue("Comments"); }
@@ -56,3 +57,4 @@ namespace util
     const std::string GetSpecialBuild(void) const { return GetStringValue("SpecialBuild"); }
   };
 }
+#endif

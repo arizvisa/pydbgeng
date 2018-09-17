@@ -11,9 +11,8 @@ CPythonContext::CPythonContext(void)
 bool CPythonContext::Import(const std::string& name, object& mod)
 {
   handle<> result(allow_null(::PyImport_ImportModule(name.c_str())));
-
-  if (result) mod = object(result);
-
+  if (result)
+    mod = object(result);
   return result;
 }
 
@@ -26,9 +25,7 @@ object CPythonContext::Import(const std::string& name)
 void CPythonContext::AddSymbol(const std::string& name, object obj)
 {
   dict symbols;
-
   symbols[name] = obj;
-
   AddSymbols(symbols);
 }
 

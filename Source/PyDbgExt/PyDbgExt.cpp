@@ -26,7 +26,7 @@ using namespace boost::algorithm;
 #include "DebugOutput.h"
 
 #include "FileVersion.h"
-     
+
 #define EXT_NAME "pydbgext"
 
 HANDLE g_hModule = NULL;
@@ -39,29 +39,21 @@ std::auto_ptr<CPythonContext> g_global;
 namespace DbgEng {
 	PSetOutput SetOutput;
 	PGetOutput GetOutput;
-	PUseClient UseClient;
-	PReleaseClient ReleaseClient;
 }
 
 bool InitDbgEng()
 {
 	HMODULE m;
-
 	m = ::GetModuleHandle("_PyDbgEng.pyd");
 	DbgEng::GetOutput = (PGetOutput) ::GetProcAddress(m, "GetOutput");
 	DbgEng::SetOutput = (PSetOutput) ::GetProcAddress(m, "SetOutput");
-	DbgEng::UseClient = (PUseClient) ::GetProcAddress(m, "UseClient");
-	DbgEng::ReleaseClient = (PReleaseClient) ::GetProcAddress(m, "ReleaseClient");
-
 	return true;
 }
 
 BOOL APIENTRY DllMain( HANDLE hModule, DWORD dwReason, LPVOID lpReserved )
 {
   UNREFERENCED_PARAMETER(lpReserved);
-
-  switch (dwReason)
-  {
+  switch (dwReason) {
   case DLL_PROCESS_ATTACH:
     g_hModule = hModule;
   case DLL_THREAD_ATTACH:
@@ -69,7 +61,6 @@ BOOL APIENTRY DllMain( HANDLE hModule, DWORD dwReason, LPVOID lpReserved )
   case DLL_PROCESS_DETACH:
     break;
   }
-
   return TRUE;
 }
 
@@ -82,23 +73,24 @@ const std::string repr(const object& obj)
 void
 PyExecuteFile( std::string path )
 {
-    g_engine->Acquire();
-    try {
-      object result = g_global->ExecuteFile(path);
-      if (result)         
-        dprintf("%s\n", repr(result).c_str());
-    } catch(error_already_set) {
-      PyErr_Print();
-    }
-    g_engine->Release();
+  g_engine->Acquire();
+  try {
+    object result = g_global->ExecuteFile(path);
+    if (result)
+      dprintf("%s\n", repr(result).c_str());
+  } catch(error_already_set) {
+    PyErr_Print();
+  } catch (...) {
+    handle_exception();
+  }
+  g_engine->Release();
 }
 
 extern "C" __declspec(dllexport) HRESULT CALLBACK DebugExtensionInitialize(PULONG Version, PULONG Flags)
 {
-  if (g_engine.get() != 0) {
-    /* XXX: already initialized? */
+  /* XXX: already initialized? */
+  if (g_engine.get() != 0)
     return 0;
-  }
 
   *Version = DEBUG_EXTENSION_VERSION(1, 0);
   *Flags = 0;
@@ -109,7 +101,7 @@ extern "C" __declspec(dllexport) HRESULT CALLBACK DebugExtensionInitialize(PULON
   if (FAILED(hr))
 	  return hr;
   CComQIPtr<IDebugControl> control = client;
-  
+
   ExtensionApis.nSize = sizeof(ExtensionApis);
   hr = control->GetWindbgExtensionApis64(&ExtensionApis);
   if (FAILED(hr))
@@ -130,13 +122,11 @@ extern "C" __declspec(dllexport) HRESULT CALLBACK DebugExtensionInitialize(PULON
   DbgEng::SetOutput(dprintf);
 
   object objDebugOutput = lookup.get("DebugOutput")();
-
   import("sys").attr("stdout") = objDebugOutput;
   import("sys").attr("stderr") = objDebugOutput;
 
   /* execute the user's rc file now that our namespace is prepared */
   PyExecuteFile(std::string(getenv("USERPROFILE")) + "\\pydbgextrc.py");
-
   g_engine->Release();
   return hr;
 }
@@ -154,15 +144,14 @@ extern "C" __declspec(dllexport) void CALLBACK DebugExtensionNotify(ULONG Notify
   UNREFERENCED_PARAMETER(Argument);
 
   /* XXX: should we save our python state somewhere?? */
-  switch (Notify)
-  {
+  switch (Notify) {
   case DEBUG_NOTIFY_SESSION_ACTIVE:
     /* locate and execute the rc script in our homedirectory */
     PyExecuteFile(std::string(getenv("USERPROFILE")) + "\\pydbgextsess.py");
-    break;  
+    break;
 
   case DEBUG_NOTIFY_SESSION_INACTIVE:
-    break;  
+    break;
 
   case DEBUG_NOTIFY_SESSION_ACCESSIBLE:
     break;
@@ -186,8 +175,7 @@ extern "C" __declspec(dllexport) HRESULT CALLBACK help(PDEBUG_CLIENT Client, PCS
   szExtPath[::GetModuleFileName((HMODULE) g_hModule, szExtPath, _countof(szExtPath))] = 0;
   ::GetFileAttributesEx(szExtPath, GetFileExInfoStandard, &wfad);
 
-  FILETIME ftCreate;
-  SYSTEMTIME stCreate;
+  FILETIME ftCreate; SYSTEMTIME stCreate;
   ::FileTimeToLocalFileTime(&wfad.ftCreationTime, &ftCreate);
   ::FileTimeToSystemTime(&ftCreate, &stCreate);
 
@@ -209,17 +197,15 @@ extern "C" __declspec(dllexport) HRESULT CALLBACK help(PDEBUG_CLIENT Client, PCS
           "\texec\t\t\t: Execute a python script\n"
           "\thelp\t\t\t: Shows this help\n"
           "\tpy\t\t\t: Evaluate a python expression\n",
-          ver.GetFileVersionString().c_str(), szExtDate, szExtTime, szExtPath, wfad.nFileSizeLow, 
+          ver.GetFileVersionString().c_str(), szExtDate, szExtTime, szExtPath, wfad.nFileSizeLow,
           g_engine->GetVersion(), g_engine->GetPlatform());
   g_engine->Release();
-
   return S_OK;
 }
 
 std::ostream& operator << (std::ostream& os, const DEBUG_VALUE& value)
 {
-  switch (value.Type)
-  {  
+  switch (value.Type) {
   case DEBUG_VALUE_INT8:
     os << value.I8;
     break;
@@ -246,24 +232,18 @@ HRESULT evaluate(PDEBUG_CLIENT Client, PCSTR args)
 {
   HRESULT result(E_FAIL);
 
-  //CDebugClient::Scope use(Client);
-  DbgEng::UseClient(Client);
   g_engine->Acquire();
-
-  try
-  {
+  try {
     object r = g_global->Execute(args);
     if (r)
-      dprintf("%s\n", repr(r).c_str());    
+      dprintf("%s\n", repr(r).c_str());
     result = S_OK;
-  }
-  catch(error_already_set)
-  {
+  } catch(error_already_set) {
     PyErr_Print();
+  } catch (...) {
+    handle_exception();
   }
-
   g_engine->Release();
-  DbgEng::ReleaseClient();
   return result;
 }
 
@@ -279,25 +259,22 @@ extern "C" __declspec(dllexport) HRESULT CALLBACK py(PDEBUG_CLIENT Client, PCSTR
 
 extern "C" __declspec(dllexport) HRESULT CALLBACK exec(PDEBUG_CLIENT Client, PCSTR args)
 {
-  //CDebugClient::Scope use(Client); 
+  //CDebugClient::Scope use(Client);
   HRESULT result = E_FAIL;
-  DbgEng::UseClient(Client);
   g_engine->Acquire();
 
-  try
-  {
+  try {
     object r = g_global->ExecuteFile(args);
-
     if (r) {
       dprintf("%s\n", repr(r).c_str());
       g_global->AddSymbol("_", r);   /* FIXME: this doesn't seem to work... */
 
     }
     result = S_OK;
-  }
-  catch(error_already_set)
-  {
+  } catch(error_already_set) {
     PyErr_Print();
+  } catch (...) {
+    handle_exception();
   }
   g_engine->Release();
   return result;
@@ -305,36 +282,31 @@ extern "C" __declspec(dllexport) HRESULT CALLBACK exec(PDEBUG_CLIENT Client, PCS
 
 extern "C" __declspec(dllexport) HRESULT CALLBACK import(PDEBUG_CLIENT Client, PCSTR args)
 {
-  //CDebugClient::Scope use(Client); 
-  DbgEng::UseClient(Client);
   HRESULT result = E_FAIL;
-  
+
   g_engine->Acquire();
-  try
-  {
+  try {
     std::vector<std::string> modules;
     split(modules, std::string(args), is_any_of(", "));
 
     for (std::vector<std::string>::const_iterator it = modules.begin(); it != modules.end(); it++) {
       const std::string name = *it;
       if (name.empty())
-	    continue;
-
+        continue;
       object mod;
       if (g_global->Import(name, mod)) {
         g_global->AddSymbol(name, mod);
-        dprintf("Import %s succeeded.\n", repr(mod).c_str());    
-	  } else {
+        dprintf("Import %s succeeded.\n", repr(mod).c_str());
+      } else
         dprintf("No module named %s.\n", name.c_str());
-      }
     }
     result = S_OK;
-  }
-  catch(error_already_set)
-  {
+  } catch(error_already_set) {
     PyErr_Print();
+  } catch (...) {
+    handle_exception();
   }
-  DbgEng::ReleaseClient();
+
   g_engine->Release();
   return result;
 }
@@ -342,8 +314,7 @@ extern "C" __declspec(dllexport) HRESULT CALLBACK import(PDEBUG_CLIENT Client, P
 #if 0
 extern "C" __declspec(dllexport) HRESULT CALLBACK from(PDEBUG_CLIENT Client, PCSTR args)
 {
-  //CDebugClient::Scope use(Client); 
-  DbgEng::UseClient(Client);
+  //CDebugClient::Scope use(Client);
   HRESULT result = E_FAIL;
 
   const char *pszImport = strstr(args, " import ");
@@ -375,10 +346,10 @@ extern "C" __declspec(dllexport) HRESULT CALLBACK from(PDEBUG_CLIENT Client, PCS
         g_global->AddSymbols(modSymbols);
         symbolList = "all symbols";
       } else {
-        std::ostringstream oss, mss;        
+        std::ostringstream oss, mss;
 
         for (size_t i=0; i<symbols.size(); i++) {
-          const std::string symbolName = symbols[i];          
+          const std::string symbolName = symbols[i];
 
           if (symbolName.empty())
 			continue;
@@ -394,7 +365,7 @@ extern "C" __declspec(dllexport) HRESULT CALLBACK from(PDEBUG_CLIENT Client, PCS
         missingList = mss.str();
       }
 
-      dprintf("Import %s from %s succeeded.\n", symbolList.c_str(), repr(mod).c_str()); 
+      dprintf("Import %s from %s succeeded.\n", symbolList.c_str(), repr(mod).c_str());
       if (!missingList.empty())
         dprintf("Symbols %s are not exist in the module.\n", missingList.c_str());
     }
@@ -404,7 +375,6 @@ extern "C" __declspec(dllexport) HRESULT CALLBACK from(PDEBUG_CLIENT Client, PCS
   {
     PyErr_Print();
   }
-  DbgEng::ReleaseClient();
   g_engine->Release();
   return result;
 }
@@ -413,7 +383,6 @@ extern "C" __declspec(dllexport) HRESULT CALLBACK from(PDEBUG_CLIENT Client, PCS
 extern "C" __declspec(dllexport) HRESULT CALLBACK print(PDEBUG_CLIENT Client, PCSTR args)
 {
   /* FIXME: This function probably doesn't work as intended... */
-  DbgEng::UseClient(Client);
   g_engine->Acquire();
   HRESULT result = E_FAIL;
   try {
@@ -422,8 +391,9 @@ extern "C" __declspec(dllexport) HRESULT CALLBACK print(PDEBUG_CLIENT Client, PC
     result = S_OK;
   } catch(error_already_set) {
     PyErr_Print();
+  } catch (...) {
+    handle_exception();
   }
   g_engine->Release();
-  DbgEng::ReleaseClient();
   return result;
 }

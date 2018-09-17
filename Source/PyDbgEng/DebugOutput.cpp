@@ -1,7 +1,6 @@
 #include "StdAfx.h"
 #include "DebugOutput.h"
 
-#include <boost/python.hpp>
 using namespace boost::python;
 
 PWINDBG_OUTPUT_ROUTINE CDebugOutput::s_callback = NULL;

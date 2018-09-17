@@ -1,47 +1,40 @@
+#ifndef __DebugSystemObjects_h
+#define __DebugSystemObjects_h
 #pragma once
 
 #include <vector>
 
 #include "DebugObject.h"
-
 #include "DebugDataSpaces.h"
 
-class CDebugSystemObjects
-  : public CDebugObject<IDebugSystemObjects3>
+class CDebugSystemObjects : public CDebugObject<IDebugSystemObjects3>
 {
-  typedef CDebugObject<IDebugSystemObjects3> __inherited;
 public:
-  class CDebugSystem : public __inherited
+  class CDebugSystem : public DebugInterface
   {
     ULONG m_id;
   public:
-    CDebugSystem(const CDebugSystemObjects *owner, ULONG id) 
-      : __inherited(owner->GetInterface()), m_id(id)
-    {
-      
-    }
+    CDebugSystem(const CDebugSystemObjects *owner, ULONG id)
+      : DebugInterface(owner->GetInterface()), m_id(id)
+    {}
 
-    ULONG GetId(void) const { return m_id; }
+    ULONG GetId(void) const;
 
-    static const object Repr(const CDebugSystem& system)
-    {
-      return "(System %d)" % make_tuple(system.GetId());
-    }
+    static const object Repr(const CDebugSystem& system);
   };
 
-  class CSystemObject : public __inherited
+  class CSystemObject : public DebugInterface
   {
   protected:
     ULONG m_engineId, m_systemId;
 
     CSystemObject(const CDebugSystemObjects *owner, ULONG engineId, ULONG systemId)
-      : __inherited(owner->GetInterface()), m_engineId(engineId), m_systemId(systemId)
-    {
+      : DebugInterface(owner->GetInterface()), m_engineId(engineId), m_systemId(systemId)
+    {}
 
-    }
   public:
-    ULONG GetEngineId(void) const { return m_engineId; }
-    ULONG GetSystemId(void) const { return m_systemId; }
+    ULONG GetEngineId(void) const;
+    ULONG GetSystemId(void) const;
   };
 
   class CThread : public CSystemObject
@@ -49,14 +42,9 @@ public:
   public:
     CThread(const CDebugSystemObjects *owner, ULONG engineId, ULONG systemId)
       : CSystemObject(owner, engineId, systemId)
-    {
+    {}
 
-    }
-
-    static const object Repr(const CThread& thread)
-    {
-      return "(Thread %d %d)" % make_tuple(thread.GetEngineId(), thread.GetSystemId());
-    }
+    static const object Repr(const CThread& thread);
   };
 
   class CCurrentThread : public CThread
@@ -64,14 +52,11 @@ public:
   public:
     CCurrentThread(const CDebugSystemObjects *owner, ULONG engineId, ULONG systemId)
       : CThread(owner, engineId, systemId)
-    {
+    {}
 
-    }
-
-    CCurrentThread(const CThread& thread) : CThread(thread)
-    {
-
-    }
+    CCurrentThread(const CThread& thread)
+      : CThread(thread)
+    {}
 
     ULONG64 GetDataOffset(void) const;
     const CDebugDataSpaces::CHandle GetHandle(void) const;
@@ -82,14 +67,9 @@ public:
   public:
     CProcess(const CDebugSystemObjects *owner, ULONG engineId, ULONG systemId)
       : CSystemObject(owner, engineId, systemId)
-    {
+    {}
 
-    }
-
-    static const object Repr(const CProcess& process)
-    {
-      return "(Process %d %d)" % make_tuple(process.GetEngineId(), process.GetSystemId());
-    }
+    static const object Repr(const CProcess& process);
   };
 
   class CCurrentProcess : public CProcess
@@ -97,14 +77,11 @@ public:
   public:
     CCurrentProcess(const CDebugSystemObjects *owner, ULONG engineId, ULONG systemId)
       : CProcess(owner, engineId, systemId)
-    {
+    {}
 
-    }
-
-    CCurrentProcess(const CProcess& process) : CProcess(process)
-    {
-
-    }
+    CCurrentProcess(const CProcess& process)
+      : CProcess(process)
+    {}
 
     ULONG64 GetDataOffset(void) const;
     const CDebugDataSpaces::CHandle GetHandle(void) const;
@@ -114,9 +91,9 @@ public:
 
   const std::pair<ULONG, ULONG> GetTotalNumberThreads(void) const;
 public:
-  CDebugSystemObjects(IUnknown *intf) : __inherited(intf)
-  {
-  }
+  CDebugSystemObjects(IUnknown *intf)
+    : DebugInterface(intf)
+  {}
 
   static void Export(void);
 
@@ -142,8 +119,8 @@ public:
   const list GetThreads(void) const;
   const list GetProcesses(void) const;
 
-  ULONG GetTotalNumberOfThreads(void) const { return GetTotalNumberThreads().first; }
-  ULONG GetLargestNumberOfThreads(void) const { return GetTotalNumberThreads().second; }
+  ULONG GetTotalNumberOfThreads(void) const;
+  ULONG GetLargestNumberOfThreads(void) const;
 
   const CThread GetThreadByEngineId(ULONG engineId) const;
   const CProcess GetProcessByEngineId(ULONG engineId) const;
@@ -154,7 +131,6 @@ public:
   const CThread GetThreadByTeb(ULONG64 offset) const;
   const CProcess GetProcessByPeb(ULONG64 offset) const;
 
-  //
   const ULONG GetProcessIdByHandle(ULONG64 handle) const;
   const ULONG GetProcessIdBySystemId(ULONG SysId) const;
   const ULONG GetThreadIdByHandle(ULONG64 handle) const;
@@ -169,12 +145,11 @@ public:
   const HRESULT SetCurrentThreadId(ULONG id) const;
   const ULONG64 GetCurrentProcessPeb() const;
   const ULONG64 GetCurrentThreadTeb() const;
-  //
+
   const CThread GetThreadByProcessor(ULONG processor) const;
 
   ULONG GetNumberThreads(void) const;
   const list CDebugSystemObjects::GetThreadIdsByIndex(ULONG start, ULONG count) const;
 };
 
-template <>
-CDebugObject<IDebugSystemObjects>::operator IDebugSystemObjects*(void) const { return m_intf; }
+#endif

@@ -1,18 +1,16 @@
+#ifndef __DebugAdvanced_h
+#define __DebugAdvanced_h
 #pragma once
 
 #include "DebugObject.h"
 
 class CDebugAdvanced : public CDebugObject<IDebugAdvanced>
 {
-  typedef CDebugObject<IDebugAdvanced> __inherited;
 public:
-  CDebugAdvanced(IUnknown *intf) : __inherited(intf)
-  {
-
-  }
+  CDebugAdvanced(IUnknown *intf) : DebugInterface(intf)
+  { }
 
   static void Export(void);
 };
 
-template <>
-CDebugObject<IDebugAdvanced>::operator IDebugAdvanced*(void) const { return m_intf; }
+#endif
