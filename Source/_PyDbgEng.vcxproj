@@ -15,7 +15,7 @@
     <RootNamespace>_PyDbgEng</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <ProjectName>_PyDbgEng</ProjectName>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.14393.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -72,7 +72,7 @@
     </PreBuildEvent>
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>$(SolutionDir)Modules\python\include;$(SolutionDir)Modules\boost\include;$(SolutionDir)Modules\windbg\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Modules\python\include;$(SolutionDir)Modules\boost;$(SolutionDir)Modules\windbg\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PYDBGENG;WIN32;SOLUTIONDIR=$(SolutionDir);_DEBUG;_WINDOWS;_USRDLL;_USE_32BIT_TIME_T;PYDBGENG_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -84,14 +84,14 @@
     </ClCompile>
     <PreLinkEvent>
       <Message>Copying binary dependencies to intermediary directory</Message>
-      <Command>xcopy /Y "$(SolutionDir)Modules\boost\lib\boost_python-*-mt-gd-*.dll" "$(IntDir)"
+      <Command>xcopy /Y "$(SolutionDir)Modules\boost\stage\lib\boost_python-*-mt-gd-*.dll" "$(IntDir)"
 exit 0
 </Command>
     </PreLinkEvent>
     <Link>
       <AdditionalDependencies>dbgeng.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)_PyDbgEng.pyd</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)Modules\python\libs;$(SolutionDir)Modules\boost\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Modules\python\libs;$(SolutionDir)Modules\boost\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <AddModuleNamesToAssembly>%(AddModuleNamesToAssembly)</AddModuleNamesToAssembly>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
@@ -122,7 +122,7 @@ exit 0
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(SolutionDir)Modules\python\include;$(SolutionDir)Modules\boost\include;$(SolutionDir)Modules\windbg\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Modules\python\include;$(SolutionDir)Modules\boost;$(SolutionDir)Modules\windbg\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>PYDBGENG;WIN32;SOLUTIONDIR=$(SolutionDir);NDEBUG;_WINDOWS;_USRDLL;_USE_32BIT_TIME_T;PYDBGENG_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <OpenMPSupport>false</OpenMPSupport>
@@ -131,14 +131,14 @@ exit 0
     </ClCompile>
     <PreLinkEvent>
       <Message>Copying binary dependencies to intermediary directory</Message>
-      <Command>xcopy /Y "$(SolutionDir)Modules\boost\lib\boost_python-*-mt-1*.dll" "$(IntDir)"
+      <Command>xcopy /Y "$(SolutionDir)Modules\boost\stage\lib\boost_python-*-mt-1*.dll" "$(IntDir)"
 exit 0
 </Command>
     </PreLinkEvent>
     <Link>
       <AdditionalDependencies>dbgeng.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>$(OutDir)_PyDbgEng.pyd</OutputFile>
-      <AdditionalLibraryDirectories>$(SolutionDir)Modules\python\libs;$(SolutionDir)Modules\boost\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)Modules\python\libs;$(SolutionDir)Modules\boost\stage;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
