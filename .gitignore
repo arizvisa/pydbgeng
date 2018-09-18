@@ -1,6 +1,8 @@
 *.user
 *.filters
 *.suo
+ipch/*
+*.db
 
 *.dll
 *.exp
