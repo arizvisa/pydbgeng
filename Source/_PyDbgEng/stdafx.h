@@ -20,9 +20,11 @@
 #include <boost/python.hpp>
 
 // utilities
-#define _countof(array) (sizeof(array)/sizeof(array[0]))
-#ifndef __field_ecount_opt
-  #define __field_ecount_opt(x)
+#ifndef _countof
+	#define _countof(array) (sizeof(array)/sizeof(array[0]))
+	#ifndef __field_ecount_opt
+		#define __field_ecount_opt(x)
+	#endif
 #endif
 
 // disabling specific warnings
