@@ -7,6 +7,6 @@
 class CDebugEngine
 {
 public:
-  CDebugEngine(void);
-  ~CDebugEngine(void);
+	CDebugEngine(void);
+	~CDebugEngine(void);
 };
