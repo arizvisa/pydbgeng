@@ -1,9 +1,5 @@
 #include "StdAfx.h"
-
-#include "PythonHelper.h"
-#include "DebugObject.h"
-
-using namespace boost::python;
+#include "utils.h"
 
 void utils::Export(void)
 {

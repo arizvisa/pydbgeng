@@ -4,7 +4,7 @@
 #include <boost/python.hpp>
 using namespace boost::python;
 
-#include "PythonHelper.h"
+#include "utils.h"
 #include "DebugObject.h"
 
 #include "DebugOutput.h"

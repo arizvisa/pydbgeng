@@ -6,7 +6,7 @@
 
 #include <boost/python.hpp>
 
-#include "PythonHelper.h"
+#include "utils.h"
 #include "DebugObject.h"
 
 #include "DebugOutput.h"

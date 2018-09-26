@@ -1,9 +1,9 @@
 #include "StdAfx.h"
+#include "utils.h"
 
 #include <string>
 #include <vector>
 
-#include "PythonHelper.h"
 #include "DebugObject.h"
 
 #include "DebugOutput.h"

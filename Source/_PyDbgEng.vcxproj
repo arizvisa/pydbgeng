@@ -171,12 +171,11 @@ exit 0
     <ClCompile Include="$(ProjectDir)_PyDbgEng\DebugControl.cpp" />
     <ClCompile Include="$(ProjectDir)_PyDbgEng\DebugDataSpaces.cpp" />
     <ClCompile Include="$(ProjectDir)_PyDbgEng\DebugEngine.cpp" />
-    <ClCompile Include="$(ProjectDir)_PyDbgEng\DebugObject.cpp" />
     <ClCompile Include="$(ProjectDir)_PyDbgEng\DebugOutput.cpp" />
     <ClCompile Include="$(ProjectDir)_PyDbgEng\DebugRegisters.cpp" />
     <ClCompile Include="$(ProjectDir)_PyDbgEng\DebugSymbols.cpp" />
     <ClCompile Include="$(ProjectDir)_PyDbgEng\DebugSystemObjects.cpp" />
-    <ClCompile Include="$(ProjectDir)_PyDbgEng\PythonHelper.cpp" />
+    <ClCompile Include="_PyDbgEng\utils.cpp" />
     <ClCompile Include="$(ProjectDir)_PyDbgEng\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -194,7 +193,7 @@ exit 0
     <ClInclude Include="$(ProjectDir)_PyDbgEng\DebugRegisters.h" />
     <ClInclude Include="$(ProjectDir)_PyDbgEng\DebugSymbols.h" />
     <ClInclude Include="$(ProjectDir)_PyDbgEng\DebugSystemObjects.h" />
-    <ClInclude Include="$(ProjectDir)_PyDbgEng\PythonHelper.h" />
+    <ClInclude Include="_PyDbgEng\utils.h" />
     <ClInclude Include="$(ProjectDir)_PyDbgEng\resource.h" />
     <ClInclude Include="$(ProjectDir)_PyDbgEng\stdafx.h" />
     <ClInclude Include="_PyDbgEng\DebugBreakpoint.h" />
