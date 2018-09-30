@@ -5,13 +5,19 @@
 #include <string>
 #include <vector>
 
+#include <boost/python.hpp>
+#include <dbgeng.h>
+
+using namespace boost::python;
+
+/** Class declarations **/
 class CDebugRegisters : public CDebugObject<IDebugRegisters>
 {
 public:
 	enum class RegisterSource : ULONG {
 		DEBUGGEE = DEBUG_REGSRC_DEBUGGEE,
 		EXPLICIT = DEBUG_REGSRC_EXPLICIT,
-		FRAME = DEBUG_REGSRC_FRAME
+		FRAME = DEBUG_REGSRC_FRAME,
 	};
 
 	class CAbstractRegister : public DebugInterface

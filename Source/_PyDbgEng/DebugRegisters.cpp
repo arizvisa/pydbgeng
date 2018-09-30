@@ -1,9 +1,10 @@
 #include "StdAfx.h"
 #include "utils.h"
-
 #include "DebugObject.h"
-
 #include "DebugRegisters.h"
+
+#include <boost/python.hpp>
+using namespace boost::python;
 
 void CDebugRegisters::Export(void)
 {
@@ -14,11 +15,11 @@ void CDebugRegisters::Export(void)
 	;
 
 	scope DebugRegisters = class_<CDebugRegisters>("DebugRegisters", no_init)
-		.add_property("Registers", &GetRegisters)
-		.add_property("Pseudos", &GetPseudos)
-		.add_property("StackOffset", &GetStackOffset)
-		.add_property("FrameOffset", &GetFrameOffset)
-		.add_property("InstructionOffset", &GetInstructionOffset)
+		.add_property("Registers", &CDebugRegisters::GetRegisters)
+		.add_property("Pseudos", &CDebugRegisters::GetPseudos)
+		.add_property("StackOffset", &CDebugRegisters::GetStackOffset)
+		.add_property("FrameOffset", &CDebugRegisters::GetFrameOffset)
+		.add_property("InstructionOffset", &CDebugRegisters::GetInstructionOffset)
 	;
 
 	class_<CDebugRegister>("DebugRegister", no_init)
@@ -121,8 +122,10 @@ const dict CDebugRegisters::GetRegisters(void) const
 		ULONG size = _countof(name);
 		Check(m_intf->GetDescription(i, name, size, &size, &desc));
 
-		CDebugRegister reg(this, i, std::string(name, size-1), (utils::ValueType) desc.Type);
+		// FIXME: is this static_cast here correct?
+		CDebugRegister reg(this, i, std::string(name, size-1), static_cast<utils::ValueType>(desc.Type));
 
+		// FIXME: DEBUG_REGISTER_SUB_REGISTER should probably be an enumeration
 		if (DEBUG_REGISTER_SUB_REGISTER == (desc.Flags & DEBUG_REGISTER_SUB_REGISTER)) {
 			reg.m_master = desc.SubregMaster;
 			reg.m_length = desc.SubregLength;
@@ -162,6 +165,7 @@ const dict CDebugRegisters::GetPseudos(void) const
 ULONG64 CDebugRegisters::GetStackOffset(void) const
 {
 	ULONG64 offset = 0;
+
 	Check(m_intf->GetStackOffset(&offset));
 	return offset;
 }
@@ -169,6 +173,7 @@ ULONG64 CDebugRegisters::GetStackOffset(void) const
 ULONG64 CDebugRegisters::GetFrameOffset(void) const
 {
 	ULONG64 offset = 0;
+
 	Check(m_intf->GetFrameOffset(&offset));
 	return offset;
 }
@@ -176,6 +181,7 @@ ULONG64 CDebugRegisters::GetFrameOffset(void) const
 ULONG64 CDebugRegisters::GetInstructionOffset(void) const
 {
 	ULONG64 offset = 0;
+
 	Check(m_intf->GetInstructionOffset(&offset));
 	return offset;
 }

@@ -1,15 +1,13 @@
 #include "StdAfx.h"
-
 #include "utils.h"
-#include "DebugObject.h"
 
+#include "DebugObject.h"
 #include "DebugOutput.h"
 #include "DebugRegisters.h"
 #include "DebugSymbols.h"
 #include "DebugDataspaces.h"
 #include "DebugSystemObjects.h"
 #include "DebugAdvanced.h"
-
 #include "DebugControl.h"
 #include "DebugClient.h"
 
@@ -19,6 +17,7 @@
 #include <iomanip>
 
 #include <boost/python.hpp>
+using namespace boost::python;
 
 void CDebugBreakpoint::Export(void)
 {
@@ -46,39 +45,43 @@ void CDebugBreakpoint::Export(void)
 	;
 
 	class_<CDebugBreakpoint>("Breakpoint", no_init)
-		.add_property("Id", &GetId,
+		.add_property("Id", &CDebugBreakpoint::GetId,
 			"a engine's unique identifier for a breakpoint.")
-		.add_property("Type", &GetType,
+		.add_property("Type", &CDebugBreakpoint::GetType,
 			"the type of the breakpoint that a breakpoint is set for.")
-		.add_property("Flags", &GetFlags, &SetFlags, "the flags for a breakpoint.")
-		.def("AddFlags", &AddFlags, "adds flags to a breakpoint.")
-		.def("RemoveFlags", &RemoveFlags, "removes flags from a breakpoint.")
-		.add_property("Owner", &GetOwner, "the client that owns the breakpoint.")
-		.add_property("Offset", &GetOffset, &SetOffset,
+		.add_property("Flags", &CDebugBreakpoint::GetFlags, &CDebugBreakpoint::SetFlags, "the flags for a breakpoint.")
+		.def("AddFlags", &CDebugBreakpoint::AddFlags, "adds flags to a breakpoint.")
+		.def("RemoveFlags", &CDebugBreakpoint::RemoveFlags, "removes flags from a breakpoint.")
+
+		.add_property("Owner", make_function(&CDebugBreakpoint::GetOwner, return_value_policy<return_by_value>()),
+			"the client that owns the breakpoint.")
+
+		.add_property("Offset", &CDebugBreakpoint::GetOffset, &CDebugBreakpoint::SetOffset,
 			"the location that triggers a breakpoint.")
-		.add_property("OffsetExpression", &GetOffsetExpression, &SetOffsetExpression,
+		.add_property("OffsetExpression", &CDebugBreakpoint::GetOffsetExpression, &CDebugBreakpoint::SetOffsetExpression,
 			"the expression string that evaluates to the location that triggers a breakpoint.")
-		.add_property("PassCount", &GetPassCount, &SetPassCount,
+		.add_property("PassCount", &CDebugBreakpoint::GetPassCount, &CDebugBreakpoint::SetPassCount,
 			"the number of times that the target was originally required to reach the breakpoint location before the breakpoint is triggered.")
-		.add_property("CurrentPassCount", &GetCurrentPassCount,
+		.add_property("CurrentPassCount", &CDebugBreakpoint::GetCurrentPassCount,
 			"the remaining number of times that the target must reach the breakpoint location before the breakpoint is triggered.")
-		.add_property("MatchThreadId", &GetMatchThreadId, &SetMatchThreadId,
+		.add_property("MatchThreadId", &CDebugBreakpoint::GetMatchThreadId, &CDebugBreakpoint::SetMatchThreadId,
 			"the engine thread ID of the thread that can trigger a breakpoint.")
-		.add_property("Command", &GetCommand, &SetCommand,
+		.add_property("Command", &CDebugBreakpoint::GetCommand, &CDebugBreakpoint::SetCommand,
 			"the command string that is executed when a breakpoint is triggered.")
-		.add_property("DataParameters", &GetDataParameters, &SetDataParameters,
+		.add_property("DataParameters", &CDebugBreakpoint::GetDataParameters, &CDebugBreakpoint::SetDataParameters,
 			"the parameters for a processor breakpoint.")
 
-		.def("__repr__", &Repr)
-		.def("Enable", &Enable, "enables a breakpoint")
-		.def("Disable", &Disable, "disable a breakpoint")
-		.def("Remove", &Remove, "disable a breakpoint")
+		.def("__repr__", &CDebugBreakpoint::Repr)
+		.def("Enable", &CDebugBreakpoint::Enable, "enables a breakpoint")
+		.def("Disable", &CDebugBreakpoint::Disable, "disable a breakpoint")
+		.def("Remove", &CDebugBreakpoint::Remove, "disable a breakpoint")
 	;
 }
 
 ULONG CDebugBreakpoint::GetId(void) const
 {
 	ULONG id = 0;
+
 	Check(m_intf->GetId(&id));
 	return id;
 }
@@ -87,44 +90,55 @@ const tuple
 CDebugBreakpoint::GetType(void) const
 {
 	ULONG BreakType, ProcType;
+
 	Check(m_intf->GetType(&BreakType, &ProcType));
-	return make_tuple((BreakpointType) BreakType, (CDebugControl::ProcessorType) ProcType);
+	return make_tuple(static_cast<BreakpointType>(BreakType), static_cast<CDebugControl::ProcessorType>(ProcType));
 }
 
 const CDebugClient&
 CDebugBreakpoint::GetOwner(void) const
 {
 	CComPtr<IDebugClient> owner;
+
 	Check(m_intf->GetAdder(&owner));
 	return CDebugClient(owner);
 }
 
 const list CDebugBreakpoint::GetFlags(void) const
 {
-	BreakpointFlag flags;
-	Check(m_intf->GetFlags(&flags));
+	ULONG res;
 
-	return res.ToList(flags, BreakpointFlag(BreakpointFlag::BREAKPOINT_GO_ONLY), BreakpointFlag(BreakpointFlag::BREAKPOINT_ONE_SHOT));
+	Check(m_intf->GetFlags(&res));
+	return utils::FlagsToList(static_cast<BreakpointFlag>(res), BreakpointFlag::BREAKPOINT_GO_ONLY, BreakpointFlag::BREAKPOINT_ONE_SHOT);
 }
 
 void CDebugBreakpoint::SetFlags(list flags) const
 {
-	Check(m_intf->SetFlags(utils::FlagsFromList<BreakpointFlag>(flags)));
+	ULONG res = utils::FlagsFromList<ULONG, BreakpointFlag>(flags);
+
+	Check(m_intf->SetFlags(res));
 }
 
 void CDebugBreakpoint::AddFlags(CDebugBreakpoint::BreakpointFlag flags) const
 {
-	Check(m_intf->AddFlags((ULONG) flags));
+	ULONG res;
+	res = static_cast<ULONG>(flags);
+
+	Check(m_intf->AddFlags(res));
 }
 
 void CDebugBreakpoint::RemoveFlags(CDebugBreakpoint::BreakpointFlag flags) const
 {
-	Check(m_intf->RemoveFlags((ULONG) flags));
+	ULONG res;
+	res = static_cast<ULONG>(flags);
+
+	Check(m_intf->RemoveFlags(res));
 }
 
 ULONG64 CDebugBreakpoint::GetOffset(void) const
 {
 	ULONG64 offset;
+
 	Check(m_intf->GetOffset(&offset));
 	return offset;
 }
@@ -138,6 +152,7 @@ const std::string CDebugBreakpoint::GetOffsetExpression(void) const
 {
 	char szExpression[1024];
 	ULONG nExpression = _countof(szExpression);
+
 	Check(m_intf->GetOffsetExpression(szExpression, nExpression, &nExpression));
 	return std::string(szExpression, nExpression-1);
 }
@@ -150,6 +165,7 @@ void CDebugBreakpoint::SetOffsetExpression(const std::string& expression) const
 ULONG CDebugBreakpoint::GetPassCount(void) const
 {
 	ULONG count;
+
 	Check(m_intf->GetPassCount(&count));
 	return count;
 }
@@ -182,6 +198,7 @@ const std::string CDebugBreakpoint::GetCommand(void) const
 {
 	char szCommand[1024];
 	ULONG nCommand = _countof(szCommand);
+
 	Check(m_intf->GetCommand(szCommand, nCommand, &nCommand));
 	return std::string(szCommand, nCommand-1);
 }
@@ -194,13 +211,14 @@ void CDebugBreakpoint::SetCommand(const std::string& command) const
 const tuple CDebugBreakpoint::GetDataParameters(void) const
 {
 	ULONG size, type;
+
 	Check(m_intf->GetDataParameters(&size, &type));
-	return make_tuple(size, (AccessType) type);
+	return make_tuple(size, static_cast<AccessType>(type));
 }
 
 void CDebugBreakpoint::SetDataParameters(tuple params) const
 {
-	Check(m_intf->SetDataParameters(extract<ULONG>(params[0]), (ULONG)extract<AccessType>(params[1])));
+	Check(m_intf->SetDataParameters(extract<ULONG>(params[0]), extract<ULONG>(params[1])));
 }
 
 const object
@@ -213,7 +231,7 @@ CDebugBreakpoint::Repr(const CDebugBreakpoint& breakpoint)
 	static const char * BreakpointTypeNames[] = { "code", "data", "time" };
 	BreakpointType type = extract<BreakpointType>(breakpoint.GetType()[0]);
 
-	oss << BreakpointTypeNames[type] << " @ "
+	oss << BreakpointTypeNames[static_cast<int>(type)] << " @ "
 			<< std::hex << std::setfill('0') << std::setw(8) << breakpoint.GetOffset();
 
 	oss << " " << std::setfill('0') << std::setw(4) << breakpoint.GetCurrentPassCount()
@@ -236,12 +254,12 @@ CDebugBreakpoint::Repr(const CDebugBreakpoint& breakpoint)
 
 void CDebugBreakpoint::Enable(void)
 {
-		return this->AddFlags(CDebugBreakpoint::BreakpointFlag::BREAKPOINT_ENABLED);
+		return this->AddFlags(BreakpointFlag::BREAKPOINT_ENABLED);
 }
 
 void CDebugBreakpoint::Disable(void)
 {
-		return this->RemoveFlags(CDebugBreakpoint::BreakpointFlag::BREAKPOINT_ENABLED);
+		return this->RemoveFlags(BreakpointFlag::BREAKPOINT_ENABLED);
 }
 
 HRESULT CDebugBreakpoint::Remove(void)

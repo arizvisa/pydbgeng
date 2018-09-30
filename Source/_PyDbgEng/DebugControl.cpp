@@ -1,14 +1,7 @@
 #include "StdAfx.h"
-
-#include <sstream>
-#include <iomanip>
-#include <datetime.h>
-
-#include <boost/python.hpp>
-
 #include "utils.h"
-#include "DebugObject.h"
 
+#include "DebugObject.h"
 #include "DebugOutput.h"
 #include "DebugBreakpoint.h"
 #include "DebugRegisters.h"
@@ -16,10 +9,15 @@
 #include "DebugDataSpaces.h"
 #include "DebugSystemObjects.h"
 #include "DebugAdvanced.h"
-
-#include "DebugControl.h"
 #include "DebugClient.h"
 
+#include "DebugControl.h"
+
+#include <sstream>
+#include <iomanip>
+
+#include <datetime.h>
+#include <boost/python.hpp>
 using namespace boost::python;
 
 void CDebugControl::Export(void)
@@ -195,136 +193,137 @@ void CDebugControl::Export(void)
 	;
 
 	scope DebugControl = class_<CDebugControl>("DebugControl", no_init)
-		.add_property("PageSize", &GetPageSize,
+		.add_property("PageSize", &CDebugControl::GetPageSize,
 			"the page size for the effective processor mode.")
-		.add_property("IsPointer64Bit", &IsPointer64Bit,
+		.add_property("IsPointer64Bit", &CDebugControl::IsPointer64Bit,
 			"the effective processor uses 64-bit pointers.")
 
-		.add_property("VersionInformation", &GetVersionInformation)
-		.def("OutputVersionInformation", &OutputVersionInformation,
+		.add_property("VersionInformation", &CDebugControl::GetVersionInformation)
+		.def("OutputVersionInformation", &CDebugControl::OutputVersionInformation,
 			(arg("target")=OutputControl::OUTPUT_ALL_CLIENTS),    // FIXME
 			"prints version information about the debugger engine to the debugger console.")
 
-		.add_property("EngineOptions", &GetEngineOptions, &SetEngineOptions,
+		.add_property("EngineOptions", &CDebugControl::GetEngineOptions, &CDebugControl::SetEngineOptions,
 			"the engine's options.")
-		.def("AddEngineOption", &AddEngineOption,
+		.def("AddEngineOption", &CDebugControl::AddEngineOption,
 			"turns on some of the debugger engine's options.")
-		.def("RemoveEngineOption", &RemoveEngineOption,
+		.def("RemoveEngineOption", &CDebugControl::RemoveEngineOption,
 			"turns off some of the engine's options.")
 
-		.add_property("ExecutionStatus", &GetExecutionStatus, &SetExecutionStatus,
+		.add_property("ExecutionStatus", &CDebugControl::GetExecutionStatus, &CDebugControl::SetExecutionStatus,
 			"information about the execution status of the debugger engine.")
-		.add_property("DebuggeeType", &GetDebuggeeType, "the nature of the current target.")
-		.add_property("CodeLevel", &GetCodeLevel, &SetCodeLevel,
+		.add_property("DebuggeeType", &CDebugControl::GetDebuggeeType, "the nature of the current target.")
+		.add_property("CodeLevel", &CDebugControl::GetCodeLevel, &CDebugControl::SetCodeLevel,
 			"the current code level and is mainly used when stepping through code.")
-		.add_property("Radix", &GetRadix, &SetRadix,
+		.add_property("Radix", &CDebugControl::GetRadix, &CDebugControl::SetRadix,
 			"the default radix (number base) used by the debugger engine when it evaluates and displays MASM expressions, and when it displays symbol information.")
-		.add_property("OutputLevel", &GetSystemOutputLevel, &SetSystemOutputLevel,
+		.add_property("OutputLevel", &CDebugControl::GetSystemOutputLevel, &CDebugControl::SetSystemOutputLevel,
 			"the level at which system errors are printed to the engine's output.")
-		.add_property("BreakLevel", &GetSystemBreakLevel, &SetSystemBreakLevel,
+		.add_property("BreakLevel", &CDebugControl::GetSystemBreakLevel, &CDebugControl::SetSystemBreakLevel,
 			"the level at which system errors break into the debugger.")
 
-		.add_property("EventFilters", &GetEventFilters,
+		.add_property("EventFilters", &CDebugControl::GetEventFilters,
 			"the event filters currently used by the engine.")
-		.add_property("ExceptionFilters", &GetExceptionFilters,
+		.add_property("ExceptionFilters", &CDebugControl::GetExceptionFilters,
 			"the exceptions that can be controlled using the specific exception filters.")
 
-		.add_property("Breakpoints", &GetBreakpoints,
+		.add_property("Breakpoints", &CDebugControl::GetBreakpoints,
 			"breakpoints for the current process.")
-		.def("AddBreakpoint", &AddBreakpoint,
-			(arg("type")=CDebugBreakpoint::BREAKPOINT_CODE, arg("id")=DEBUG_ANY_ID),
+		.def("AddBreakpoint", &CDebugControl::AddBreakpoint,
+			(arg("type")=CDebugBreakpoint::BreakpointType::BREAKPOINT_CODE, arg("id")=DEBUG_ANY_ID),
 			"create a new breakpoint for the current target.")
 
-		.add_property("SupportedProcessorTypes", &GetSupportedProcessorTypes,
+		.add_property("SupportedProcessorTypes", &CDebugControl::GetSupportedProcessorTypes,
 			"the processor types supported by the debugger engine. ")
-		.add_property("PossibleExecutingProcessorTypes", &GetPossibleExecutingProcessorTypes,
+		.add_property("PossibleExecutingProcessorTypes", &CDebugControl::GetPossibleExecutingProcessorTypes,
 			"the processor types that are supported by the computer running the current target.")
 
-		.add_property("ActualProcessorType", &GetActualProcessorType,
+		.add_property("ActualProcessorType", &CDebugControl::GetActualProcessorType,
 			"the processor type of the physical processor of the computer that is running the target.")
-		.add_property("EffectiveProcessorType", &GetEffectiveProcessorType, &SetEffectiveProcessorType,
+		.add_property("EffectiveProcessorType", &CDebugControl::GetEffectiveProcessorType, &CDebugControl::SetEffectiveProcessorType,
 			"the effective processor type of the processor of the computer that is running the target.")
-		.add_property("ExecutingProcessorType", &GetExecutingProcessorType,
+		.add_property("ExecutingProcessorType", &CDebugControl::GetExecutingProcessorType,
 			"the executing processor type for the processor for which the last event occurred.")
 
-		.add_property("CurrentTimeDate", &GetCurrentTimeDate,
+		.add_property("CurrentTimeDate", &CDebugControl::GetCurrentTimeDate,
 			"the time of the current target.")
-		.add_property("CurrentSystemUpTime", &GetCurrentSystemUpTime,
+		.add_property("CurrentSystemUpTime", &CDebugControl::GetCurrentSystemUpTime,
 			"the current target's computer has been running since it was last started.")
 
-		.add_property("Events", &GetEvents, "the events for the current target")
-		.add_property("CurrentEvent", &GetCurrentEvent,
+		.add_property("Events", &CDebugControl::GetEvents, "the events for the current target")
+		.add_property("CurrentEvent", &CDebugControl::GetCurrentEvent,
 			"the current event within the current list of events for the current target, if such a list exists.")
 
-		.def("WaitForEvent", &WaitForEvent,
+		.def("WaitForEvent", &CDebugControl::WaitForEvent,
 			(args("timeout")=INFINITE),
 			"waits for an event that breaks into the debugger engine application.")
 
-		.add_property("HasInterrupt", &HasInterrupt,
+		.add_property("HasInterrupt", &CDebugControl::HasInterrupt,
 			"whether a user interrupt was issued.")
-		.def("SetInterrupt", &SetInterrupt, (arg("type")=InterruptType::INTR_ACTIVE),
+		.def("SetInterrupt", &CDebugControl::SetInterrupt, (arg("type")=InterruptType::INTR_ACTIVE),
 			"registers a user interrupt or breaks into the debugger.")
-		.add_property("InterruptTimeout", &GetInterruptTimeout, &SetInterruptTimeout,
+		.add_property("InterruptTimeout", &CDebugControl::GetInterruptTimeout, &CDebugControl::SetInterruptTimeout,
 			"the number of seconds that the engine will wait when requesting a break into the debugger.")
 
-		.add_property("ExpressionSyntax", &GetExpressionSyntax, &SetExpressionSyntax,
+		.add_property("ExpressionSyntax", &CDebugControl::GetExpressionSyntax, &CDebugControl::SetExpressionSyntax,
 			"the current syntax that the engine is using for evaluating expressions.")
-		.add_property("ExpressionSyntaxNames", &GetExpressionSyntaxNames,
+		.add_property("ExpressionSyntaxNames", &CDebugControl::GetExpressionSyntaxNames,
 			"the full and abbreviated names of supported expression syntax.")
-		.def("SetExpressionSyntaxByName", &SetExpressionSyntaxByName,
+		.def("SetExpressionSyntaxByName", &CDebugControl::SetExpressionSyntaxByName,
 			"set the syntax that the engine will use to evaluate expressions.")
 
-		.def("Evaluate", &Evaluate, ("expression", arg("type")=DEBUG_VALUE_INVALID),
+		.def("Evaluate", &CDebugControl::Evaluate, ("expression", arg("type")=DEBUG_VALUE_INVALID),
 			"evaluate an expression, returning the result.")
-		.def("Execute", &Execute, ("command", arg("flags")=ExecuteFlag::EXECUTE_DEFAULT, arg("target")=OutputControl::OUTPUT_ALL_CLIENTS),
+		.def("Execute", &CDebugControl::Execute, ("command", arg("flags")=ExecuteFlag::EXECUTE_DEFAULT, arg("target")=OutputControl::OUTPUT_ALL_CLIENTS),
 			"execute the specified debugger commands.")
-		.def("ExecuteCommandFile", &ExecuteCommandFile,
+		.def("ExecuteCommandFile", &CDebugControl::ExecuteCommandFile,
 			("commandFile", arg("flags")=ExecuteFlag::EXECUTE_DEFAULT, arg("target")=OutputControl::OUTPUT_ALL_CLIENTS),
 			"open the specified file and execute the debugger commands that are contained within.")
 
-		.add_property("AssemblyOptions", &GetAssemblyOptions, &SetAssemblyOptions,
+		.add_property("AssemblyOptions", &CDebugControl::GetAssemblyOptions, &CDebugControl::SetAssemblyOptions,
 			"the assembly and disassembly options that affect how the debugger engine assembles and disassembles processor instructions for the target.")
-		.def("AddAssemblyOption", &AddAssemblyOption,
+		.def("AddAssemblyOption", &CDebugControl::AddAssemblyOption,
 			"turns on some of the assembly and disassembly options.")
-		.def("RemoveAssemblyOption", &RemoveAssemblyOption,
+		.def("RemoveAssemblyOption", &CDebugControl::RemoveAssemblyOption,
 			"turns off some of the assembly and disassembly options.")
 
-		.def("Assemble", &Assemble, ("offset", "instr"),
+		.def("Assemble", &CDebugControl::Assemble, ("offset", "instr"),
 			"assemble a single processor instruction. The assembled instruction is placed in the target's memory.")
-		.def("Disassemble", &Disassemble, ("offset", arg("flags")=DisassembleFlag::DISASM_DEFAULT, arg("bufSize")=4096),
+		.def("Disassemble", &CDebugControl::Disassemble, ("offset", arg("flags")=DisassembleFlag::DISASM_DEFAULT, arg("bufSize")=4096),
 			"disassemble a processor instruction in the target's memory.")
-		.def("OutputDisassembly", &OutputDisassembly,
+		.def("OutputDisassembly", &CDebugControl::OutputDisassembly,
 			("offset", arg("flags")=DisassembleFlag::DISASM_DEFAULT, arg("target")=OutputControl::OUTPUT_ALL_CLIENTS),
 			"disassembles a processor instruction and sends the disassembly to the output callbacks.")
-		.add_property("DisassembleEffectiveOffset", &GetDisassembleEffectiveOffset,
+		.add_property("DisassembleEffectiveOffset", &CDebugControl::GetDisassembleEffectiveOffset,
 			"the address of the last instruction disassembled using Disassemble.")
-		.def("GetNearInstruction", &GetNearInstruction, ("offset", arg("delta")),
+		.def("GetNearInstruction", &CDebugControl::GetNearInstruction, ("offset", arg("delta")),
 			"the location of a processor instruction relative to a given location.")
-		.add_property("ReturnOffset", &GetReturnOffset,
+		.add_property("ReturnOffset", &CDebugControl::GetReturnOffset,
 			"the return address for the current function.")
 
-		.def("Input", &Input,
+		.def("Input", &CDebugControl::Input,
 			"quest an input string from the debugger engine.")
-		.def("ReturnInput", &ReturnInput,
+		.def("ReturnInput", &CDebugControl::ReturnInput,
 			"send an input string to the engine following a request for input.")
-		.def("Output", &Output,
-			("text", arg("mask")=CDebugClient::OutputMask::MASK_NORMAL, arg("target")=OutputControl::OUTPUT_ALL_CLIENTS),
+		.def("Output", &CDebugControl::Output,
+			("text", arg("mask")=CDebugOutput::OutputMask::MASK_NORMAL, arg("target")=OutputControl::OUTPUT_ALL_CLIENTS),
 			"send the text to output callbacks that were registered with some of the engine's clients.")
 
-		.add_property("TextMacros", &GetTextMacros,
+		.add_property("TextMacros", &CDebugControl::GetTextMacros,
 			"the value of a fixed-name alias.")
-		.def("SetTextMacro", &SetTextMacroByName,
+		.def("SetTextMacro", &CDebugControl::SetTextMacroByName,
 			"set the value of a fixed-name alias.")
-		.def("SetTextMacro", &SetTextMacroBySlot,
+		.def("SetTextMacro", &CDebugControl::SetTextMacroBySlot,
 			"set the value of a fixed-name alias.")
 
-		.def("GetStackFrames", &GetStackFrames,
+		.def("GetStackFrames", &CDebugControl::GetStackFrames,
 			(arg("frameOffset")=0, arg("stackOffset")=0, arg("InstructionOffset")=0),
 			"the frames at the top of the specified call stack.")
 	;
 
 	class_<CProcessor>("Processor", no_init)
 		.add_property("Type", &CProcessor::GetType)
+
 		.add_property("Name", &CProcessor::GetName)
 		.add_property("Abbrev", &CProcessor::GetAbbrev)
 
@@ -334,17 +333,13 @@ void CDebugControl::Export(void)
 	class_<CEventFilter>("EventFilter", no_init)
 		.add_property("Index", &CEventFilter::GetIndex)
 		.add_property("Text", &CEventFilter::GetText)
-		.add_property("Status",
-			&CEventFilter::GetStatus,
-			&CEventFilter::SetStatus)
-		.add_property("Command",
-			&CEventFilter::GetCommand,
-			&CEventFilter::SetCommand)
+		.add_property("Status", &CEventFilter::GetStatus, &CEventFilter::SetStatus)
+		.add_property("Command", &CEventFilter::GetCommand, &CEventFilter::SetCommand)
 
 		.def("__repr__", &CEventFilter::Repr)
 	;
 
-	class_<CExceptionFilter, bases<CEventFilter> >("ExceptionFilter", no_init)
+	class_<CExceptionFilter, bases<CEventFilter>>("ExceptionFilter", no_init)
 		.add_property("Handled",
 			&CExceptionFilter::IsHandled,
 			&CExceptionFilter::SetHandled)
@@ -386,7 +381,7 @@ const std::pair<const std::string, const std::string> CDebugControl::CProcessor:
 {
 	char szName[256], szAbbrev[256];
 	ULONG ulName = _countof(szName), ulAbbrev = _countof(szAbbrev);
-	Check(m_intf->GetProcessorTypeNames((ULONG) m_type, szName, ulName, &ulName, szAbbrev, ulAbbrev, &ulAbbrev));
+	Check(m_intf->GetProcessorTypeNames(static_cast<ULONG>(m_type), szName, ulName, &ulName, szAbbrev, ulAbbrev, &ulAbbrev));
 	return std::make_pair(std::string(szName, ulName-1), std::string(szAbbrev, ulAbbrev-1));
 }
 
@@ -420,14 +415,15 @@ CDebugControl::BreakStatus CDebugControl::CEventFilter::GetStatus(void) const
 {
 	DEBUG_SPECIFIC_FILTER_PARAMETERS param;
 	Check(m_intf->GetSpecificFilterParameters(m_idx, 1, &param));
-	return (CDebugControl::BreakStatus) param.ExecutionOption;
+	return static_cast<BreakStatus>(param.ExecutionOption);
 }
 
 void CDebugControl::CEventFilter::SetStatus(CDebugControl::BreakStatus status) const
 {
 	DEBUG_SPECIFIC_FILTER_PARAMETERS param;
 	Check(m_intf->GetSpecificFilterParameters(m_idx, 1, &param));
-	param.ExecutionOption = (ULONG)status;
+
+	param.ExecutionOption = static_cast<ULONG>(status);
 	Check(m_intf->SetSpecificFilterParameters(m_idx, 1, &param));
 }
 
@@ -435,6 +431,7 @@ const std::string CDebugControl::CExceptionFilter::GetSecondCommand(void) const
 {
 	char buf[1024];
 	ULONG size = _countof(buf);
+
 	Check(m_intf->GetExceptionFilterSecondCommand(m_idx, buf, size, &size));
 	return std::string(buf, size-1);
 }
@@ -447,15 +444,17 @@ void CDebugControl::CExceptionFilter::SetSecondCommand(const std::string& comman
 CDebugControl::BreakStatus CDebugControl::CExceptionFilter::GetStatus(void) const
 {
 	DEBUG_EXCEPTION_FILTER_PARAMETERS param;
+
 	Check(m_intf->GetExceptionFilterParameters(1, NULL, m_idx, &param));
-	return (BreakStatus) param.ExecutionOption;
+	return static_cast<BreakStatus>(param.ExecutionOption);
 }
 
 void CDebugControl::CExceptionFilter::SetStatus(BreakStatus status) const
 {
 	DEBUG_EXCEPTION_FILTER_PARAMETERS param;
 	Check(m_intf->GetExceptionFilterParameters(1, NULL, m_idx, &param));
-	param.ExecutionOption = (ULONG)status;
+
+	param.ExecutionOption = static_cast<ULONG>(status);
 	Check(m_intf->SetExceptionFilterParameters(1, &param));
 }
 
@@ -476,18 +475,19 @@ void CDebugControl::CExceptionFilter::SetHandled(bool handled) const
 
 const std::string CDebugControl::CEvent::GetName(void) const
 {
+	CComQIPtr<IDebugControl3> intf(m_intf);
 	char szName[256];
 	ULONG nName = _countof(szName);
 
-	Check(CComQIPtr<IDebugControl3>(m_intf)->GetEventIndexDescription(
-		m_idx, DEBUG_EINDEX_NAME, szName, nName, &nName));
-
+	// FIXME: DEBUG_EINDEX_NAME should be an enumeration
+	Check(intf->GetEventIndexDescription(m_idx, DEBUG_EINDEX_NAME, szName, nName, &nName));
 	return std::string(szName, nName-1);
 }
 
 ULONG CDebugControl::GetPageSize(void) const
 {
 	ULONG size = 0;
+
 	Check(m_intf->GetPageSize(&size));
 	return size;
 }
@@ -527,126 +527,140 @@ void CDebugControl::OutputVersionInformation(CDebugControl::OutputControl target
 
 const list CDebugControl::GetEngineOptions(void) const
 {
-	EngineOption options;
-	Check(m_intf->GetEngineOptions(&options));
+	ULONG res;
+	Check(m_intf->GetEngineOptions(&res));
 
-	return utils::FlagsToList<EngineOption>(options, EngineOption(EngineOption::ENGOPT_IGNORE_DBGHELP_VERSION), EngineOption(EngineOption::ENGOPT_PREFER_DML));
+	return utils::FlagsToList(static_cast<EngineOption>(res), EngineOption::ENGOPT_IGNORE_DBGHELP_VERSION, EngineOption::ENGOPT_PREFER_DML);
 }
 
 void CDebugControl::SetEngineOptions(const list& options) const
 {
-	Check(m_intf->SetEngineOptions((ULONG) utils::FlagsFromList<EngineOption>(options)));
+	ULONG res = utils::FlagsFromList<ULONG, EngineOption>(options);
+
+	Check(m_intf->SetEngineOptions(res));
 }
 
 void CDebugControl::AddEngineOption(CDebugControl::EngineOption option) const
 {
-	Check(m_intf->AddEngineOptions((ULONG) option));
+	ULONG res = static_cast<ULONG>(option);
+
+	Check(m_intf->AddEngineOptions(res));
 }
 
 void CDebugControl::RemoveEngineOption(CDebugControl::EngineOption option) const
 {
-	Check(m_intf->RemoveEngineOptions((ULONG) option));
+	Check(m_intf->RemoveEngineOptions(static_cast<ULONG>(option)));
 }
 
 CDebugControl::ExecutionStatus CDebugControl::GetExecutionStatus(void) const
 {
 	ULONG status;
+
 	Check(m_intf->GetExecutionStatus(&status));
 	return (ExecutionStatus) status;
 }
 
 void CDebugControl::SetExecutionStatus(ExecutionStatus status) const
 {
-	Check(m_intf->SetExecutionStatus((ULONG) status));
+	Check(m_intf->SetExecutionStatus(static_cast<ULONG>(status)));
 }
 
 const tuple CDebugControl::GetDebuggeeType(void) const
 {
 	ULONG Class = 0, Qualifier = 0;
 	Check(m_intf->GetDebuggeeType(&Class, &Qualifier));
+
 	switch (Class) {
-	case (ULONG)DebuggeeClass::CLASS_KERNEL:
-		return make_tuple((DebuggeeClass) Class, (CDebugControl::KernelDebuggee) Qualifier);
-	case (ULONG)DebuggeeClass::CLASS_USER:
-		return make_tuple((DebuggeeClass) Class, (CDebugControl::UserDebuggee) Qualifier);
+	case static_cast<ULONG>(DebuggeeClass::CLASS_KERNEL):
+		return make_tuple(static_cast<DebuggeeClass>(Class), static_cast<KernelDebuggee>(Qualifier));
+	case static_cast<ULONG>(DebuggeeClass::CLASS_USER):
+		return make_tuple(static_cast<DebuggeeClass>(Class), static_cast<CDebugControl::UserDebuggee>(Qualifier));
 	default:
-		return make_tuple((DebuggeeClass) Class, Qualifier);
+		return make_tuple(static_cast<DebuggeeClass>(Class), Qualifier);
 	}
 }
 
 CDebugControl::CodeLevel CDebugControl::GetCodeLevel(void) const
 {
 	ULONG level = 0;
+
 	Check(m_intf->GetCodeLevel(&level));
 	return (CodeLevel) level;
 }
 
 void CDebugControl::SetCodeLevel(CDebugControl::CodeLevel level) const
 {
-	Check(m_intf->SetCodeLevel((ULONG) level));
+	Check(m_intf->SetCodeLevel(static_cast<ULONG>(level)));
 }
 
 CDebugControl::NumberRadix CDebugControl::GetRadix(void) const
 {
 	ULONG radix = 0;
+
 	Check(m_intf->GetRadix(&radix));
-	return (NumberRadix) radix;
+	return static_cast<NumberRadix>(radix);
 }
 
 void CDebugControl::SetRadix(CDebugControl::NumberRadix radix) const
 {
-	Check(m_intf->SetRadix((ULONG) radix));
+	Check(m_intf->SetRadix(static_cast<ULONG>(radix)));
 }
 
 const std::pair<ULONG, ULONG> CDebugControl::GetSystemErrorControl(void) const
 {
 	ULONG outputLevel, breakLevel;
+
 	Check(m_intf->GetSystemErrorControl(&outputLevel, &breakLevel));
 	return std::make_pair(outputLevel, breakLevel);
 }
 
 void CDebugControl::SetSystemOutputLevel(ErrorLevel level) const
 {
-	Check(m_intf->SetSystemErrorControl((ULONG) level, GetSystemErrorControl().second));
+	Check(m_intf->SetSystemErrorControl(static_cast<ULONG>(level), GetSystemErrorControl().second));
 }
 
 void CDebugControl::SetSystemBreakLevel(ErrorLevel level) const
 {
-	Check(m_intf->SetSystemErrorControl(GetSystemErrorControl().first, (ULONG) level));
+	Check(m_intf->SetSystemErrorControl(GetSystemErrorControl().first, static_cast<ULONG>(level)));
 }
 
 CDebugControl::ProcessorType CDebugControl::GetActualProcessorType(void) const
 {
 	ULONG type;
+
 	Check(m_intf->GetActualProcessorType(&type));
-	return (ProcessorType) type;
+	return static_cast<ProcessorType>(type);
 }
 
 CDebugControl::ProcessorType CDebugControl::GetEffectiveProcessorType(void) const
 {
 	ULONG type;
+
 	Check(m_intf->GetEffectiveProcessorType(&type));
-	return (ProcessorType) type;
+	return static_cast<ProcessorType>(type);
 }
 
 void CDebugControl::SetEffectiveProcessorType(CDebugControl::ProcessorType type) const
 {
-	Check(m_intf->SetEffectiveProcessorType((ULONG) type));
+	Check(m_intf->SetEffectiveProcessorType(static_cast<ULONG>(type)));
 }
 
 CDebugControl::ProcessorType CDebugControl::GetExecutingProcessorType(void) const
 {
 	ULONG type;
+
 	Check(m_intf->GetExecutingProcessorType(&type));
-	return (ProcessorType) type;
+	return static_cast<ProcessorType>(type);
 }
 
 object CDebugControl::GetCurrentTimeDate(void) const
 {
 	CComQIPtr<IDebugControl2> intf(m_intf);
 
-	time_t now;
-	Check(intf->GetCurrentTimeDate((PULONG) &now));
+	ULONG current;
+	Check(intf->GetCurrentTimeDate(&current));
+
+	time_t now = static_cast<time_t>(current);
 
 	tm t;
 	Check(localtime_s(&t, &now));
@@ -657,24 +671,25 @@ object CDebugControl::GetCurrentTimeDate(void) const
 
 object CDebugControl::GetCurrentSystemUpTime(void) const
 {
+	static const ULONG SECONDS_PER_DAY = 60 * 60 * 24;
+
 	CComQIPtr<IDebugControl2> intf(m_intf);
 	ULONG uptime = 0;
+
 	Check(intf->GetCurrentSystemUpTime(&uptime));
-	static const ULONG SECONDS_PER_DAY = 60 * 60 * 24;
 	return object(handle<>(::PyDelta_FromDSU(uptime / SECONDS_PER_DAY, uptime % SECONDS_PER_DAY, 0)));
 }
 
 const dict CDebugControl::GetEventFilters(void) const
 {
 	ULONG SpecificEvents, SpecificExceptions, ArbitraryExceptions;
-
 	Check(m_intf->GetNumberEventFilters(&SpecificEvents, &SpecificExceptions, &ArbitraryExceptions));
 
 	dict filters; char buf[1024];
-
 	for (size_t i=0; i<SpecificEvents; i++) {
 		ULONG size = _countof(buf);
 		Check(m_intf->GetEventFilterText(i, buf, size, &size));
+
 		CEventFilter filter(this, i, std::string(buf, size-1));
 		filters[filter.GetText()] = filter;
 	}
@@ -687,10 +702,10 @@ const dict CDebugControl::GetExceptionFilters(void) const
 	Check(m_intf->GetNumberEventFilters(&SpecificEvents, &SpecificExceptions, &ArbitraryExceptions));
 
 	dict filters; char buf[1024];
-
 	for (size_t i=SpecificEvents; i<SpecificEvents+SpecificExceptions; i++) {
 		ULONG size = _countof(buf);
 		Check(m_intf->GetEventFilterText(i, buf, size, &size));
+
 		CExceptionFilter filter(this, i, std::string(buf, size-1));
 		filters[filter.GetText()] = filter;
 	}
@@ -707,6 +722,7 @@ const dict CDebugControl::GetSupportedProcessorTypes(void) const
 	dict processors;
 	for (ULONG i=0; i<number; i++) {
 		Check(m_intf->GetSupportedProcessorTypes(i, 1, &type));
+
 		CProcessor processor(this, (ProcessorType) type);
 		processors[processor.GetName()] = processor;
 	}
@@ -723,6 +739,7 @@ const dict CDebugControl::GetPossibleExecutingProcessorTypes(void) const
 	dict processors;
 	for (ULONG i=0; i<number; i++) {
 		Check(m_intf->GetPossibleExecutingProcessorTypes(i, 1, &type));
+
 		CProcessor processor(this, (ProcessorType) type);
 		processors[processor.GetName()] = processor;
 	}
@@ -734,26 +751,27 @@ const list CDebugControl::GetBreakpoints(void) const
 	ULONG Number = 0;
 	Check(m_intf->GetNumberBreakpoints(&Number));
 
-	list breakpoints;
+	list res;
 	for (size_t i=0; i<Number; i++)
-		breakpoints.append(CDebugBreakpoint(this, i));
-	return breakpoints;
+		res.append(CDebugBreakpoint(this, i));
+	return res;
 }
 
 CDebugBreakpoint
 CDebugControl::AddBreakpoint(CDebugBreakpoint::BreakpointType type, ULONG id)
 {
 	CComPtr<IDebugBreakpoint> intf;
-	Check(m_intf->AddBreakpoint((ULONG) type, id, &intf));
+
+	Check(m_intf->AddBreakpoint(static_cast<ULONG>(type), id, &intf));
 	return CDebugBreakpoint(this, intf);
 }
 
-void CDebugControl::Output(const std::string& text, CDebugClient::OutputMask mask, CDebugControl::OutputControl target) const
+void CDebugControl::Output(const std::string& text, CDebugOutput::OutputMask mask, CDebugControl::OutputControl target) const
 {
 	if (CDebugControl::OutputControl::OUTPUT_ALL_CLIENTS == target) {
-		Check(m_intf->Output((ULONG) mask, "%s", text.c_str()));
+		Check(m_intf->Output(static_cast<ULONG>(mask), "%s", text.c_str()));
 	} else {
-		Check(m_intf->ControlledOutput((ULONG) target, (ULONG) mask, "%s", text.c_str()));
+		Check(m_intf->ControlledOutput(static_cast<ULONG>(target), static_cast<ULONG>(mask), "%s", text.c_str()));
 	}
 }
 
@@ -771,15 +789,17 @@ const list CDebugControl::GetEvents(void) const
 
 const CDebugControl::CEvent CDebugControl::GetCurrentEvent(void) const
 {
+	CComQIPtr<IDebugControl3> intf(m_intf);
 	ULONG idx;
-	Check(CComQIPtr<IDebugControl3>(m_intf)->GetCurrentEventIndex(&idx));
+
+	Check(intf->GetCurrentEventIndex(&idx));
 	return CEvent(this, idx);
 }
 
 ULONG CDebugControl::WaitForEvent(ULONG timeout) const
 {
-	HRESULT hr = m_intf->WaitForEvent(0, timeout);
-	return hr;
+	// FIXME: Check() this if FAILED() or raise an exception or something?
+	return m_intf->WaitForEvent(0, timeout);
 }
 
 bool CDebugControl::HasInterrupt(void) const
@@ -792,12 +812,13 @@ bool CDebugControl::HasInterrupt(void) const
 
 void CDebugControl::SetInterrupt(InterruptType type) const
 {
-	Check(m_intf->SetInterrupt((ULONG) type));
+	Check(m_intf->SetInterrupt(static_cast<ULONG>(type)));
 }
 
 ULONG CDebugControl::GetInterruptTimeout(void) const
 {
 	ULONG seconds;
+
 	Check(m_intf->GetInterruptTimeout(&seconds));
 	return seconds;
 }
@@ -809,14 +830,19 @@ void CDebugControl::SetInterruptTimeout(ULONG seconds) const
 
 CDebugControl::ExpressionSyntax CDebugControl::GetExpressionSyntax(void) const
 {
+	CComQIPtr<IDebugControl3> intf(m_intf);
 	ULONG syntax;
-	Check(CComQIPtr<IDebugControl3>(m_intf)->GetExpressionSyntax(&syntax));
-	return (ExpressionSyntax) syntax;
+
+	Check(intf->GetExpressionSyntax(&syntax));
+	return static_cast<ExpressionSyntax>(syntax);
 }
 
 void CDebugControl::SetExpressionSyntax(CDebugControl::ExpressionSyntax syntax) const
 {
-	Check(CComQIPtr<IDebugControl3>(m_intf)->SetExpressionSyntax((ULONG) syntax));
+	CComQIPtr<IDebugControl3> intf(m_intf);
+	ULONG res = static_cast<ULONG>(syntax);
+
+	Check(intf->SetExpressionSyntax(res));
 }
 
 const dict CDebugControl::GetExpressionSyntaxNames(void) const
@@ -839,7 +865,9 @@ const dict CDebugControl::GetExpressionSyntaxNames(void) const
 
 void CDebugControl::SetExpressionSyntaxByName(const std::string& abbrev) const
 {
-	Check(CComQIPtr<IDebugControl3>(m_intf)->SetExpressionSyntaxByName(abbrev.c_str()));
+	CComQIPtr<IDebugControl3> intf(m_intf);
+
+	Check(intf->SetExpressionSyntaxByName(abbrev.c_str()));
 }
 
 const object CDebugControl::Evaluate(const std::string& expression, ULONG type) const
@@ -849,10 +877,9 @@ const object CDebugControl::Evaluate(const std::string& expression, ULONG type) 
 	HRESULT hr = m_intf->Evaluate(expression.c_str(), type, &value, &idx);
 
 	if (FAILED(hr)) {
-		Check(m_intf->Output(DEBUG_OUTPUT_WARNING,
-			"An error occurred while evaluating the expression.\n"));
-		Check(m_intf->Output(DEBUG_OUTPUT_WARNING,
-			"%s\n", expression.c_str()));
+		// FIXME: consolidate this into an exception or something?
+		Check(m_intf->Output(DEBUG_OUTPUT_WARNING, "An error occurred while evaluating the expression.\n"));
+		Check(m_intf->Output(DEBUG_OUTPUT_WARNING, "%s\n", expression.c_str()));
 
 		std::string str(idx, ' ');
 		str += "^ there was a syntax error or an undefined variable\n";
@@ -865,40 +892,51 @@ const object CDebugControl::Evaluate(const std::string& expression, ULONG type) 
 
 void CDebugControl::Execute(const std::string& command, ExecuteFlag flags, CDebugControl::OutputControl target) const
 {
-	Check(m_intf->Execute((ULONG) target, command.c_str(), (ULONG) flags));
+	Check(m_intf->Execute(static_cast<ULONG>(target), command.c_str(), static_cast<ULONG>(flags)));
 }
 
 void CDebugControl::ExecuteCommandFile(const std::string& commandFile, ExecuteFlag flags, CDebugControl::OutputControl target) const
 {
-	Check(m_intf->ExecuteCommandFile((ULONG) target, commandFile.c_str(), (ULONG) flags));
+	Check(m_intf->ExecuteCommandFile(static_cast<ULONG>(target), commandFile.c_str(), static_cast<ULONG>(flags)));
 }
 
 const list CDebugControl::GetAssemblyOptions(void) const
 {
-	AssemblyOption options;
-	Check(CComQIPtr<IDebugControl3>(m_intf)->GetAssemblyOptions(&options));
+	ULONG res;
+	CComQIPtr<IDebugControl3> intf(m_intf);
+	Check(intf->GetAssemblyOptions(&res));
 
-	return utils::FlagsToList<options, AssemblyOption(AssemblyOption::ASMOPT_VERBOSE), AssemblyOption(AssemblyOption::ASMOPT_SOURCE_LINE_NUMBER));
+	return utils::FlagsToList(static_cast<AssemblyOption>(res), AssemblyOption::ASMOPT_VERBOSE, AssemblyOption::ASMOPT_SOURCE_LINE_NUMBER);
 }
 
 void CDebugControl::SetAssemblyOptions(const list& options) const
 {
-	Check(CComQIPtr<IDebugControl3>(m_intf)->SetAssemblyOptions((ULONG) utils::FlagsFromList<AssemblyOption>(options)));
+	CComQIPtr<IDebugControl3> intf(m_intf);
+	ULONG res = utils::FlagsFromList<ULONG, AssemblyOption>(options);
+
+	Check(intf->SetAssemblyOptions(res));
 }
 
 void CDebugControl::AddAssemblyOption(CDebugControl::AssemblyOption options) const
 {
-	Check(CComQIPtr<IDebugControl3>(m_intf)->AddAssemblyOptions((ULONG) options));
+	CComQIPtr<IDebugControl3> intf(m_intf);
+	ULONG res = static_cast<ULONG>(options);
+
+	Check(intf->AddAssemblyOptions(res));
 }
 
 void CDebugControl::RemoveAssemblyOption(CDebugControl::AssemblyOption options) const
 {
-	Check(CComQIPtr<IDebugControl3>(m_intf)->RemoveAssemblyOptions((ULONG) options));
+	CComQIPtr<IDebugControl3> intf(m_intf);
+	ULONG res = static_cast<ULONG>(options);
+
+	Check(intf->RemoveAssemblyOptions(res));
 }
 
 ULONG64 CDebugControl::Assemble(ULONG64 offset, const std::string& instr) const
 {
 	ULONG64 end;
+
 	Check(m_intf->Assemble(offset, instr.c_str(), &end));
 	return end;
 }
@@ -909,7 +947,7 @@ const tuple CDebugControl::Disassemble(ULONG64 offset, DisassembleFlag flags, si
 	std::string buf(bufSize, '\0');
 	ULONG size = buf.size();
 
-	Check(m_intf->Disassemble(offset, (ULONG) flags, const_cast<char *>(buf.c_str()), size, &size, &end));
+	Check(m_intf->Disassemble(offset, static_cast<ULONG>(flags), const_cast<char*>(buf.c_str()), size, &size, &end));
 	buf.resize(size-1);
 	return make_tuple( str(buf), end);
 }
@@ -917,13 +955,15 @@ const tuple CDebugControl::Disassemble(ULONG64 offset, DisassembleFlag flags, si
 ULONG64 CDebugControl::OutputDisassembly(ULONG64 offset, DisassembleFlag flags, CDebugControl::OutputControl target) const
 {
 	ULONG64 end;
-	Check(m_intf->OutputDisassembly((ULONG) target, offset, (ULONG) flags, &end));
+
+	Check(m_intf->OutputDisassembly(static_cast<ULONG>(target), offset, static_cast<ULONG>(flags), &end));
 	return end;
 }
 
 ULONG64 CDebugControl::GetDisassembleEffectiveOffset(void) const
 {
 	ULONG64 offset;
+
 	Check(m_intf->GetDisassembleEffectiveOffset(&offset));
 	return offset;
 }
@@ -931,6 +971,7 @@ ULONG64 CDebugControl::GetDisassembleEffectiveOffset(void) const
 ULONG64 CDebugControl::GetNearInstruction(ULONG64 offset, LONG delta) const
 {
 	ULONG64 nearOffset;
+
 	Check(m_intf->GetNearInstruction(offset, delta, &nearOffset));
 	return nearOffset;
 }
@@ -938,6 +979,7 @@ ULONG64 CDebugControl::GetNearInstruction(ULONG64 offset, LONG delta) const
 ULONG64 CDebugControl::GetReturnOffset(void) const
 {
 	ULONG64 offset;
+
 	Check(m_intf->GetReturnOffset(&offset));
 	return offset;
 }
@@ -953,6 +995,7 @@ const std::string CDebugControl::Input(void) const
 
 		if (FAILED(hr))
 			Check(hr);
+
 		if (S_OK == hr) {
 			input.resize(size);
 			break;
@@ -976,6 +1019,7 @@ const dict CDebugControl::GetTextMacros(void) const
 	for (int i=0; i<10; i++) {
 		szName[2] = '0' + i;
 		Check(m_intf->GetTextMacro(i, szMacro, _countof(szMacro), &nMacro));
+
 		macros[std::string(szName)] = std::string(szMacro, nMacro-1);
 	}
 	return macros;
@@ -998,6 +1042,8 @@ void CDebugControl::SetTextMacroByName(const std::string& name, const std::strin
 			return;
 		}
 	}
+
+	// FIXME: is this the right thing to do?
 	utils::RaiseException("macro name is not exists.", PyExc_KeyError);
 }
 
@@ -1006,15 +1052,15 @@ const dict CDebugControl::GetTextReplacements(void) const
 	CComQIPtr<IDebugControl2> intf(m_intf);
 
 	ULONG number;
+	Check(intf->GetNumberTextReplacements(&number));
+
 	char szAlias[MAX_MACRO_SIZE], szValue[MAX_MACRO_SIZE];
 	ULONG nAlias, nValue;
 
-	Check(intf->GetNumberTextReplacements(&number));
-
 	dict replacements;
 	for (ULONG i=0; i<number; i++) {
-		Check(intf->GetTextReplacement(
-			NULL, i, szAlias, _countof(szAlias), &nAlias, szValue, _countof(szValue), &nValue));
+		Check(intf->GetTextReplacement(NULL, i, szAlias, _countof(szAlias), &nAlias, szValue, _countof(szValue), &nValue));
+
 		replacements[std::string(szAlias, nAlias-1)] = std::string(szValue, nValue-1);
 	}
 	return replacements;
@@ -1022,27 +1068,36 @@ const dict CDebugControl::GetTextReplacements(void) const
 
 const std::string CDebugControl::GetTextReplacement(const std::string& alias) const
 {
+	CComQIPtr<IDebugControl2> intf(m_intf);
+
 	char szValue[MAX_MACRO_SIZE];
 	ULONG nValue = _countof(szValue);
 
-	Check(CComQIPtr<IDebugControl2>(m_intf)->GetTextReplacement(
-		alias.c_str(), 0, NULL, 0, NULL, szValue, _countof(szValue), &nValue));
+	Check(intf->GetTextReplacement(alias.c_str(), 0, NULL, 0, NULL, szValue, _countof(szValue), &nValue));
 	return std::string(szValue, nValue-1);
 }
 
 void CDebugControl::SetTextReplacement(const std::string& alias, const std::string& value) const
 {
-	Check(CComQIPtr<IDebugControl2>(m_intf)->SetTextReplacement(alias.c_str(), value.c_str()));
+	CComQIPtr<IDebugControl2> intf(m_intf);
+
+	Check(intf->SetTextReplacement(alias.c_str(), value.c_str()));
 }
 
 void CDebugControl::RemoveTextReplacements(void) const
 {
-	Check(CComQIPtr<IDebugControl2>(m_intf)->RemoveTextReplacements());
+	CComQIPtr<IDebugControl2> intf(m_intf);
+
+	Check(intf->RemoveTextReplacements());
 }
 
 void CDebugControl::OutputTextReplacements(CDebugControl::OutputControl target) const
 {
-	Check(CComQIPtr<IDebugControl2>(m_intf)->OutputTextReplacements((ULONG) target, DEBUG_OUT_TEXT_REPL_DEFAULT));
+	CComQIPtr<IDebugControl2> intf(m_intf);
+	ULONG res = static_cast<ULONG>(target);
+
+	// FIXME: make DEBUG_OUT_TEXT_REPL_DEFAULT an enumeration
+	Check(intf->OutputTextReplacements(res, DEBUG_OUT_TEXT_REPL_DEFAULT));
 }
 
 const list CDebugControl::GetStackFrames(ULONG64 FrameOffset, ULONG64 StackOffset, ULONG64 InstructionOffset) const

@@ -3,15 +3,17 @@
 #pragma once
 
 #include <atlbase.h>
-#include <dbgeng.h>
 #include <string>
 
 #define KDEXT_64BIT
 #include <wdbgexts.h>
+#include <dbgeng.h>
 
+/** Type declarations **/
 typedef void (*PSetOutput)(PWINDBG_OUTPUT_ROUTINE);
 typedef PWINDBG_OUTPUT_ROUTINE (*PGetOutput)();
 
+/** Class declarations **/
 class CDebugOutput
 {
 	static PWINDBG_OUTPUT_ROUTINE s_callback;

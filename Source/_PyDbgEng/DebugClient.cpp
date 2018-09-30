@@ -1,12 +1,7 @@
 #include "StdAfx.h"
-
-#include <sstream>
-#include <list>
-#include <queue>
-
 #include "utils.h"
-#include "DebugObject.h"
 
+#include "DebugObject.h"
 #include "DebugOutput.h"
 #include "DebugBreakpoint.h"
 #include "DebugRegisters.h"
@@ -14,9 +9,16 @@
 #include "DebugDataSpaces.h"
 #include "DebugSystemObjects.h"
 #include "DebugAdvanced.h"
-
 #include "DebugControl.h"
+
 #include "DebugClient.h"
+
+#include <sstream>
+#include <list>
+#include <queue>
+
+#include <boost/python.hpp>
+using namespace boost::python;
 
 void CDebugClient::Export(void)
 {
@@ -130,86 +132,85 @@ void CDebugClient::Export(void)
 
 	// CDebugClient object
 	scope DebugClient = class_<CDebugClient>("DebugClient", no_init)
-		.add_property("Control", &GetControl)
-		.add_property("Registers", &GetRegisters)
-		.add_property("Symbols", &GetSymbols)
-		.add_property("DataSpaces", &GetDataSpaces)
-		.add_property("SystemObjects", &GetSystemObjects)
+		.add_property("Control", make_function(&CDebugClient::GetControl, return_value_policy<return_by_value>()))
+		.add_property("Registers", make_function(&CDebugClient::GetRegisters, return_value_policy<return_by_value>()))
+		.add_property("Symbols", make_function(&CDebugClient::GetSymbols, return_value_policy<return_by_value>()))
+		.add_property("DataSpaces", make_function(&CDebugClient::GetDataSpaces, return_value_policy<return_by_value>()))
+		.add_property("SystemObjects", make_function(&CDebugClient::GetSystemObjects, return_value_policy<return_by_value>()))
 
-		.def_readonly("EventCallbacks", &m_eventCallbacks)
-		.def_readonly("InputCallbacks", &m_inputCallbacks)
-		.def_readonly("OutputCallbacks", &m_outputCallbacks)
+		.def_readonly("EventCallbacks", &CDebugClient::m_eventCallbacks)
+		.def_readonly("InputCallbacks", &CDebugClient::m_inputCallbacks)
+		.def_readonly("OutputCallbacks", &CDebugClient::m_outputCallbacks)
 
-		.add_property("NumberOfEventCallbacks", &GetNumberOfEventCallbacks)
-		.add_property("NumberOfInputCallbacks", &GetNumberOfInputCallbacks)
-		.add_property("NumberOfOutputCallbacks", &GetNumberOfOutputCallbacks)
+		.add_property("NumberOfEventCallbacks", &CDebugClient::GetNumberOfEventCallbacks)
+		.add_property("NumberOfInputCallbacks", &CDebugClient::GetNumberOfInputCallbacks)
+		.add_property("NumberOfOutputCallbacks", &CDebugClient::GetNumberOfOutputCallbacks)
 
-		.add_property("ExitCode", &GetExitCode,
+		.add_property("ExitCode", &CDebugClient::GetExitCode,
 			"returns the exit code of the current process if that process has already run through to completion.")
 
-		.add_property("Identity", &GetIdentity,
+		.add_property("Identity", &CDebugClient::GetIdentity,
 			"return a string describing the computer and user this client represents.")
-		.def("OutputIdentity", &OutputIdentity,
+		.def("OutputIdentity", &CDebugClient::OutputIdentity,
 			(arg("format")="%s", arg("target")=CDebugControl::OutputControl::OUTPUT_ALL_CLIENTS),
 			"format and output a string describing the computer and user this client represents.")
 
-		.add_property("OutputMask", &GetOutputMask, &SetOutputMask,
+		.add_property("OutputMask", &CDebugClient::GetOutputMask, &CDebugClient::SetOutputMask,
 			"the output mask currently set for the client.")
-		.add_property("OutputWidth", &GetOutputWidth, &SetOutputWidth,
+		.add_property("OutputWidth", &CDebugClient::GetOutputWidth, &CDebugClient::SetOutputWidth,
 			"the width of the output display for this client object.")
-		.add_property("QuitLockString", &GetQuitLockString, &SetQuitLockString,
+		.add_property("QuitLockString", &CDebugClient::GetQuitLockString, &CDebugClient::SetQuitLockString,
 			"the string used to prevent the user from accidentally ending the debugging session.")
-
 /* FIXME
-		.def("CreateProcess", &CreateProcess,
+		.def("CreateProcess", &CDebugClient::CreateProcess,
 			("commandLine", arg("initialDirectory")=std::string(), arg("environmentVariables")=dict(),
 			 arg("createFlags")=CREATE_DEFAULT, arg("attachFlags")=ATTACH_DEFAULT,
 			 arg("attachProcessId")=0, arg("server")=DEFAULT_PROCESS_SERVER),
 			"create a process from the specified command line.")
 */
-		.def("AttachProcess", &AttachProcess,
+		.def("AttachProcess", &CDebugClient::AttachProcess,
 			("id", arg("flags")=AttachFlags::ATTACH_DEFAULT, arg("server")=DEFAULT_PROCESS_SERVER),
 			"connects the debugger engine to a user-mode process")
-		.def("DetachProcesses", &DetachProcesses,
+		.def("DetachProcesses", &CDebugClient::DetachProcesses,
 			"detaches the debugger engine from all processes in all targets, resuming all their threads.")
-		.def("TerminateProcesses", &TerminateProcesses,
+		.def("TerminateProcesses", &CDebugClient::TerminateProcesses,
 			"attempts to terminate all processes in all targets.")
-		.def("AbandonCurrentProcess", &AbandonCurrentProcess,
+		.def("AbandonCurrentProcess", &CDebugClient::AbandonCurrentProcess,
 			"removes the current process from the debugger engine's process list without detaching or terminating the process.")
-		.def("DetachCurrentProcess", &DetachCurrentProcess,
+		.def("DetachCurrentProcess", &CDebugClient::DetachCurrentProcess,
 			"detaches the debugger engine from the current process, resuming all its threads.")
-		.def("TerminateCurrentProcess", &TerminateCurrentProcess,
+		.def("TerminateCurrentProcess", &CDebugClient::TerminateCurrentProcess,
 			"attempts to terminate the current process.")
-		.def("AttachKernel", &AttachKernel,
+		.def("AttachKernel", &CDebugClient::AttachKernel,
 			(arg("flags")=AttachKernelFlags::ATTACH_LOCAL_KERNEL, arg("connectOptions")=std::string()),
 			"connect the debugger engine to a kernel target.")
-		.add_property("IsKernelDebuggerEnabled", &IsKernelDebuggerEnabled,
+		.add_property("IsKernelDebuggerEnabled", &CDebugClient::IsKernelDebuggerEnabled,
 			"whether kernel debugging is enabled for the local kernel.")
-		.add_property("KernelConnectionOptions", &GetKernelConnectionOptions, &SetKernelConnectionOptions,
+		.add_property("KernelConnectionOptions", &CDebugClient::GetKernelConnectionOptions, &CDebugClient::SetKernelConnectionOptions,
 			"the connection options for the current kernel target.")
 
-		.def("OpenDumpFile", &OpenDumpFile, "opens a dump file as a debugger target.")
-		.def("AddDumpInformationFile", &AddDumpInformationFile,
+		.def("OpenDumpFile", &CDebugClient::OpenDumpFile, "opens a dump file as a debugger target.")
+		.def("AddDumpInformationFile", &CDebugClient::AddDumpInformationFile,
 			"registers additional files containing supporting information that will be used when opening a dump file.")
-		.add_property("GetDumpFiles", &GetDumpFiles,
+		.add_property("GetDumpFiles", &CDebugClient::GetDumpFiles,
 			"describe the files containing supporting information that were used when opening the current dump target.")
-		.def("WriteDumpFile", &WriteUserDumpFile,
+		.def("WriteDumpFile", &CDebugClient::WriteUserDumpFile,
 			("filename", arg("qualifier")=CDebugControl::UserDebuggee::USER_SMALL_DUMP, arg("format")=DumpFormat::FORMAT_DEFAULT, arg("comment")=std::string()),
 			"creates a user-mode crash dump file.")
-		.def("WriteDumpFile", &WriteKernelDumpFile,
+		.def("WriteDumpFile", &CDebugClient::WriteKernelDumpFile,
 			("filename", arg("qualifier")=CDebugControl::KernelDebuggee::KERNEL_SMALL_DUMP, arg("format")=DumpFormat::FORMAT_DEFAULT, arg("comment")=std::string()),
 			"creates a kernel-mode crash dump file.")
 
-	.def("GetRunningProcessSystemIds", &GetRunningProcessSystemIds,
-		(arg("server")=DEFAULT_PROCESS_SERVER),
-		"returns a list of all the process ids on the specified system.")
-	.def("GetRunningProcessDescription", &GetRunningProcessDescription,
-		(arg("flags")=AttachFlags::ATTACH_DEFAULT, arg("server")=DEFAULT_PROCESS_SERVER),
-		"returns information about a process id on the specified system.")
-		.def("ConnectProcessServer", &ConnectProcessServer,
+		.def("GetRunningProcessSystemIds", &CDebugClient::GetRunningProcessSystemIds,
+			(arg("server")=DEFAULT_PROCESS_SERVER),
+			"returns a list of all the process ids on the specified system.")
+		.def("GetRunningProcessDescription", &CDebugClient::GetRunningProcessDescription,
+			(arg("flags")=AttachFlags::ATTACH_DEFAULT, arg("server")=DEFAULT_PROCESS_SERVER),
+			"returns information about a process id on the specified system.")
+		.def("ConnectProcessServer", &CDebugClient::ConnectProcessServer,
 			arg("remoteOptions")=std::string(),
 			"connect the debugger engine to a process server. return it's id.")
-		.def("DisconnectProcessServer", &DisconnectProcessServer,
+		.def("DisconnectProcessServer", &CDebugClient::DisconnectProcessServer,
 			arg("Server"),
 			"disconnect the debugger engine from a process server.")
 	;
@@ -217,8 +218,7 @@ void CDebugClient::Export(void)
 	CDebugEventCallbacks::Export();
 	CDebugInputCallbacks::Export();
 	CDebugOutputCallbacks::Export();
-}
-
+} 
 void CDebugClient::CDebugEventCallbacks::Export(void)
 {
 	enum_<CDebugEventCallbacks::InterestMask>("InterestMask")
@@ -307,10 +307,10 @@ void CDebugClient::CDebugEventCallbacks::Export(void)
 	/// CDebugCallbacks
 	class_<CDebugCallbacksBase, boost::noncopyable>("DebugCallbacksBase", no_init)
 	;
-	class_<CComObjectStackEx<CDebugInputCallbacks>, bases<CDebugCallbacksBase> >("DebugInputCallbacks", no_init)
+	class_<CComObjectStackEx<CDebugInputCallbacks>, bases<CDebugCallbacksBase>>("DebugInputCallbacks", no_init)
 		.add_property("Input", &CDebugInputCallbacks::GetInput, &CDebugInputCallbacks::SetInput)
 	;
-	class_<CComObjectStackEx<CDebugOutputCallbacks>, bases<CDebugCallbacksBase> >("DebugOutputCallbacks", no_init)
+	class_<CComObjectStackEx<CDebugOutputCallbacks>, bases<CDebugCallbacksBase>>("DebugOutputCallbacks", no_init)
 		.add_property("Output", &CDebugOutputCallbacks::GetOutput, &CDebugOutputCallbacks::SetOutput)
 	;
 
@@ -320,7 +320,7 @@ void CDebugClient::CDebugEventCallbacks::Export(void)
 									&CDebugEventCallbacks::Set##name, \
 									doc)
 
-	class_<CComObjectStackEx<CDebugEventCallbacks>, bases<CDebugCallbacksBase> >("DebugEventCallbacks", no_init)
+	class_<CComObjectStackEx<CDebugEventCallbacks>, bases<CDebugCallbacksBase>>("DebugEventCallbacks", no_init)
 		DEF_EVENT(Breakpoint, "the target issues a breakpoint exception.")
 		DEF_EVENT(Exception, "an exception debugging event occurs in the target.")
 		DEF_EVENT(CreateThread, "a create-thread debugging event occurs in the target.")
@@ -335,16 +335,17 @@ void CDebugClient::CDebugEventCallbacks::Export(void)
 		DEF_EVENT(ChangeEngineState, "the engine state has changed.")
 		DEF_EVENT(ChangeSymbolState, "the symbol state changes.")
 	;
+#undef DEF_EVENT
 
 	class_<CEventArgs>("EventArgs", no_init)
-		.add_property("Source", &CEventArgs::GetOwner)
+		.add_property("Source", make_function(&CEventArgs::GetOwner, return_value_policy<return_by_value>()))
 	;
 
-	class_<CBreakpointEventArgs, bases<CEventArgs> >("BreakpointEventArgs", no_init)
-		.add_property("Breakpoint", &CBreakpointEventArgs::GetBreakpoint)
+	class_<CBreakpointEventArgs, bases<CEventArgs>>("BreakpointEventArgs", no_init)
+		.add_property("Breakpoint", make_function(&CBreakpointEventArgs::GetBreakpoint, return_value_policy<return_by_value>()))
 	;
 
-	class_<CExceptionEventArgs, bases<CEventArgs> >("ExceptionEventArgs", no_init)
+	class_<CExceptionEventArgs, bases<CEventArgs>>("ExceptionEventArgs", no_init)
 		.add_property("IsFirstChance", &CExceptionEventArgs::IsFirstChance)
 		.add_property("Code", &CExceptionEventArgs::GetExceptionCode)
 		.add_property("Flags", &CExceptionEventArgs::GetExceptionFlags)
@@ -352,17 +353,17 @@ void CDebugClient::CDebugEventCallbacks::Export(void)
 		.add_property("Parameters", &CExceptionEventArgs::GetParameters)
 	;
 
-	class_<CCreateThreadEventArgs, bases<CEventArgs> >("CreateThreadEventArgs", no_init)
+	class_<CCreateThreadEventArgs, bases<CEventArgs>>("CreateThreadEventArgs", no_init)
 		.add_property("Handle", &CCreateThreadEventArgs::GetHandle)
 		.add_property("DataOffset", &CCreateThreadEventArgs::GetDataOffset)
 		.add_property("StartOffset", &CCreateThreadEventArgs::GetStartOffset)
 	;
 
-	class_<CExitThreadEventArgs, bases<CEventArgs> >("ExitThreadEventArgs", no_init)
+	class_<CExitThreadEventArgs, bases<CEventArgs>>("ExitThreadEventArgs", no_init)
 		.add_property("ExitCode", &CExitThreadEventArgs::GetExitCode)
 	;
 
-	class_<CCreateProcessEventArgs, bases<CEventArgs> >("CreateProcessEventArgs", no_init)
+	class_<CCreateProcessEventArgs, bases<CEventArgs>>("CreateProcessEventArgs", no_init)
 		.add_property("ImageFileHandle", &CCreateProcessEventArgs::GetImageFileHandle)
 		.add_property("Handle", &CCreateProcessEventArgs::GetHandle)
 		.add_property("BaseOffset", &CCreateProcessEventArgs::GetBaseOffset)
@@ -376,11 +377,11 @@ void CDebugClient::CDebugEventCallbacks::Export(void)
 		.add_property("StartOffset", &CCreateProcessEventArgs::GetStartOffset)
 	;
 
-	class_<CExitProcessEventArgs, bases<CEventArgs> >("ExitProcessEventArgs", no_init)
+	class_<CExitProcessEventArgs, bases<CEventArgs>>("ExitProcessEventArgs", no_init)
 		.add_property("ExitCode", &CExitProcessEventArgs::GetExitCode)
 	;
 
-	class_<CLoadModuleEventArgs, bases<CEventArgs> >("LoadModuleEventArgs", no_init)
+	class_<CLoadModuleEventArgs, bases<CEventArgs>>("LoadModuleEventArgs", no_init)
 		.add_property("ImageFileHandle", &CLoadModuleEventArgs::GetImageFileHandle)
 		.add_property("BaseOffset", &CLoadModuleEventArgs::GetBaseOffset)
 		.add_property("ModuleSize", &CLoadModuleEventArgs::GetModuleSize)
@@ -390,29 +391,29 @@ void CDebugClient::CDebugEventCallbacks::Export(void)
 		.add_property("TimeDateStamp", &CLoadModuleEventArgs::GetTimeDateStamp)
 	;
 
-	class_<CUnloadModuleEventArgs, bases<CEventArgs> >("UnloadModuleEventArgs", no_init)
+	class_<CUnloadModuleEventArgs, bases<CEventArgs>>("UnloadModuleEventArgs", no_init)
 		.add_property("ImageBaseName", &CUnloadModuleEventArgs::GetImageBaseName)
 		.add_property("BaseOffset", &CUnloadModuleEventArgs::GetBaseOffset)
 	;
 
-	class_<CSystemErrorEventArgs, bases<CEventArgs> >("SystemErrorEventArgs", no_init)
+	class_<CSystemErrorEventArgs, bases<CEventArgs>>("SystemErrorEventArgs", no_init)
 		.add_property("Error", &CSystemErrorEventArgs::GetError)
 		.add_property("Level", &CSystemErrorEventArgs::GetLevel)
 	;
 
-	class_<CSessionStatusEventArgs, bases<CEventArgs> >("SessionStatusEventArgs", no_init)
+	class_<CSessionStatusEventArgs, bases<CEventArgs>>("SessionStatusEventArgs", no_init)
 		.add_property("Status", &CSessionStatusEventArgs::GetStatus)
 	;
 
-	class_<CStateChangeEventArgs<CDebugEventCallbacks::ChangeEngineStateFlags>, bases<CEventArgs> >("ChangeEngineStateArgs", no_init)
+	class_<CStateChangeEventArgs<CDebugEventCallbacks::ChangeEngineStateFlags>, bases<CEventArgs>>("ChangeEngineStateArgs", no_init)
 		.add_property("Flags", &CStateChangeEventArgs<CDebugEventCallbacks::ChangeEngineStateFlags>::GetFlags)
 		.add_property("Argument", &CStateChangeEventArgs<CDebugEventCallbacks::ChangeEngineStateFlags>::GetArgument)
 	;
-	class_<CStateChangeEventArgs<CDebugEventCallbacks::ChangeDebuggeeStateFlags>, bases<CEventArgs> >("ChangeDebuggeeStateArgs", no_init)
+	class_<CStateChangeEventArgs<CDebugEventCallbacks::ChangeDebuggeeStateFlags>, bases<CEventArgs>>("ChangeDebuggeeStateArgs", no_init)
 		.add_property("Flags", &CStateChangeEventArgs<CDebugEventCallbacks::ChangeDebuggeeStateFlags>::GetFlags)
 		.add_property("Argument", &CStateChangeEventArgs<CDebugEventCallbacks::ChangeDebuggeeStateFlags>::GetArgument)
 	;
-	class_<CStateChangeEventArgs<CDebugEventCallbacks::ChangeSymbolStateFlags>, bases<CEventArgs> >("ChangeSymbolStateArgs", no_init)
+	class_<CStateChangeEventArgs<CDebugEventCallbacks::ChangeSymbolStateFlags>, bases<CEventArgs>>("ChangeSymbolStateArgs", no_init)
 		.add_property("Flags", &CStateChangeEventArgs<CDebugEventCallbacks::ChangeSymbolStateFlags>::GetFlags)
 		.add_property("Argument", &CStateChangeEventArgs<CDebugEventCallbacks::ChangeSymbolStateFlags>::GetArgument)
 	;
@@ -420,15 +421,18 @@ void CDebugClient::CDebugEventCallbacks::Export(void)
 
 STDMETHODIMP CDebugClient::CDebugInputCallbacks::StartInput(__in ULONG BufferSize)
 {
+	HRESULT hr;
 	if (!m_input)
 		return E_NOTIMPL;
+
 	try {
 		m_input(CInputEventArgs(m_intf, BufferSize));
-		return S_OK;
+		hr = S_OK;
 	} catch (error_already_set) {
 		PyErr_Print();
-		return E_FAIL;
+		hr = E_FAIL;
 	}
+	return hr;
 }
 STDMETHODIMP CDebugClient::CDebugInputCallbacks::EndInput(void)
 {
@@ -437,20 +441,24 @@ STDMETHODIMP CDebugClient::CDebugInputCallbacks::EndInput(void)
 
 STDMETHODIMP CDebugClient::CDebugOutputCallbacks::Output(__in ULONG Mask, __in PCSTR Text)
 {
-	if (!m_output) return E_NOTIMPL;
+	HRESULT hr;
+	if (!m_output)
+		return E_NOTIMPL;
 
 	try {
 		m_output(COutputEventArgs(m_intf, Mask, Text));
-		return S_OK;
+		hr = S_OK;
 	} catch (error_already_set) {
 		PyErr_Print();
-		return E_FAIL;
+		hr = E_FAIL;
 	}
+	return hr;
 }
 
 ULONG CDebugClient::GetExitCode(void) const
 {
 	ULONG code;
+
 	m_intf->GetExitCode(&code);
 	return code;
 }
@@ -465,7 +473,7 @@ const std::string CDebugClient::GetIdentity(void) const
 }
 void CDebugClient::OutputIdentity(const std::string& format, CDebugControl::OutputControl target) const
 {
-	m_intf->OutputIdentity((ULONG) target, 0, format.c_str());
+	m_intf->OutputIdentity(static_cast<ULONG>(target), 0, format.c_str());
 }
 
 // FIXME: wrap the flags in a sane fashion
@@ -476,14 +484,14 @@ void CDebugClient::CreateProcess(const std::string& commandLine, const std::stri
 {
 	HRESULT hr;
 	bool attach = attachProcessId != 0 ||
-								(((ULONG) createFlags) & (DEBUG_PROCESS | DEBUG_ONLY_THIS_PROCESS)) != 0;
+								((static_cast<ULONG>(createFlags)) & (DEBUG_PROCESS | DEBUG_ONLY_THIS_PROCESS)) != 0;
 
 	if (initialDirectory.empty() && utils::empty(environmentVariables))
 		if (attach) {
 			hr = m_intf->CreateProcessAndAttach(server, const_cast<PSTR>(commandLine.c_str()),
-				(ULONG) createFlags, attachProcessId, (ULONG)attachFlags);
+				static_cast<ULONG>(createFlags), attachProcessId, static_cast<ULONG>(attachFlags));
 		} else
-			hr = m_intf->CreateProcess(server, const_cast<PSTR>(commandLine.c_str()), (ULONG) createFlags);
+			hr = m_intf->CreateProcess(server, const_cast<PSTR>(commandLine.c_str()), static_cast<ULONG>(createFlags));
 	else {
 		list items = environmentVariables.items();
 		std::ostringstream oss;
@@ -500,12 +508,12 @@ void CDebugClient::CreateProcess(const std::string& commandLine, const std::stri
 		CComQIPtr<IDebugClient5> intf(m_intf);
 		if (!intf) utils::RaiseException("The debug engine doesn't support IDebugClient5 interface", PyExc_NotImplementedError);
 
-		DEBUG_CREATE_PROCESS_OPTIONS options = { (ULONG) createFlags, 0, 0, 0 };
+		DEBUG_CREATE_PROCESS_OPTIONS options = { static_cast<ULONG>(createFlags), 0, 0, 0 };
 
 		if (attach) {
 			hr = intf->CreateProcessAndAttach2(server, const_cast<PSTR>(commandLine.c_str()),
 				&options, sizeof(options), const_cast<PSTR>(initialDirectory.c_str()), env.c_str(),
-				attachProcessId, (ULONG)attachFlags);
+				attachProcessId, static_cast<ULONG>(attachFlags));
 		} else {
 			hr = intf->CreateProcess2(server, const_cast<PSTR>(commandLine.c_str()),
 				&options, sizeof(options), const_cast<PSTR>(initialDirectory.c_str()), env.c_str());
@@ -515,25 +523,22 @@ void CDebugClient::CreateProcess(const std::string& commandLine, const std::stri
 }
 */
 
+// FIXME: these should all return HRESULT instead of throwing an exception
 HRESULT CDebugClient::AttachProcess(ULONG id, CDebugClient::AttachFlags flags, ULONG64 server) const
 {
 	HRESULT hr;
-	hr = m_intf->AttachProcess(server, id, (ULONG)flags);
+	hr = m_intf->AttachProcess(server, id, static_cast<ULONG>(flags));
 	Check(hr);
 	return hr;
 }
 
 void CDebugClient::DetachProcesses(void) const
 {
-	HRESULT hr;
-	hr = m_intf->DetachProcesses();
-	Check(hr);
+	Check(m_intf->DetachProcesses());
 }
 void CDebugClient::TerminateProcesses(void) const
 {
-	HRESULT hr;
-	hr = m_intf->TerminateProcesses();
-	Check(hr);
+	Check(m_intf->TerminateProcesses());
 }
 void CDebugClient::AbandonCurrentProcess(void) const
 {
@@ -542,54 +547,49 @@ void CDebugClient::AbandonCurrentProcess(void) const
 }
 void CDebugClient::DetachCurrentProcess(void) const
 {
-	HRESULT hr;
 	CComQIPtr<IDebugClient2> intf(m_intf);
 
-	hr = intf->DetachCurrentProcess();
-	Check(hr);
+	Check(intf->DetachCurrentProcess());
 }
 void CDebugClient::TerminateCurrentProcess(void) const
 {
-	HRESULT hr;
 	CComQIPtr<IDebugClient2> intf(m_intf);
 
-	hr = intf->TerminateCurrentProcess();
-	Check(hr);
+	Check(intf->TerminateCurrentProcess());
 }
 
 ULONG64 CDebugClient::ConnectProcessServer(const std::string& remoteOptions) const
 {
 	ULONG64 serverId = 0;
 	HRESULT hr = 0;
+
 	hr = m_intf->ConnectProcessServer(remoteOptions.c_str(), &serverId);
+	Check(hr);	// FIXME: these should all return the error code somehow
 	/* XXX: Need to implement GetRunningProcessSystemIds */
-		return serverId;
+	return serverId;
 }
 
 void CDebugClient::DisconnectProcessServer(ULONG64 Server) const
 {
-	HRESULT hr;
-	hr = m_intf->DisconnectProcessServer(Server);
-	Check(hr);
+	Check(m_intf->DisconnectProcessServer(Server));
 }
 
 void CDebugClient::AttachKernel(CDebugClient::AttachKernelFlags flags, const std::string& connectOptions) const
 {
-	HRESULT hr;
-	hr = m_intf->AttachKernel((ULONG) flags, connectOptions.empty() ? NULL : connectOptions.c_str());
-	Check(hr);
+	Check(m_intf->AttachKernel(static_cast<ULONG>(flags), connectOptions.empty() ? NULL : connectOptions.c_str()));
 }
 
 bool CDebugClient::IsKernelDebuggerEnabled(void) const
 {
 	HRESULT hr = CComQIPtr<IDebugClient2>(m_intf)->IsKernelDebuggerEnabled();
-	Check(hr);
+	Check(hr);	// FIXME: should always return error code
 	return S_OK == hr;
 }
 
 const std::string CDebugClient::GetKernelConnectionOptions(void) const
 {
 	char options[1024]; ULONG size;
+
 	Check(m_intf->GetKernelConnectionOptions(options, _countof(options), &size));
 	return std::string(options, size-1);
 }
@@ -602,8 +602,7 @@ bool CDebugClient::DispatchCallbacks(ULONG timeout) const
 {
 	HRESULT hr = m_intf->DispatchCallbacks(timeout);
 
-	Check(hr);
-
+	Check(hr);	// FIXME: always return error code
 	return hr == S_OK;
 }
 void CDebugClient::ExitDispatch(void) const
@@ -613,36 +612,47 @@ void CDebugClient::ExitDispatch(void) const
 
 ULONG CDebugClient::GetNumberOfEventCallbacks(CDebugClient::CDebugEventCallbacks::InterestMask event) const
 {
-	ULONG count;
-	Check(CComQIPtr<IDebugClient5>(m_intf)->GetNumberEventCallbacks((ULONG) event, &count));
+	CComQIPtr<IDebugClient5> intf(m_intf);
+	ULONG res, count;
+
+	res = static_cast<ULONG>(event);
+	Check(intf->GetNumberEventCallbacks(res, &count));
 	return count;
 }
 ULONG CDebugClient::GetNumberOfInputCallbacks(void) const
 {
+	CComQIPtr<IDebugClient5> intf(m_intf);
 	ULONG count;
-	Check(CComQIPtr<IDebugClient5>(m_intf)->GetNumberInputCallbacks(&count));
+
+	Check(intf->GetNumberInputCallbacks(&count));
 	return count;
 }
 ULONG CDebugClient::GetNumberOfOutputCallbacks(void) const
 {
+	CComQIPtr<IDebugClient5> intf(m_intf);
 	ULONG count;
-	Check(CComQIPtr<IDebugClient5>(m_intf)->GetNumberOutputCallbacks(&count));
+
+	Check(intf->GetNumberOutputCallbacks(&count));
 	return count;
 }
 
 CDebugOutput::OutputMask CDebugClient::GetOutputMask(void) const
 {
 	ULONG mask;
+
 	Check(m_intf->GetOutputMask(&mask));
-	return (CDebugOutput::OutputMask) mask;
+	return static_cast<CDebugOutput::OutputMask>(mask);
 }
 void CDebugClient::SetOutputMask(CDebugOutput::OutputMask mask) const
 {
-	Check(m_intf->SetOutputMask((ULONG) mask));
+	ULONG res = static_cast<ULONG>(mask);
+
+	Check(m_intf->SetOutputMask(res));
 }
 ULONG CDebugClient::GetOutputWidth(void) const
 {
 	ULONG width;
+
 	Check(m_intf->GetOutputMask(&width));
 	return width;
 }
@@ -653,16 +663,19 @@ void CDebugClient::SetOutputWidth(ULONG width) const
 
 const std::string CDebugClient::GetQuitLockString(void) const
 {
+	CComQIPtr<IDebugClient5> intf(m_intf);
 	char szMsg[1024];
 	ULONG nMsg = _countof(szMsg);
 
-	Check(CComQIPtr<IDebugClient5>(m_intf)->GetQuitLockString(szMsg, nMsg, &nMsg));
-
+	Check(intf->GetQuitLockString(szMsg, nMsg, &nMsg));
 	return std::string(szMsg, nMsg-1);
 }
+
 void CDebugClient::SetQuitLockString(const std::string str) const
 {
-	Check(CComQIPtr<IDebugClient5>(m_intf)->SetQuitLockString(str.c_str()));
+	CComQIPtr<IDebugClient5> intf(m_intf);
+
+	Check(intf->SetQuitLockString(str.c_str()));
 }
 
 void CDebugClient::OpenDumpFile(const std::string& filename) const
@@ -671,7 +684,10 @@ void CDebugClient::OpenDumpFile(const std::string& filename) const
 }
 void CDebugClient::AddDumpInformationFile(const std::string& filename) const
 {
-	Check(CComQIPtr<IDebugClient2>(m_intf)->AddDumpInformationFile(filename.c_str(), DEBUG_DUMP_FILE_PAGE_FILE_DUMP));
+	CComQIPtr<IDebugClient2> intf(m_intf);
+
+	// FIXME: DEBUG_DUMP_FILE_PAGE_FILE_DUMP should be an enumeration
+	Check(intf->AddDumpInformationFile(filename.c_str(), DEBUG_DUMP_FILE_PAGE_FILE_DUMP));	// XXX
 }
 const dict CDebugClient::GetDumpFiles(void) const
 {
@@ -694,21 +710,23 @@ const dict CDebugClient::GetDumpFiles(void) const
 
 void CDebugClient::WriteUserDumpFile(const std::string& filename, CDebugControl::UserDebuggee qualifier, CDebugClient::DumpFormat format, const std::string& comment) const
 {
+	CComQIPtr<IDebugClient2> intf(m_intf);
+
 	if (DumpFormat::FORMAT_DEFAULT == format && comment.empty()) {
 		Check(m_intf->WriteDumpFile(filename.c_str(), static_cast<ULONG>(qualifier)));
 	} else {
-		Check(CComQIPtr<IDebugClient2>(m_intf)->WriteDumpFile2(
-			filename.c_str(), static_cast<ULONG>(qualifier), (ULONG) format, comment.empty() ? comment.c_str() : NULL));
+		Check(intf->WriteDumpFile2(filename.c_str(), static_cast<ULONG>(qualifier), static_cast<ULONG>(format), comment.empty()? comment.c_str() : NULL));
 	}
 }
 
 void CDebugClient::WriteKernelDumpFile(const std::string& filename, CDebugControl::KernelDebuggee qualifier, CDebugClient::DumpFormat format, const std::string& comment) const
 {
+	CComQIPtr<IDebugClient2> intf(m_intf);
+
 	if (DumpFormat::FORMAT_DEFAULT == format && comment.empty()) {
 		Check(m_intf->WriteDumpFile(filename.c_str(), static_cast<ULONG>(qualifier)));
 	} else {
-		Check(CComQIPtr<IDebugClient2>(m_intf)->WriteDumpFile2(
-		filename.c_str(), static_cast<ULONG>(qualifier), (ULONG) format, comment.empty() ? comment.c_str() : NULL));
+		Check(intf->WriteDumpFile2(filename.c_str(), static_cast<ULONG>(qualifier), static_cast<ULONG>(format), comment.empty()? comment.c_str() : NULL));
 	}
 }
 
@@ -778,21 +796,22 @@ tuple CDebugClient::GetRunningProcessDescription(ULONG systemId, ULONG flags, UL
 // CDebugEventCallbacks
 void CDebugClient::CDebugEventCallbacks::Get(IDebugEventCallbacks** callbacks)
 {
-	HRESULT hr = m_intf->GetEventCallbacks(callbacks);
-	Check(hr);
+	Check(m_intf->GetEventCallbacks(callbacks));
 }
 
 void CDebugClient::CDebugEventCallbacks::Set(IDebugEventCallbacks* callbacks)
 {
-	HRESULT hr = m_intf->SetEventCallbacks(callbacks);
-	Check(hr);
+	Check(m_intf->SetEventCallbacks(callbacks));
 }
 
 STDMETHODIMP CDebugClient::CDebugEventCallbacks::GetInterestMask(__out PULONG Mask)
 {
-	*Mask = 0;
+	ULONG res;
+
+	res = 0;
 	for(CallbackMap::const_iterator it = m_eventCallbacks.begin(); it != m_eventCallbacks.end(); it++)
-		*Mask |= it->first;
+		res |= it->first;
+	*Mask = res;
 	return S_OK;
 }
 
@@ -1124,14 +1143,12 @@ CDebugClient::CSessionStatusEventArgs::GetStatus(void) const
 /* CDebugClient::CDebugInputCallbacks */
 void CDebugClient::CDebugInputCallbacks::Get(IDebugInputCallbacks** callbacks)
 {
-	HRESULT hr = m_intf->GetInputCallbacks(callbacks);
-	Check(hr);
+	Check(m_intf->GetInputCallbacks(callbacks));
 }
 
 void CDebugClient::CDebugInputCallbacks::Set(IDebugInputCallbacks* callbacks)
 {
-	HRESULT hr = m_intf->SetInputCallbacks(callbacks);
-	Check(hr);
+	Check(m_intf->SetInputCallbacks(callbacks));
 }
 
 const object
@@ -1149,7 +1166,7 @@ CDebugClient::CDebugInputCallbacks::SetInput(const object& obj)
 void
 CDebugClient::CDebugInputCallbacks::Export(void)
 {
-	class_<CDebugClient::CInputEventArgs, bases<CDebugClient::CEventArgs> >("InputEventArgs", no_init)
+	class_<CDebugClient::CInputEventArgs, bases<CDebugClient::CEventArgs>>("InputEventArgs", no_init)
 		.add_property("BufferSize", &CDebugClient::CInputEventArgs::GetBufferSize)
 		;
 }
@@ -1164,15 +1181,13 @@ ULONG CDebugClient::CInputEventArgs::GetBufferSize(void) const
 void
 CDebugClient::CDebugOutputCallbacks::Get(IDebugOutputCallbacks** callbacks)
 {
-	HRESULT hr = m_intf->GetOutputCallbacks(callbacks);
-	Check(hr);
+	Check(m_intf->GetOutputCallbacks(callbacks));
 }
 
 void
 CDebugClient::CDebugOutputCallbacks::Set(IDebugOutputCallbacks* callbacks)
 {
-	HRESULT hr = m_intf->SetOutputCallbacks(callbacks);
-	Check(hr);
+	Check(m_intf->SetOutputCallbacks(callbacks));
 }
 
 const object
@@ -1208,7 +1223,7 @@ CDebugClient::CDebugOutputCallbacks::Export(void)
 		.value("HAS_SPECIAL_CHARACTERS", CallbackFlags::OUTCBF_DML_HAS_SPECIAL_CHARACTERS) // The markup content has encoded special characters like ", &, < and >.
 	;
 
-	class_<CDebugClient::COutputEventArgs, bases<CDebugClient::CEventArgs> >("OutputEventArgs", no_init)
+	class_<CDebugClient::COutputEventArgs, bases<CDebugClient::CEventArgs>>("OutputEventArgs", no_init)
 		.add_property("Mask", &CDebugClient::COutputEventArgs::GetMask)
 		.add_property("Text", &CDebugClient::COutputEventArgs::GetText)
 	;
@@ -1218,7 +1233,7 @@ CDebugClient::CDebugOutputCallbacks::Export(void)
 CDebugOutput::OutputMask
 CDebugClient::COutputEventArgs::GetMask(void) const
 {
-	return (CDebugOutput::OutputMask) m_mask;
+	return static_cast<CDebugOutput::OutputMask>(m_mask);
 }
 
 const std::string

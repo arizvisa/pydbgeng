@@ -2,8 +2,15 @@
 #define __DebugBreakpoint_h
 #pragma once
 
+#include <boost/python.hpp>
+#include <dbgeng.h>
+
+using namespace boost::python;
+
+/** Forward declarations **/
 class CDebugClient;
 
+/** Class declarations **/
 class CDebugBreakpoint : public CDebugObjectOwned<IDebugBreakpoint> {
 
 public:
@@ -87,5 +94,4 @@ public:
 	void Enable(void);
 	HRESULT Remove(void);
 };
-
 #endif

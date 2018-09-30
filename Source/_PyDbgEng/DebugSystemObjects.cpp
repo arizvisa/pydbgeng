@@ -2,7 +2,6 @@
 #include "utils.h"
 
 #include "DebugObject.h"
-
 #include "DebugDataSpaces.h"
 #include "DebugSystemObjects.h"
 
@@ -10,46 +9,51 @@
 #include <algorithm>
 
 #include <datetime.h>
+#include <boost/python.hpp>
+using namespace boost::python;
 
 void CDebugSystemObjects::Export(void)
 {
 	if (::Py_IsInitialized() && !PyDateTimeAPI) PyDateTime_IMPORT;
 
 	scope DebugSystemObjects = class_<CDebugSystemObjects>("DebugSystemObjects", no_init)
-		.add_property("EventSystem", &GetEventSystem,
+		.add_property("EventSystem", &CDebugSystemObjects::GetEventSystem,
 			"the engine target for the target in which the last event occurred.")
-		.add_property("EventProcess", &GetEventProcess,
+		.add_property("EventProcess", &CDebugSystemObjects::GetEventProcess,
 			"the engine process for the process on which the last event occurred.")
-		.add_property("EventThread", &GetEventThread,
+		.add_property("EventThread", &CDebugSystemObjects::GetEventThread,
 			"the engine thread for the thread on which the last event occurred.")
 
-		.add_property("CurrentSystem", &GetCurrentSystem, &SetCurrentSystem, "the engine target for the current process.")
-		.add_property("CurrentProcess", &GetCurrentProcess, &SetCurrentProcess, "the current process.")
-		.add_property("CurrentThread", &GetCurrentThread, &SetCurrentThread, "the current thread.")
+		.add_property("CurrentSystem", &CDebugSystemObjects::GetCurrentSystem, &CDebugSystemObjects::SetCurrentSystem,
+			"the engine target for the current process.")
+		.add_property("CurrentProcess", &CDebugSystemObjects::GetCurrentProcess, &CDebugSystemObjects::SetCurrentProcess,
+			"the current process.")
+		.add_property("CurrentThread", &CDebugSystemObjects::GetCurrentThread, &CDebugSystemObjects::SetCurrentThread,
+			"the current thread.")
 
-		.add_property("ImplicitProcessDataOffset", &GetImplicitProcessDataOffset, &SetImplicitProcessDataOffset,
+		.add_property("ImplicitProcessDataOffset", &CDebugSystemObjects::GetImplicitProcessDataOffset, &CDebugSystemObjects::SetImplicitProcessDataOffset,
 			"the implicit process for the current target.")
-		.add_property("ImplicitThreadDataOffset", &GetImplicitThreadDataOffset, &SetImplicitThreadDataOffset,
+		.add_property("ImplicitThreadDataOffset", &CDebugSystemObjects::GetImplicitThreadDataOffset, &CDebugSystemObjects::SetImplicitThreadDataOffset,
 			"the implicit thread for the current target.")
 
-		.add_property("Systems", &GetSystems, "targets to which the engine is currently connected.")
-		.add_property("Threads", &GetThreads, "threads in the current process.")
-		.add_property("Processes", &GetProcesses, "processes for the current target.")
+		.add_property("Systems", &CDebugSystemObjects::GetSystems, "targets to which the engine is currently connected.")
+		.add_property("Threads", &CDebugSystemObjects::GetThreads, "threads in the current process.")
+		.add_property("Processes", &CDebugSystemObjects::GetProcesses, "processes for the current target.")
 
-		.add_property("TotalNumberOfThreads", &GetTotalNumberOfThreads,
+		.add_property("TotalNumberOfThreads", &CDebugSystemObjects::GetTotalNumberOfThreads,
 			"the total number of threads for all the processes in the current target.")
-		.add_property("LargestNumberOfThreads", &GetLargestNumberOfThreads,
+		.add_property("LargestNumberOfThreads", &CDebugSystemObjects::GetLargestNumberOfThreads,
 			"the largest number of threads in any process for the current target.")
 
-		.def("GetThread", &GetThreadBySystemId,
+		.def("GetThread", &CDebugSystemObjects::GetThreadBySystemId,
 			"returns the thread specified by its system thread ID.")
 
-		.def("GetProcess", &GetProcessBySystemId,
+		.def("GetProcess", &CDebugSystemObjects::GetProcessBySystemId,
 			"returns the process specified by its system process ID.")
 
-		.def("GetCurrentProcessSystemId", &GetCurrentProcessSystemId,
+		.def("GetCurrentProcessSystemId", &CDebugSystemObjects::GetCurrentProcessSystemId,
 			"the current process.")
-		.def("GetCurrentThreadSystemId", &GetCurrentThreadSystemId,
+		.def("GetCurrentThreadSystemId", &CDebugSystemObjects::GetCurrentThreadSystemId,
 			"the current thread.")
 
 		/*
@@ -57,41 +61,41 @@ void CDebugSystemObjects::Export(void)
 		flier's choice of code.
 		*/
 
-		.def("GetCurrentProcessId", &GetCurrentProcessId,
+		.def("GetCurrentProcessId", &CDebugSystemObjects::GetCurrentProcessId,
 			"the current process.")
-		.def("GetCurrentThreadId", &GetCurrentThreadId,
+		.def("GetCurrentThreadId", &CDebugSystemObjects::GetCurrentThreadId,
 				"the current thread")
 
-		.def("GetProcessIdByHandle", &GetProcessIdByHandle,
+		.def("GetProcessIdByHandle", &CDebugSystemObjects::GetProcessIdByHandle,
 				"returns the process id when given a handle")
-		.def("GetProcessIdBySystemId", &GetProcessIdBySystemId,
+		.def("GetProcessIdBySystemId", &CDebugSystemObjects::GetProcessIdBySystemId,
 				"returns the process id when given a system id")
 
-		.def("GetThreadIdByHandle", &GetThreadIdByHandle,
+		.def("GetThreadIdByHandle", &CDebugSystemObjects::GetThreadIdByHandle,
 				"returns the thread id when given a handle")
-		.def("GetThreadIdBySystemId", &GetThreadIdBySystemId,
+		.def("GetThreadIdBySystemId", &CDebugSystemObjects::GetThreadIdBySystemId,
 				"returns the thread id when given a system id")
 
-		.def("SetCurrentProcessId", &SetCurrentProcessId,
+		.def("SetCurrentProcessId", &CDebugSystemObjects::SetCurrentProcessId,
 			"setting the current process.")
-		.def("SetCurrentThreadId", &SetCurrentThreadId,
+		.def("SetCurrentThreadId", &CDebugSystemObjects::SetCurrentThreadId,
 				"setting the current thread")
 
-		.def("GetCurrentProcessHandle", &GetCurrentProcessHandle,
+		.def("GetCurrentProcessHandle", &CDebugSystemObjects::GetCurrentProcessHandle,
 			"handle of the current process.")
-		.def("GetCurrentThreadHandle", &GetCurrentThreadHandle,
+		.def("GetCurrentThreadHandle", &CDebugSystemObjects::GetCurrentThreadHandle,
 			"handle of the current thread.")
 
-		.def("GetCurrentProcessPeb", &GetCurrentProcessPeb,
+		.def("GetCurrentProcessPeb", &CDebugSystemObjects::GetCurrentProcessPeb,
 			"peb of the current process.")
-		.def("GetCurrentThreadTeb", &GetCurrentThreadTeb,
+		.def("GetCurrentThreadTeb", &CDebugSystemObjects::GetCurrentThreadTeb,
 			"teb of the current thread.")
 
 ////////
-		.def("GetNumberThreads", &GetNumberThreads,
+		.def("GetNumberThreads", &CDebugSystemObjects::GetNumberThreads,
 			"returns the number of threads in the current process.")
 
-		.def("GetThreadIdsByIndex", &GetThreadIdsByIndex,
+		.def("GetThreadIdsByIndex", &CDebugSystemObjects::GetThreadIdsByIndex,
 			"returns a list of tuples containing the requested thread ids.")
 	;
 
@@ -106,22 +110,22 @@ void CDebugSystemObjects::Export(void)
 		.add_property("SystemId", &CSystemObject::GetSystemId)
 		;
 
-	class_<CThread, bases<CSystemObject> >("Thread", no_init)
+	class_<CThread, bases<CSystemObject>>("Thread", no_init)
 		.def("__repr__", &CThread::Repr)
 		;
 
-	class_<CCurrentThread, bases<CThread> >("CurrentThreadClass", no_init)
+	class_<CCurrentThread, bases<CThread>>("CurrentThreadClass", no_init)
 		.add_property("DataOffset", &CCurrentThread::GetDataOffset,
 			"the location of the system data structure for the current thread.")
 		.add_property("Handle", &CCurrentThread::GetHandle,
 			"the system handle for the current thread.")
 		;
 
-	class_<CProcess, bases<CSystemObject> >("Process", no_init)
+	class_<CProcess, bases<CSystemObject>>("Process", no_init)
 		.def("__repr__", &CProcess::Repr)
 		;
 
-	class_<CCurrentProcess, bases<CProcess> >("CurrentProcessClass", no_init)
+	class_<CCurrentProcess, bases<CProcess>>("CurrentProcessClass", no_init)
 		.add_property("DataOffset", &CCurrentProcess::GetDataOffset,
 			"the location of the system data structure for the current process.")
 		.add_property("Handle", &CCurrentProcess::GetHandle,
@@ -137,7 +141,8 @@ const ULONG64
 CDebugSystemObjects::GetCurrentProcessPeb(void) const
 {
 	ULONG64 address;
-	Check( m_intf->GetCurrentProcessPeb(&address) );
+
+	Check(m_intf->GetCurrentProcessPeb(&address));
 	return address;
 }
 
@@ -145,7 +150,8 @@ const ULONG64
 CDebugSystemObjects::GetCurrentThreadTeb(void) const
 {
 	ULONG64 address;
-	Check( m_intf->GetCurrentThreadTeb(&address) );
+
+	Check(m_intf->GetCurrentThreadTeb(&address));
 	return address;
 }
 
@@ -153,6 +159,7 @@ const CDebugSystemObjects::CDebugSystem
 CDebugSystemObjects::GetEventSystem(void) const
 {
 	CComQIPtr<IDebugSystemObjects3> intf(m_intf);
+
 	ULONG id;
 	Check(intf->GetEventSystem(&id));
 	return CDebugSystem(this, id);
@@ -163,6 +170,7 @@ CDebugSystemObjects::GetEventProcess(void) const
 {
 	ULONG engId;
 	Check(m_intf->GetEventProcess(&engId));
+
 	return GetProcessByEngineId(engId);
 }
 
@@ -171,14 +179,16 @@ CDebugSystemObjects::GetEventThread(void) const
 {
 	ULONG engId;
 	Check(m_intf->GetEventThread(&engId));
+
 	return GetThreadByEngineId(engId);
 }
 
 const CDebugSystemObjects::CDebugSystem
 CDebugSystemObjects::GetCurrentSystem(void) const
 {
-	ULONG id = 0;
 	CComQIPtr<IDebugSystemObjects3> intf(m_intf);
+
+	ULONG id = 0;
 	Check(intf->GetCurrentSystemId(&id));
 	return CDebugSystem(this, id);
 }
@@ -193,65 +203,73 @@ CDebugSystemObjects::SetCurrentSystem(const CDebugSystemObjects::CDebugSystem& s
 const ULONG
 CDebugSystemObjects::GetCurrentProcessId(void) const
 {
-		ULONG pid;
-		Check( m_intf->GetCurrentProcessId(&pid) );
-		return pid;
+	ULONG pid;
+	Check(m_intf->GetCurrentProcessId(&pid));
+
+	return pid;
 }
 
 const ULONG
 CDebugSystemObjects::GetCurrentThreadId(void) const
 {
-		ULONG pid;
-		Check( m_intf->GetCurrentThreadId(&pid) );
-		return pid;
+	ULONG pid;
+	Check(m_intf->GetCurrentThreadId(&pid));
+
+	return pid;
 }
 
 const HRESULT
 CDebugSystemObjects::SetCurrentProcessId(ULONG id) const
 {
-		HRESULT r;
-		r = m_intf->SetCurrentProcessId(id);
-		Check(r);
-		return r;
+	HRESULT hr;
+	hr = m_intf->SetCurrentProcessId(id);
+	Check(hr);
+
+	return hr;
 }
 
 const HRESULT
 CDebugSystemObjects::SetCurrentThreadId(ULONG id) const
 {
-		HRESULT r = m_intf->SetCurrentThreadId(id);
-		Check(r);
-		return r;
+	HRESULT hr = m_intf->SetCurrentThreadId(id);
+	Check(hr);
+
+	return hr;
 }
 
 const ULONG64
 CDebugSystemObjects::GetCurrentProcessHandle(void) const
 {
-		ULONG64 handle;
-		Check( m_intf->GetCurrentProcessHandle(&handle) );
-		return handle;
+	ULONG64 handle;
+	Check(m_intf->GetCurrentProcessHandle(&handle));
+
+	return handle;
 }
 const ULONG64
 CDebugSystemObjects::GetCurrentThreadHandle(void) const
 {
-		ULONG64 handle;
-		Check( m_intf->GetCurrentThreadHandle(&handle) );
-		return handle;
+	ULONG64 handle;
+	Check(m_intf->GetCurrentThreadHandle(&handle));
+
+	return handle;
 }
 
 const ULONG
 CDebugSystemObjects::GetCurrentProcessSystemId(void) const
 {
-		ULONG result;
-		Check( m_intf->GetCurrentProcessSystemId(&result) );
-		return result;
+	ULONG result;
+	Check(m_intf->GetCurrentProcessSystemId(&result));
+
+	return result;
 }
 
 const ULONG
 CDebugSystemObjects::GetCurrentThreadSystemId(void) const
 {
-		ULONG result;
-		Check( m_intf->GetCurrentThreadSystemId(&result) );
-		return result;
+	ULONG result;
+	Check(m_intf->GetCurrentThreadSystemId(&result));
+
+	return result;
 }
 
 const CDebugSystemObjects::CCurrentProcess
@@ -259,6 +277,7 @@ CDebugSystemObjects::GetCurrentProcess(void) const
 {
 	ULONG engId;
 	Check(m_intf->GetCurrentProcessId(&engId));
+
 	return CCurrentProcess(this, engId, GetProcessByEngineId(engId).GetSystemId());
 }
 
@@ -273,6 +292,7 @@ CDebugSystemObjects::GetCurrentThread(void) const
 {
 	ULONG engId;
 	Check(m_intf->GetCurrentThreadId(&engId));
+
 	return CCurrentThread(this, engId, GetThreadByEngineId(engId).GetSystemId());
 }
 
@@ -286,8 +306,10 @@ ULONG64
 CDebugSystemObjects::GetImplicitProcessDataOffset(void) const
 {
 	CComQIPtr<IDebugSystemObjects2> intf(m_intf);
+
 	ULONG64 offset;
 	Check(intf->GetImplicitProcessDataOffset(&offset));
+
 	return offset;
 }
 
@@ -302,8 +324,10 @@ ULONG64
 CDebugSystemObjects::GetImplicitThreadDataOffset(void) const
 {
 	CComQIPtr<IDebugSystemObjects2> intf(m_intf);
+
 	ULONG64 offset;
 	Check(intf->GetImplicitThreadDataOffset(&offset));
+
 	return offset;
 }
 
@@ -325,6 +349,7 @@ CDebugSystemObjects::GetSystems(void) const
 	list systems;
 	for (ULONG i=0; i<number; i++) {
 		Check(intf->GetSystemIdsByIndex(i, 1, &id));
+
 		CDebugSystem system(this, id);
 		systems.append(system);
 	}
@@ -366,6 +391,7 @@ CDebugSystemObjects::GetTotalNumberThreads(void) const
 {
 	ULONG total, largest;
 	Check(m_intf->GetTotalNumberThreads(&total, &largest));
+
 	return std::make_pair(total, largest);
 }
 
@@ -381,6 +407,8 @@ CDebugSystemObjects::GetThreadByEngineId(ULONG engineId) const
 	for (ULONG i=0; i<number; i++)
 		if (engIds[i] == engineId)
 			return CThread(this, engIds[i], sysIds[i]);
+
+	// FIXME: should we return an error code instead?
 	utils::RaiseException("The thread engine id is not exists.", PyExc_IndexError);
 }
 
@@ -397,6 +425,7 @@ CDebugSystemObjects::GetProcessByEngineId(ULONG engineId) const
 		if (engIds[i] == engineId)
 			return CProcess(this, engIds[i], sysIds[i]);
 
+	// FIXME: should we return an error code instead?
 	utils::RaiseException("The process engine id is not exists.", PyExc_IndexError);
 }
 
@@ -405,6 +434,7 @@ CDebugSystemObjects::GetThreadBySystemId(ULONG systemId) const
 {
 	ULONG engineId;
 	Check(m_intf->GetThreadIdBySystemId(systemId, &engineId));
+
 	return CThread(this, engineId, systemId);
 }
 
@@ -413,6 +443,7 @@ CDebugSystemObjects::GetProcessBySystemId(ULONG systemId) const
 {
 	ULONG engineId;
 	Check(m_intf->GetProcessIdBySystemId(systemId, &engineId));
+
 	return CProcess(this, engineId, systemId);
 }
 
@@ -421,6 +452,7 @@ CDebugSystemObjects::GetThreadByTeb(ULONG64 offset) const
 {
 	ULONG engineId;
 	Check(m_intf->GetThreadIdByTeb(offset, &engineId));
+
 	return GetThreadByEngineId(engineId);
 }
 
@@ -429,6 +461,7 @@ CDebugSystemObjects::GetProcessByPeb(ULONG64 offset) const
 {
 	ULONG engineId;
 	Check(m_intf->GetProcessIdByPeb(offset, &engineId));
+
 	return GetProcessByEngineId(engineId);
 }
 
@@ -437,6 +470,7 @@ CDebugSystemObjects::GetProcessIdByHandle(ULONG64 handle) const
 {
 	ULONG pid;
 	Check(m_intf->GetProcessIdByHandle(handle, &pid));
+
 	return pid;
 }
 
@@ -445,6 +479,7 @@ CDebugSystemObjects::GetProcessIdBySystemId(ULONG SysId) const
 {
 	ULONG pid;
 	Check(m_intf->GetProcessIdBySystemId(SysId, &pid));
+
 	return pid;
 }
 
@@ -453,6 +488,7 @@ CDebugSystemObjects::GetThreadIdByHandle(ULONG64 handle) const
 {
 	ULONG tid;
 	Check(m_intf->GetThreadIdByHandle(handle, &tid));
+
 	return tid;
 }
 
@@ -461,6 +497,7 @@ CDebugSystemObjects::GetThreadIdBySystemId(ULONG SysId) const
 {
 	ULONG tid;
 	Check(m_intf->GetThreadIdBySystemId(SysId, &tid));
+
 	return tid;
 }
 const CDebugSystemObjects::CThread
@@ -468,6 +505,7 @@ CDebugSystemObjects::GetThreadByProcessor(ULONG processor) const
 {
 	ULONG engineId;
 	Check(m_intf->GetThreadIdByProcessor(processor, &engineId));
+
 	return GetThreadByEngineId(engineId);
 }
 
@@ -475,24 +513,24 @@ ULONG
 CDebugSystemObjects::GetNumberThreads(void) const
 {
 	ULONG result = 0;
-	HRESULT r = m_intf->GetNumberThreads(&result);
-	Check(r);
+	Check(m_intf->GetNumberThreads(&result));
+
 	return result;
 }
 
 const list
 CDebugSystemObjects::GetThreadIdsByIndex(ULONG start, ULONG count) const
 {
-	list tids; HRESULT r;
+	list tids;
 	PULONG d_ids(0); PULONG s_ids(0);
 	CComQIPtr<IDebugSystemObjects> intf(m_intf);
 
 	try {
 		d_ids = new ULONG[count]; s_ids = new ULONG[count];
-		Check(r = m_intf->GetThreadIdsByIndex(start, count, d_ids, s_ids));
+		Check(m_intf->GetThreadIdsByIndex(start, count, d_ids, s_ids));
 
 		for (ULONG i = 0; i < count; i++)
-			tids.append( make_tuple( d_ids[i], s_ids[i] ) );
+			tids.append(make_tuple(d_ids[i], s_ids[i]));
 
 	} catch (std::exception&) {
 		if (d_ids)		// if bjarne knew what finally meant, i might not have to
@@ -501,6 +539,7 @@ CDebugSystemObjects::GetThreadIdsByIndex(ULONG start, ULONG count) const
 			delete [] s_ids;
 		throw;
 	}
+
 	delete [] d_ids; delete [] s_ids;
 	return tids;
 }
@@ -510,102 +549,96 @@ ULONG CDebugSystemObjects::GetTotalNumberOfThreads(void) const
 	return GetTotalNumberThreads().first;
 }
 
-ULONG
-CDebugSystemObjects::GetLargestNumberOfThreads(void) const
+ULONG CDebugSystemObjects::GetLargestNumberOfThreads(void) const
 {
 	return GetTotalNumberThreads().second;
 }
 
 /* CDebugSystemObjects::CDebugSystem */
-ULONG
-CDebugSystemObjects::CDebugSystem::GetId(void) const
+ULONG CDebugSystemObjects::CDebugSystem::GetId(void) const
 {
 	return m_id;
 }
 
-const object
-CDebugSystemObjects::CDebugSystem::Repr(const CDebugSystem& system)
+const object CDebugSystemObjects::CDebugSystem::Repr(const CDebugSystem& system)
 {
 	return "(System %d)" % make_tuple(system.GetId());
 }
 
 /* CDebugSystemObjects::CSystemObject */
-ULONG
-CDebugSystemObjects::CSystemObject::GetEngineId(void) const
+ULONG CDebugSystemObjects::CSystemObject::GetEngineId(void) const
 {
 	return m_engineId;
 }
 
-ULONG
-CDebugSystemObjects::CSystemObject::GetSystemId(void) const
+ULONG CDebugSystemObjects::CSystemObject::GetSystemId(void) const
 {
 	return m_systemId;
 }
 
 /* CDebugSystemObjects::CThread */
-const object
-CDebugSystemObjects::CThread::Repr(const CThread& thread)
+const object CDebugSystemObjects::CThread::Repr(const CThread& thread)
 {
 	return "(Thread %d %d)" % make_tuple(thread.GetEngineId(), thread.GetSystemId());
 }
 
 /* CDebugSystemObjects::CCurrentThread */
-ULONG64
-CDebugSystemObjects::CCurrentThread::GetDataOffset(void) const
+ULONG64 CDebugSystemObjects::CCurrentThread::GetDataOffset(void) const
 {
 	ULONG64 offset;
 	Check(m_intf->GetCurrentThreadDataOffset(&offset));
+
 	return offset;
 }
 
-const CDebugDataSpaces::CHandle
-CDebugSystemObjects::CCurrentThread::GetHandle(void) const
+const CDebugDataSpaces::CHandle CDebugSystemObjects::CCurrentThread::GetHandle(void) const
 {
 	ULONG64 handle;
 	Check(m_intf->GetCurrentThreadHandle(&handle));
+
 	return CDebugDataSpaces::CHandle(m_intf, handle);
 }
 
 /* CDebugSystemObjects::CProcess */
-const object
-CDebugSystemObjects::CProcess::Repr(const CProcess& process)
+const object CDebugSystemObjects::CProcess::Repr(const CProcess& process)
 {
 	return "(Process %d %d)" % make_tuple(process.GetEngineId(), process.GetSystemId());
 }
 
 /* CDebugSystemObjects::CCurrentProcess */
-ULONG64
-CDebugSystemObjects::CCurrentProcess::GetDataOffset(void) const
+ULONG64 CDebugSystemObjects::CCurrentProcess::GetDataOffset(void) const
 {
 	ULONG64 offset;
 	Check(m_intf->GetCurrentProcessDataOffset(&offset));
+
 	return offset;
 }
 
-const CDebugDataSpaces::CHandle
-CDebugSystemObjects::CCurrentProcess::GetHandle(void) const
+const CDebugDataSpaces::CHandle CDebugSystemObjects::CCurrentProcess::GetHandle(void) const
 {
 	ULONG64 handle;
 	Check(m_intf->GetCurrentProcessHandle(&handle));
+
 	return CDebugDataSpaces::CHandle(m_intf, handle);
 }
 
-const std::string
-CDebugSystemObjects::CCurrentProcess::GetExecutableName(void) const
+const std::string CDebugSystemObjects::CCurrentProcess::GetExecutableName(void) const
 {
 	char szName[MAX_PATH];
 	ULONG nName = _countof(szName);
 	Check(m_intf->GetCurrentProcessExecutableName(szName, nName, &nName));
+
 	return std::string(szName, nName-1);
 }
 
 const object
 CDebugSystemObjects::CCurrentProcess::GetUpTime(void) const
 {
+	static const ULONG SECONDS_PER_DAY = 60 * 60 * 24;
+
 	CComQIPtr<IDebugSystemObjects2> intf(m_intf);
 	ULONG uptime;
 	Check(intf->GetCurrentProcessUpTime(&uptime));
-	static const ULONG SECONDS_PER_DAY = 60 * 60 * 24;
+
 	return object(handle<>(::PyDelta_FromDSU(uptime / SECONDS_PER_DAY, uptime % SECONDS_PER_DAY, 0)));
 }
-

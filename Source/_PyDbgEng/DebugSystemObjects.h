@@ -4,8 +4,15 @@
 
 #include <vector>
 
+#include <boost/python.hpp>
+#include <dbgeng.h>
+
+using namespace boost::python;
+
+/** Forward declarations **/
 class CDebugDataSpaces;
 
+/** Class declarations **/
 class CDebugSystemObjects : public CDebugObject<IDebugSystemObjects3>
 {
 public:

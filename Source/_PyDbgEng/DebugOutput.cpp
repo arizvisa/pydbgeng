@@ -1,10 +1,9 @@
 #include "StdAfx.h"
 #include "utils.h"
-
 #include "DebugObject.h"
-
 #include "DebugOutput.h"
 
+#include <boost/python.hpp>
 using namespace boost::python;
 
 PWINDBG_OUTPUT_ROUTINE CDebugOutput::s_callback = NULL;
@@ -12,7 +11,7 @@ PWINDBG_OUTPUT_ROUTINE CDebugOutput::s_callback = NULL;
 void CDebugOutput::Export(void)
 {
 	class_<CDebugOutput>("DebugOutput")
-		.def("write", &Write)
+		.def("write", &CDebugOutput::Write)
 	;
 
 	enum_<OutputMask>("OutputMask")
@@ -57,6 +56,7 @@ extern "C" {
 	{
 		PWINDBG_OUTPUT_ROUTINE result;
 		result = CDebugOutput::getCallback();
+
 		CDebugOutput::setCallback(c);
 		return result;
 	}

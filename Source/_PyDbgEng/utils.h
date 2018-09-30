@@ -1,5 +1,8 @@
 #pragma once
 
+#include <boost/python.hpp>
+#include <dbgeng.h>
+
 using namespace boost::python;
 
 struct utils
@@ -19,7 +22,7 @@ struct utils
 		FLOAT82   = DEBUG_VALUE_FLOAT82,
 		FLOAT128  = DEBUG_VALUE_FLOAT128,
 		VECTOR64  = DEBUG_VALUE_VECTOR64,
-		VECTOR128 = DEBUG_VALUE_VECTOR128
+		VECTOR128 = DEBUG_VALUE_VECTOR128,
 	};
 
 /** Python Helpers */
@@ -47,47 +50,26 @@ struct utils
 	template <class T>
 	static void fatal(T message);
 
-	template <typename T, typename ET=T::enumeration_type>
+	template <typename T>
 	static const list FlagsToList(T flags, T min, T max) {
 		BOOST_STATIC_ASSERT((boost::is_enum<T>::value));
 		list result;
 
-		for (ET flag = static_cast<ET>(min); 0 < flag <= static_cast<ET>(max); flag <<= 1)
-			if (flag == static_cast<ET>(flags) & flag)
+		for (size_t flag = static_cast<size_t>(min); flag <= static_cast<size_t>(max); flag <<= 1)
+			if (static_cast<size_t>(flags) & flag == flag)
 				result.append(static_cast<T>(flag));
 		return result;
 	}
 
-	template <typename T, typename ET=T::enumeration_type>
-	static const ET FlagsFromList(list flags) {
+	template <typename Tr, typename T>
+	static const Tr FlagsFromList(list flags) {
 		BOOST_STATIC_ASSERT((boost::is_enum<T>::value));
 
-		ET result;
+		Tr result;
 		while (!utils::empty(flags))
-			result |= extract<ET>(flags.pop());
+			result |= extract<Tr>(flags.pop());
 		return result;
 	}
 };
 
-template <typename T>
-class PythonBitSet {
-private:
-	T value_;
-
-public:
-	typename T type;
-
-	PythonBitSet(enum value) : value_(static_cast<T>(value)) { }
-	PythonBitSet(T value) : value_(value) { }
-	PythonBitSet(T& value) : value_(value) { }
-
-	inline PythonBitSet& operator=(const T& value) {
-		value_ = value;
-	}
-	inline operator PythonBitSet() const {
-		return value_;
-	}
-};
-
 #define Check(x) do { utils::RealCheck(x, #x); } while (0)
-

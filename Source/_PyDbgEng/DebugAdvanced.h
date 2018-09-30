@@ -2,6 +2,9 @@
 #define __DebugAdvanced_h
 #pragma once
 
+#include <dbgeng.h>
+
+/** Class declarations **/
 class CDebugAdvanced : public CDebugObject<IDebugAdvanced>
 {
 public:

@@ -2,10 +2,15 @@
 #define __DebugSymbols_h
 #pragma once
 
+#include <boost/python.hpp>
+#include <dbgeng.h>
 #include <dbghelp.h>
 
-class CDebugControl;
+using namespace boost::python;
 
+#include "DebugControl.h"
+
+/** Class declarations **/
 class CDebugSymbols : public CDebugObject<IDebugSymbols>
 {
 public:
@@ -39,7 +44,7 @@ public:
 		OPT_FAVOR_COMPRESSED          = SYMOPT_FAVOR_COMPRESSED,
 		OPT_ALLOW_ZERO_ADDRESS        = SYMOPT_ALLOW_ZERO_ADDRESS,
 		OPT_DISABLE_SYMSRV_AUTODETECT = SYMOPT_DISABLE_SYMSRV_AUTODETECT,
-		OPT_DEBUG                     = SYMOPT_DEBUG
+		OPT_DEBUG                     = SYMOPT_DEBUG,
 	};
 
 	enum class TypeOption : ULONG {
@@ -47,7 +52,7 @@ public:
 		OPT_UNICODE_DISPLAY    = DEBUG_TYPEOPTS_UNICODE_DISPLAY,
 		OPT_LONGSTATUS_DISPLAY = DEBUG_TYPEOPTS_LONGSTATUS_DISPLAY,
 		OPT_FORCERADIX_OUTPUT  = DEBUG_TYPEOPTS_FORCERADIX_OUTPUT,
-		OPT_MATCH_MAXSIZE      = DEBUG_TYPEOPTS_MATCH_MAXSIZE
+		OPT_MATCH_MAXSIZE      = DEBUG_TYPEOPTS_MATCH_MAXSIZE,
 	};
 
 	class CType;
@@ -106,7 +111,7 @@ public:
 		const object ReadVirtual(ULONG64 offset) const;
 		ULONG WriteVirtual(ULONG64 offset, const object buffer) const;
 
-		void OutputPhysical(ULONG64 offset, CDebugSymbols::TypeOption options=TypeOption::OPT_TYPE_DEFAULT, CDebugControl::OutputControl target=CDebugControl::OutputControl::OUTPUT_ALL_CLIENTS);
+		void OutputPhysical(ULONG64 offset, TypeOption options=TypeOption::OPT_TYPE_DEFAULT, CDebugControl::OutputControl target=CDebugControl::OutputControl::OUTPUT_ALL_CLIENTS);
 		void OutputVirtual(ULONG64 offset, TypeOption options=TypeOption::OPT_TYPE_DEFAULT, CDebugControl::OutputControl target=CDebugControl::OutputControl::OUTPUT_ALL_CLIENTS);
 
 		static const object Repr(const CType& type);

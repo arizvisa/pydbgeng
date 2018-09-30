@@ -1,6 +1,9 @@
 #include "StdAfx.h"
 #include "utils.h"
 
+#include <boost/python.hpp>
+using namespace boost::python;
+
 void utils::Export(void)
 {
 	enum_<ValueType>("ValueType")
@@ -131,6 +134,7 @@ void utils::RealCheck(HRESULT res, std::string s) throw(...)
 const object utils::ToObject(const DEBUG_VALUE& value)
 {
 	size_t size(0);
+	// FIXME: should probably make this into an enumeration
 	switch (value.Type) {
 		case DEBUG_VALUE_INVALID:
 			size = 0;
@@ -187,6 +191,7 @@ static void utils::warning(boost::python::str message)
 	m = import("logging");
 	m.attr("warn")(message);
 }
+
 template<>
 static void utils::fatal(boost::python::str message)
 {
@@ -202,6 +207,7 @@ static void utils::fatal(boost::python::str message)
 template<>
 static void utils::warning(const std::string& message)
 { return utils::warning(boost::python::str(message.c_str())); }
+
 template<>
 static void utils::fatal(const std::string& message)
 { return utils::fatal(boost::python::str(message.c_str())); }
@@ -209,6 +215,7 @@ static void utils::fatal(const std::string& message)
 template<>
 static void utils::warning(const char* message)
 { return utils::warning(boost::python::str(message)); }
+
 template<>
 static void utils::fatal(const char* message)
 { return utils::fatal(boost::python::str(message)); }

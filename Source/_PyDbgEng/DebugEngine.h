@@ -4,6 +4,7 @@
 
 #include <atlbase.h>
 
+/** Class declarations **/
 class CDebugEngine
 {
 public:

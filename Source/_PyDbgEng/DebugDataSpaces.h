@@ -2,9 +2,14 @@
 #define __DebugDataSpaces_h
 #pragma once
 
+#include <boost/python.hpp>
+#include <dbgeng.h>
+
+using namespace boost::python;
+
+/** Class declarations **/
 class CDebugDataSpaces : public CDebugObject<IDebugDataSpaces>
 {
-
 public:
 	class CHandle : public CDebugObject<IDebugDataSpaces2>
 	{

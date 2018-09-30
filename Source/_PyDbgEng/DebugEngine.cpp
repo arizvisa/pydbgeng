@@ -1,23 +1,21 @@
 #include "StdAfx.h"
-
-#include <DbgEng.h>
-#include <boost/python.hpp>
-using namespace boost::python;
-
 #include "utils.h"
-#include "DebugObject.h"
 
+#include "DebugObject.h"
 #include "DebugOutput.h"
 #include "DebugRegisters.h"
 #include "DebugSymbols.h"
 #include "DebugDataSpaces.h"
 #include "DebugSystemObjects.h"
 #include "DebugAdvanced.h"
-
 #include "DebugControl.h"
 #include "DebugClient.h"
 
 #include "DebugEngine.h"
+
+#include <dbgeng.h>
+#include <boost/python.hpp>
+using namespace boost::python;
 
 /** returns a new IDebugClient interface */
 CDebugClient*
@@ -31,14 +29,16 @@ CDebugClient*
 Connect(const std::string& remoteOptions)
 {
 	CComPtr<IDebugClient> intf;
-	HRESULT r;
+	HRESULT hr;
 
-	r = ::DebugConnect( remoteOptions.c_str(), __uuidof(IDebugClient), (PVOID*)&intf);
-	if (r != S_OK) {
-		::PyErr_SetFromWindowsErr(r);
+	// FIXME: there's probably a safer way to do this rather than reinterpret_cast
+	hr = ::DebugConnect(remoteOptions.c_str(), __uuidof(IDebugClient), reinterpret_cast<PVOID*>(&intf));
+	if (hr != S_OK) {
+		::PyErr_SetFromWindowsErr(hr);
 		throw_error_already_set();
 		assert(false == true);
 	}
+	// FIXME: there's a better way to assert via BOOST
 	assert(intf);
 
 	return new CDebugClient(intf);

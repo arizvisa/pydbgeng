@@ -8,6 +8,14 @@
 #include <atlbase.h>
 #include <atlcom.h>
 
+#include <boost/python.hpp>
+#include <dbgeng.h>
+
+using namespace boost::python;
+
+#include "DebugControl.h"
+
+/** Forward declarations */
 class CDebugBreakpoint;
 class CDebugOutput;
 class CDebugRegisters;
@@ -16,8 +24,7 @@ class CDebugDataSpaces;
 class CDebugSystemObjects;
 class CDebugAdvanced;
 
-class CDebugControl;
-
+/** Class declarations */
 class CDebugClient : public CDebugObject<IDebugClient>
 {
 public:
@@ -55,7 +62,7 @@ public:
 		ATTACH_NONINVASIVE_NO_SUSPEND = DEBUG_ATTACH_NONINVASIVE_NO_SUSPEND,
 		ATTACH_INVASIVE_NO_INITIAL_BREAK = DEBUG_ATTACH_INVASIVE_NO_INITIAL_BREAK,
 		ATTACH_INVASIVE_RESUME_PROCESS = DEBUG_ATTACH_INVASIVE_RESUME_PROCESS,
-		ATTACH_NONINVASIVE_ALLOW_PARTIAL = DEBUG_ATTACH_NONINVASIVE_ALLOW_PARTIAL
+		ATTACH_NONINVASIVE_ALLOW_PARTIAL = DEBUG_ATTACH_NONINVASIVE_ALLOW_PARTIAL,
 	};
 
 	/** Process creation (not mapped 1:1) */
@@ -172,7 +179,7 @@ public:
 		CREATE_ATTACH_ONLY_THIS_PROCESS = DEBUG_ONLY_THIS_PROCESS,
 		CREATE_SUSPENDED_               = CREATE_SUSPENDED,
 		CREATE_NO_DEBUG_HEAP            = DEBUG_CREATE_PROCESS_NO_DEBUG_HEAP,
-		CREATE_THROUGH_RTL              = DEBUG_CREATE_PROCESS_THROUGH_RTL
+		CREATE_THROUGH_RTL              = DEBUG_CREATE_PROCESS_THROUGH_RTL,
 	};
 
 	class CEventArgs {
@@ -246,7 +253,7 @@ public:
 			EVENT_SESSION_STATUS        = DEBUG_EVENT_SESSION_STATUS,
 			EVENT_CHANGE_DEBUGGEE_STATE = DEBUG_EVENT_CHANGE_DEBUGGEE_STATE,
 			EVENT_CHANGE_ENGINE_STATE   = DEBUG_EVENT_CHANGE_ENGINE_STATE,
-			EVENT_CHANGE_SYMBOL_STATE   = DEBUG_EVENT_CHANGE_SYMBOL_STATE
+			EVENT_CHANGE_SYMBOL_STATE   = DEBUG_EVENT_CHANGE_SYMBOL_STATE,
 		};
 
 		enum class SessionStatusFlags : ULONG {
@@ -257,7 +264,7 @@ public:
 			SESSION_END                          = DEBUG_SESSION_END,
 			SESSION_REBOOT                       = DEBUG_SESSION_REBOOT,
 			SESSION_HIBERNATE                    = DEBUG_SESSION_HIBERNATE,
-			SESSION_FAILURE                      = DEBUG_SESSION_FAILURE
+			SESSION_FAILURE                      = DEBUG_SESSION_FAILURE,
 		};
 
 		enum class ChangeDebuggeeStateFlags : ULONG {
@@ -666,6 +673,7 @@ public:
 	static void Export(void);
 
 /** Inlines */
+	/* FIXME: these should probably create new references */
 	inline const CDebugControl& GetControl(void) const
 	{ return CDebugControl(m_intf); }
 	inline const CDebugRegisters& GetRegisters(void) const

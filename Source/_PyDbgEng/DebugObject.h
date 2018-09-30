@@ -11,8 +11,10 @@
 #include <boost/type_traits.hpp>
 using namespace boost::python;
 
+/** Forward declarations **/
 class CDebugControl;
 
+/** Class declarations **/
 template <typename I>
 class CDebugObject {
 protected:
@@ -38,8 +40,11 @@ public:
 	{ }
 
 /** interface scope */
-	operator I*(void) const { return m_intf; }
 	I *GetInterface(void) const { return m_intf; }
+
+	operator I*(void) const {
+		return GetInterface();
+	}
 
 	static inline HRESULT Create(I** intf) {
 		return ::DebugCreate(__uuidof(I), (PVOID*)intf);
