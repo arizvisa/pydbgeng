@@ -104,12 +104,6 @@
       <AssemblyIdentity>_PyDbgEng.pyd</AssemblyIdentity>
       <UpdateFileHashes>true</UpdateFileHashes>
     </Manifest>
-    <PostBuildEvent>
-      <Message>Moving binary dependencies into output directory</Message>
-      <Command>move "$(IntDir)boost_python-*-mt-gd-*.dll" "$(OutDir)"
-exit 0
-</Command>
-    </PostBuildEvent>
     <ResourceCompile>
       <PreprocessorDefinitions>_VC80_UPGRADE=0x0710;SOLUTIONDIR=$(SolutionDir);%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
@@ -142,12 +136,6 @@ exit 0
       <AddModuleNamesToAssembly>%(AddModuleNamesToAssembly)</AddModuleNamesToAssembly>
       <DelayLoadDLLs>%(DelayLoadDLLs)</DelayLoadDLLs>
     </Link>
-    <PostBuildEvent>
-      <Message>Moving binary dependencies into output directory</Message>
-      <Command>move "$(IntDir)boost_python-*-mt-1*.dll" "$(OutDir)"
-exit 0
-</Command>
-    </PostBuildEvent>
     <Manifest />
     <ResourceCompile>
       <PreprocessorDefinitions>_VC80_UPGRADE=0x0710;SOLUTIONDIR=$(SolutionDir);%(PreprocessorDefinitions)</PreprocessorDefinitions>

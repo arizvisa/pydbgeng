@@ -70,17 +70,13 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <PostBuildEvent>
       <Message>Copying default scripts into Output directory</Message>
-      <Command>xcopy /Y "$(ProjectDir)*.py" "$(OutDir)"
-exit 0
-</Command>
+      <Command>xcopy /Y "$(ProjectDir)*.py" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <PostBuildEvent>
       <Message>Copying default scripts into Output directory</Message>
-      <Command>xcopy /Y "$(ProjectDir)*.py" "$(OutDir)"
-exit 0
-</Command>
+      <Command>xcopy /Y "$(ProjectDir)*.py" "$(OutDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
